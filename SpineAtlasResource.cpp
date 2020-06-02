@@ -63,3 +63,4 @@ void SpineAtlasResource::set_textures(const Array &ts) {
 Array SpineAtlasResource::get_textures() {
 	return texes;
 }
+

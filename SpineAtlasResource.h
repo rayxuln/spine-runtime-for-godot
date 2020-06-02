@@ -32,6 +32,8 @@ public:
 	void set_textures(const Array &ts);
 	Array get_textures();
 
+	inline spine::Atlas *get_spine_atlas(){return atlas;}
+
 	SpineAtlasResource();
     virtual ~SpineAtlasResource();
 };

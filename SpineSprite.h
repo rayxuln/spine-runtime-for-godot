@@ -8,7 +8,7 @@
 #include <scene/2d/node_2d.h>
 #include <scene/resources/texture.h>
 
-#include "SpineAtlasResource.h"
+#include "SpineSkeletonDataResource.h"
 
 class SpineSprite : public Node2D {
     GDCLASS(SpineSprite, Node2D);
@@ -16,12 +16,10 @@ protected:
     static void _bind_methods();
 
 private:
-    Ref<SpineAtlasResource> atlas;
-
-    void load_spine_atlas();
+    Ref<SpineSkeletonDataResource> skeleton_data;
 public:
-    void set_atlas(const Ref<SpineAtlasResource> &a);
-    Ref<SpineAtlasResource> get_atlas();
+    void set_skeleton_data(const Ref<SpineSkeletonDataResource> &s);
+    Ref<SpineSkeletonDataResource> get_skeleton_data();
 };
 
 
