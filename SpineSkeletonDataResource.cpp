@@ -38,13 +38,19 @@ bool SpineSkeletonDataResource::is_valid() {
 void SpineSkeletonDataResource::load_res(spine::Atlas *a) {
 	auto path = get_path();
 	spine::SkeletonJson json(a);
-	skeleton_data = json.readSkeletonDataFile(spine::String(path.utf8()));
-	if(!skeleton_data)
+	auto temp_skeleton_data = json.readSkeletonDataFile(spine::String(path.utf8()));
+	if(!temp_skeleton_data)
 	{
 		print_error(String("Error happened while loading skeleton json data: ") + path);
 		print_error(String("Error msg: ") + json.getError().buffer());
 		return;
 	}
+	if(skeleton_data)
+	{
+		delete skeleton_data;
+		skeleton_data = NULL;
+	}
+	skeleton_data = temp_skeleton_data;
 
 	valid = true;
 	print_line("Skeleton json data loaded!");
