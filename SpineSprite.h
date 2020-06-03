@@ -9,6 +9,7 @@
 #include <scene/resources/texture.h>
 
 #include "SpineAnimationStateDataResource.h"
+#include "SpineSkeleton.h"
 
 class SpineSprite : public Node2D {
     GDCLASS(SpineSprite, Node2D);
@@ -17,9 +18,13 @@ protected:
 
 private:
     Ref<SpineAnimationStateDataResource> animation_state_data_res;
+
+	Ref<SpineSkeleton> skeleton;
 public:
     void set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &a);
     Ref<SpineAnimationStateDataResource> get_animation_state_data_res();
+
+	void _on_animation_data_created();
 };
 
 
