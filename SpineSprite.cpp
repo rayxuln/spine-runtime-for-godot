@@ -31,4 +31,8 @@ void SpineSprite::_on_animation_data_created(){
 	skeleton = Ref<SpineSkeleton>(memnew(SpineSkeleton));
 	skeleton->load_skeleton(animation_state_data_res->get_skeleton());
 	print_line("Run time skeleton created.");
+
+	animation_state = Ref<SpineAnimationState>(memnew(SpineAnimationState));
+	animation_state->load_animation_state(animation_state_data_res);
+	print_line("Run time animation state created.");
 }

@@ -22,9 +22,7 @@ private:
 
 public:
 
-	inline void load_skeleton(Ref<SpineSkeletonDataResource> sd){
-		skeleton = new spine::Skeleton(sd->get_skeleton_data());
-	}
+	void load_skeleton(Ref<SpineSkeletonDataResource> sd);
 
 	inline spine::Skeleton *get_skeleton(){
 		return skeleton;

@@ -19,3 +19,12 @@ SpineSkeleton::~SpineSkeleton() {
 		skeleton = NULL;
 	}
 }
+
+void SpineSkeleton::load_skeleton(Ref<SpineSkeletonDataResource> sd) {
+	if(skeleton)
+	{
+		delete skeleton;
+		skeleton = NULL;
+	}
+	skeleton = new spine::Skeleton(sd->get_skeleton_data());
+}

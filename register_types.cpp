@@ -11,6 +11,7 @@
 #include "SpineSprite.h"
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
+#include "SpineAnimationState.h"
 
 static Ref<ResourceFormatLoaderSpineAtlas> atlas_loader;
 static Ref<ResourceFormatLoaderSpineSkeletonJsonData> json_skeleton_loader;
@@ -23,6 +24,7 @@ void register_spine_runtime_types(){
 	ClassDB::register_class<SpineAnimationStateDataResource>();
 	ClassDB::register_class<SpineSkeletonJsonDataResource>();
 	ClassDB::register_class<SpineSkeleton>();
+	ClassDB::register_class<SpineAnimationState>();
 
     atlas_loader.instance();
     ResourceLoader::add_resource_format_loader(atlas_loader);

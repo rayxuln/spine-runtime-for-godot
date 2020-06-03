@@ -10,6 +10,7 @@
 
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
+#include "SpineAnimationState.h"
 
 class SpineSprite : public Node2D {
     GDCLASS(SpineSprite, Node2D);
@@ -20,6 +21,7 @@ private:
     Ref<SpineAnimationStateDataResource> animation_state_data_res;
 
 	Ref<SpineSkeleton> skeleton;
+	Ref<SpineAnimationState> animation_state;
 public:
     void set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &a);
     Ref<SpineAnimationStateDataResource> get_animation_state_data_res();
