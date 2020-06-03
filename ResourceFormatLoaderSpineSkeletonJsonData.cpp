@@ -3,13 +3,13 @@
 //
 
 #include "ResourceFormatLoaderSpineSkeletonJsonData.h"
-#include "SpineSkeletonDataResource.h"
+#include "SpineSkeletonJsonDataResource.h"
 
 RES ResourceFormatLoaderSpineSkeletonJsonData::load(const String &p_path, const String &p_original_path, Error *r_error) {
-    Ref<SpineSkeletonDataResource> skeleton = memnew(SpineSkeletonDataResource);
-    Error err = skeleton->load_file(p_path);
+    Ref<SpineSkeletonJsonDataResource> skeleton = memnew(SpineSkeletonJsonDataResource);
+    skeleton->set_path(p_path);
     if(r_error){
-        *r_error = err;
+        *r_error = OK;
     }
     return skeleton;
 }
