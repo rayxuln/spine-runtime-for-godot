@@ -36,19 +36,6 @@ void SpineSprite::_notification(int p_what) {
 			draw_skeleton(skeleton);
 
 //			RID ci = get_canvas_item();
-
-			/*
-			texture->draw(ci,Point2());
-			break;
-			*/
-
-//			Rect2 src_rect, dst_rect;
-//			bool filter_clip;
-//			_get_rects(src_rect, dst_rect, filter_clip);
-//			texture->draw_rect_region(ci, dst_rect, src_rect, Color(1, 1, 1), false, normal_map, filter_clip);
-
-
-
 		} break;
 	}
 }
@@ -82,6 +69,8 @@ void SpineSprite::_on_animation_data_created(){
 	animation_state->load_animation_state(animation_state_data_res);
 	print_line("Run time animation state created.");
 
+	update();
+
 	emit_signal("animation_state_ready", animation_state, skeleton);
 }
 
@@ -93,5 +82,48 @@ Ref<SpineAnimationState> SpineSprite::get_animation_state() {
 }
 
 void SpineSprite::draw_skeleton(Ref<SpineSkeleton> s) {
+	static unsigned short quad_indices[] = {0, 1, 2, 2, 3, 0};
 
+	auto sk = s->get_skeleton();
+	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
+	{
+		spine::Slot *slot = sk->getDrawOrder()[i];
+
+		spine::Attachment *attachment = slot->getAttachment();
+		if(!attachment) continue;
+
+		int blend_mode;
+		switch (slot->getData().getBlendMode()) {
+			case spine::BlendMode_Normal:
+				blend_mode = 0;
+				break;
+			case spine::BlendMode_Additive:
+				blend_mode = 1;
+				break;
+			case spine::BlendMode_Multiply:
+				blend_mode = 2;
+				break;
+			case spine::BlendMode_Screen:
+				blend_mode = 3;
+				break;
+			default:
+				blend_mode = 0;
+		}
+
+		spine::Color skeleton_color = sk->getColor();
+		spine::Color slot_color = slot->getColor();
+		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
+
+		Ref<Texture> tex;
+		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
+		{
+			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
+
+			tex = *((Ref<ImageTexture>*)((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject());
+
+
+		}
+
+		print_line("drawing spine skeleton...");
+	}
 }
