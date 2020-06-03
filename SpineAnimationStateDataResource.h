@@ -19,6 +19,8 @@ private:
 	Ref<SpineSkeletonDataResource> skeleton;
 
 	spine::AnimationStateData *animation_state_data;
+
+	bool animation_state_data_created;
 public:
 
 	void set_skeleton(const Ref<SpineSkeletonDataResource> &s);
@@ -29,6 +31,8 @@ public:
 	}
 
 	void _on_skeleton_data_loaded();
+
+	bool is_animation_state_data_created();
 
 	SpineAnimationStateDataResource();
 	~SpineAnimationStateDataResource();

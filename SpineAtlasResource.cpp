@@ -22,11 +22,15 @@ public:
         tex->create_from_image(img);
 		res.texes.append(tex);
         page.setRendererObject((void*)p_tex);
+
+		page.width = tex->get_width();
+		page.height = tex->get_height();
     }
 
     virtual void unload(void *vp_tex){
         Ref<ImageTexture> &tex = *((Ref<ImageTexture> *)vp_tex);
         tex.unref();
+		memfree((Ref<ImageTexture>*)vp_tex);
     }
 };
 

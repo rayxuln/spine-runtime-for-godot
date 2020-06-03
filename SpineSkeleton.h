@@ -28,6 +28,10 @@ public:
 		return skeleton;
 	}
 
+	inline void update_world_transform(){
+		skeleton->updateWorldTransform();
+	}
+
 	SpineSkeleton();
 	~SpineSkeleton();
 };

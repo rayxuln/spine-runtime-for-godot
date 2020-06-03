@@ -8,6 +8,7 @@
 #include "core/variant_parser.h"
 
 #include "SpineAnimationStateDataResource.h"
+#include "SpineSkeleton.h"
 
 class SpineAnimationState : public Reference{
 	GDCLASS(SpineAnimationState, Reference);
@@ -23,6 +24,15 @@ public:
 
 	inline spine::AnimationState *get_animation_state(){
 		return animation_state;
+	}
+
+	void set_animation(const String &anim_name, bool loop, int track);
+
+	inline void update(float delta){
+		animation_state->update(delta);
+	}
+	inline void apply(Ref<SpineSkeleton> skeleton){
+		animation_state->apply(*(skeleton->get_skeleton()));
 	}
 
 	SpineAnimationState();
