@@ -31,6 +31,7 @@ public:
 	}
 
 	void _on_skeleton_data_loaded();
+	void _on_skeleton_data_changed();
 
 	bool is_animation_state_data_created();
 

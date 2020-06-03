@@ -38,6 +38,7 @@ public:
 	void update_mesh_from_skeleton(Ref<SpineSkeleton> s);
 
 	void _on_animation_data_created();
+	void _on_animation_data_changed();
 };
 
 

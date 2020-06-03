@@ -12,6 +12,7 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_on_animation_data_created"), &SpineSprite::_on_animation_data_created);
 	ClassDB::bind_method(D_METHOD("get_skeleton"), &SpineSprite::get_skeleton);
 	ClassDB::bind_method(D_METHOD("get_animation_state"), &SpineSprite::get_animation_state);
+	ClassDB::bind_method(D_METHOD("_on_animation_data_changed"), &SpineSprite::_on_animation_data_changed);
 
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "skeleton")));
 
@@ -24,7 +25,7 @@ void SpineSprite::_notification(int p_what) {
 			set_process_internal(true);
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			if (!(skeleton.is_valid() && animation_state.is_valid()))
+			if (!(skeleton.is_valid() && animation_state.is_valid()) || mesh_instances.size() == 0)
 				return;
 
 			animation_state->update(get_process_delta_time());
@@ -42,35 +43,24 @@ void SpineSprite::_notification(int p_what) {
 void SpineSprite::set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &s) {
     animation_state_data_res = s;
 
-	if(!animation_state_data_res.is_null())
-	{
-		skeleton.unref();
-		animation_state.unref();
-
-		animation_state_data_res->connect("animation_state_data_created", this, "_on_animation_data_created");
-
-		if(animation_state_data_res->is_animation_state_data_created())
-		{
-			_on_animation_data_created();
-		}
-	}
+	// update run time skeleton and meshes
+	_on_animation_data_changed();
 }
 Ref<SpineAnimationStateDataResource> SpineSprite::get_animation_state_data_res() {
     return animation_state_data_res;
 }
 
 void SpineSprite::_on_animation_data_created(){
+//	print_line("_on_animation_data_created");
 	skeleton = Ref<SpineSkeleton>(memnew(SpineSkeleton));
 	skeleton->load_skeleton(animation_state_data_res->get_skeleton());
-	print_line("Run time skeleton created.");
+//	print_line("Run time skeleton created.");
 
 	animation_state = Ref<SpineAnimationState>(memnew(SpineAnimationState));
 	animation_state->load_animation_state(animation_state_data_res);
-	print_line("Run time animation state created.");
+//	print_line("Run time animation state created.");
 
 	// add mesh instances related by current skeleton
-	remove_mesh_instances();
-
 	animation_state->update(0);
 	animation_state->apply(skeleton);
 	skeleton->update_world_transform();
@@ -79,6 +69,24 @@ void SpineSprite::_on_animation_data_created(){
 	_notification(NOTIFICATION_INTERNAL_PROCESS);
 
 	emit_signal("animation_state_ready", animation_state, skeleton);
+}
+void SpineSprite::_on_animation_data_changed() {
+//	print_line("_on_animation_data_changed");
+	remove_mesh_instances();
+	skeleton.unref();
+	animation_state.unref();
+	if(!animation_state_data_res.is_null())
+	{
+		if(!animation_state_data_res->is_connected("animation_state_data_created", this, "_on_animation_data_created"))
+			animation_state_data_res->connect("animation_state_data_created", this, "_on_animation_data_created");
+		if(!animation_state_data_res->is_connected("skeleton_data_res_changed", this, "_on_animation_data_changed"))
+			animation_state_data_res->connect("skeleton_data_res_changed", this, "_on_animation_data_changed");
+
+		if(animation_state_data_res->is_animation_state_data_created())
+		{
+			_on_animation_data_created();
+		}
+	}
 }
 
 Ref<SpineSkeleton> SpineSprite::get_skeleton() {
@@ -343,11 +351,15 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		dic["tex"] = tex;
 
 		// update mesh instances
-		auto mesh_ins = mesh_instances[mi_index];
-		mesh_ins->set_mesh(array_mesh);
-		mesh_ins->set_texture(tex);
-		Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
-		mat->set_blend_mode(blend_mode);
+		if(mi_index < mesh_instances.size())
+		{
+			auto mesh_ins = mesh_instances[mi_index];
+			mesh_ins->set_mesh(array_mesh);
+			mesh_ins->set_texture(tex);
+			Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
+			mat->set_blend_mode(blend_mode);
+		}
+
 
 		mi_index += 1;
 	}

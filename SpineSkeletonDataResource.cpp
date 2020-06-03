@@ -14,6 +14,8 @@ void SpineSkeletonDataResource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_skeleton_data_loaded"), &SpineSkeletonDataResource::is_skeleton_data_loaded);
 
 	ADD_SIGNAL(MethodInfo("skeleton_data_loaded"));
+	ADD_SIGNAL(MethodInfo("atlas_res_changed"));
+	ADD_SIGNAL(MethodInfo("skeleton_json_res_changed"));
 
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "atlas_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAtlasResource"), "set_atlas_res", "get_atlas_res");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "skeleton_json_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineSkeletonJsonDataResource"), "set_skeleton_json_res", "get_skeleton_json_res");
@@ -52,11 +54,10 @@ void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_pat
 	skeleton_data = temp_skeleton_data;
 
 	valid = true;
-	print_line("Skeleton json data loaded!");
+//	print_line("Skeleton json data loaded!");
 }
 
 void SpineSkeletonDataResource::update_skeleton_data() {
-	valid = false;
 	if(atlas_res != NULL && !skeleton_json_res.is_null())
 	{
 		load_res(atlas_res->get_spine_atlas(), skeleton_json_res->get_path());
@@ -69,6 +70,9 @@ void SpineSkeletonDataResource::update_skeleton_data() {
 
 void SpineSkeletonDataResource::set_atlas_res(const Ref<SpineAtlasResource> &a) {
 	atlas_res = a;
+	valid = false;
+//	print_line("atlas_res_changed emitted");
+	emit_signal("atlas_res_changed");
 	update_skeleton_data();
 }
 Ref<SpineAtlasResource> SpineSkeletonDataResource::get_atlas_res() {
@@ -77,6 +81,9 @@ Ref<SpineAtlasResource> SpineSkeletonDataResource::get_atlas_res() {
 
 void SpineSkeletonDataResource::set_skeleton_json_res(const Ref<SpineSkeletonJsonDataResource> &s) {
 	skeleton_json_res = s;
+	valid = false;
+//	print_line("skeleton_json_res_changed emitted");
+	emit_signal("skeleton_json_res_changed");
 	update_skeleton_data();
 }
 Ref<SpineSkeletonJsonDataResource> SpineSkeletonDataResource::get_skeleton_json_res() {
