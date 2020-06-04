@@ -21,6 +21,8 @@ private:
 	spine::AnimationStateData *animation_state_data;
 
 	bool animation_state_data_created;
+
+	float default_mix;
 public:
 
 	void set_skeleton(const Ref<SpineSkeletonDataResource> &s);
@@ -29,6 +31,9 @@ public:
 	inline spine::AnimationStateData *get_animation_state_data(){
 		return animation_state_data;
 	}
+
+	void set_default_mix(float m);
+	float get_default_mix();
 
 	void _on_skeleton_data_loaded();
 	void _on_skeleton_data_changed();

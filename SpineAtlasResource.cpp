@@ -13,7 +13,7 @@ public:
     RaiixSpineTextureLoader(SpineAtlasResource &r):res(r){}
 
     virtual void load(spine::AtlasPage &page, const spine::String &path){
-        print_line(String("Atlas tex path: ") + String(path.buffer()));
+//        print_line(String("Atlas tex path: ") + String(path.buffer()));
         Ref<Image> img = memnew(Image);
         ImageLoader::load_image(String(path.buffer()), img);
 

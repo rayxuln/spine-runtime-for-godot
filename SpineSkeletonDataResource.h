@@ -9,6 +9,7 @@
 
 #include "SpineAtlasResource.h"
 #include "SpineSkeletonJsonDataResource.h"
+#include "SpineAnimation.h"
 
 #include <spine/spine.h>
 
@@ -42,6 +43,32 @@ public:
 	inline spine::SkeletonData *get_skeleton_data(){return skeleton_data;}
 
 	bool is_skeleton_data_loaded();
+
+	// spine api
+	int find_bone_index(const String &bone_name);
+
+	int find_slot_index(const String &slot_name);
+
+	int find_path_constraint_index(const String &path_constraint_name);
+
+	Ref<SpineAnimation> find_animation(const String &animation_name);
+
+	String get_sk_name();
+	void set_sk_name(const String &v);
+
+	float get_x();
+	void set_x(float v);
+
+	float get_y();
+	void set_y(float v);
+
+	float get_width();
+	float get_height();
+
+	String get_version();
+
+	float get_fps();
+	void set_fps(float v);
 };
 
 #endif //GODOT_SPINESKELETONDATARESOURCE_H

@@ -81,6 +81,8 @@ void SpineSprite::_on_animation_data_changed() {
 			animation_state_data_res->connect("animation_state_data_created", this, "_on_animation_data_created");
 		if(!animation_state_data_res->is_connected("skeleton_data_res_changed", this, "_on_animation_data_changed"))
 			animation_state_data_res->connect("skeleton_data_res_changed", this, "_on_animation_data_changed");
+		if(!animation_state_data_res->is_connected("animation_state_data_changed", this, "_on_animation_data_changed"))
+			animation_state_data_res->connect("animation_state_data_changed", this, "_on_animation_data_changed");
 
 		if(animation_state_data_res->is_animation_state_data_created())
 		{

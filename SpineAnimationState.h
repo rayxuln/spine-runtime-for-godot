@@ -19,6 +19,7 @@ protected:
 private:
 	spine::AnimationState *animation_state;
 
+	Ref<SpineAnimationStateDataResource> anim_state_data_res;
 public:
 	void load_animation_state(Ref<SpineAnimationStateDataResource> ad);
 
@@ -26,14 +27,28 @@ public:
 		return animation_state;
 	}
 
-	void set_animation(const String &anim_name, bool loop, int track);
+	void reload_animation_state();
 
-	inline void update(float delta){
-		animation_state->update(delta);
-	}
-	inline void apply(Ref<SpineSkeleton> skeleton){
-		animation_state->apply(*(skeleton->get_skeleton()));
-	}
+	void set_animation(const String &anim_name, bool loop, uint64_t track_id);
+	void add_animation(const String &anim_name, float delay, bool loop, uint64_t track_id);
+
+	void set_empty_animation(uint64_t track_id, float mix_duration);
+	void add_empty_animation(uint64_t track_id, float mix_duration, float delay);
+	void set_empty_animations(float mix_duration);
+
+	Ref<SpineAnimationStateDataResource> get_data();
+
+	float get_time_scale();
+	void set_time_scale(float v);
+
+	void disable_queue();
+	void enable_queue();
+
+	void update(float delta);
+	bool apply(Ref<SpineSkeleton> skeleton);
+
+	void clear_tracks();
+	void clear_track(uint64_t track_id);
 
 	SpineAnimationState();
 	~SpineAnimationState();
