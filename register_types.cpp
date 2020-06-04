@@ -39,7 +39,6 @@ void register_spine_runtime_types(){
 
 	json_skeleton_loader.instance();
 	ResourceLoader::add_resource_format_loader(json_skeleton_loader);
-
 }
 
 void unregister_spine_runtime_types(){

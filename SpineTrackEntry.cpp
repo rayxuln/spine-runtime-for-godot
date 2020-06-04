@@ -5,8 +5,217 @@
 #include "SpineTrackEntry.h"
 
 void SpineTrackEntry::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_track_index"), &SpineTrackEntry::get_track_index);
 
+	ClassDB::bind_method(D_METHOD("get_animation"), &SpineTrackEntry::get_animation);
+
+	ClassDB::bind_method(D_METHOD("get_loop"), &SpineTrackEntry::get_loop);
+	ClassDB::bind_method(D_METHOD("set_loop", "v"), &SpineTrackEntry::set_loop);
+
+	ClassDB::bind_method(D_METHOD("get_hold_previous"), &SpineTrackEntry::get_hold_previous);
+	ClassDB::bind_method(D_METHOD("set_hold_previous", "v"), &SpineTrackEntry::set_hold_previous);
+
+	ClassDB::bind_method(D_METHOD("get_delay"), &SpineTrackEntry::get_delay);
+	ClassDB::bind_method(D_METHOD("set_delay", "v"), &SpineTrackEntry::set_delay);
+
+	ClassDB::bind_method(D_METHOD("get_track_time"), &SpineTrackEntry::get_track_time);
+	ClassDB::bind_method(D_METHOD("set_track_time", "v"), &SpineTrackEntry::set_track_time);
+
+	ClassDB::bind_method(D_METHOD("get_track_end"), &SpineTrackEntry::get_track_end);
+	ClassDB::bind_method(D_METHOD("set_track_end", "v"), &SpineTrackEntry::set_track_end);
+
+	ClassDB::bind_method(D_METHOD("get_animation_start"), &SpineTrackEntry::get_animation_start);
+	ClassDB::bind_method(D_METHOD("set_animation_start", "v"), &SpineTrackEntry::set_animation_start);
+
+	ClassDB::bind_method(D_METHOD("get_animation_last"), &SpineTrackEntry::get_animation_last);
+	ClassDB::bind_method(D_METHOD("set_animation_last", "v"), &SpineTrackEntry::set_animation_last);
+
+	ClassDB::bind_method(D_METHOD("get_animation_time"), &SpineTrackEntry::get_animation_time);
+
+	ClassDB::bind_method(D_METHOD("get_time_scale"), &SpineTrackEntry::get_time_scale);
+	ClassDB::bind_method(D_METHOD("set_time_scale", "v"), &SpineTrackEntry::set_time_scale);
+
+	ClassDB::bind_method(D_METHOD("get_alpha"), &SpineTrackEntry::get_alpha);
+	ClassDB::bind_method(D_METHOD("set_alpha", "v"), &SpineTrackEntry::set_alpha);
+
+	ClassDB::bind_method(D_METHOD("get_event_threshold"), &SpineTrackEntry::get_event_threshold);
+	ClassDB::bind_method(D_METHOD("set_event_threshold", "v"), &SpineTrackEntry::set_event_threshold);
+
+	ClassDB::bind_method(D_METHOD("get_attachment_threshold"), &SpineTrackEntry::get_attachment_threshold);
+	ClassDB::bind_method(D_METHOD("set_attachment_threshold", "v"), &SpineTrackEntry::set_attachment_threshold);
+
+	ClassDB::bind_method(D_METHOD("get_draw_order_threshold"), &SpineTrackEntry::get_draw_order_threshold);
+	ClassDB::bind_method(D_METHOD("set_draw_order_threshold", "v"), &SpineTrackEntry::set_draw_order_threshold);
+
+	ClassDB::bind_method(D_METHOD("get_next"), &SpineTrackEntry::get_next);
+
+	ClassDB::bind_method(D_METHOD("is_complete"), &SpineTrackEntry::is_complete);
+
+	ClassDB::bind_method(D_METHOD("get_mix_time"), &SpineTrackEntry::get_mix_time);
+	ClassDB::bind_method(D_METHOD("set_mix_time", "v"), &SpineTrackEntry::set_mix_time);
+
+	ClassDB::bind_method(D_METHOD("get_mix_duration"), &SpineTrackEntry::get_mix_duration);
+	ClassDB::bind_method(D_METHOD("set_mix_duration", "v"), &SpineTrackEntry::set_mix_duration);
+
+	ClassDB::bind_method(D_METHOD("get_mix_blend"), &SpineTrackEntry::get_mix_blend);
+	ClassDB::bind_method(D_METHOD("set_mix_blend", "v"), &SpineTrackEntry::set_mix_blend);
+
+	ClassDB::bind_method(D_METHOD("get_mixing_from"), &SpineTrackEntry::get_mixing_from);
+	ClassDB::bind_method(D_METHOD("get_mixing_to"), &SpineTrackEntry::get_mixing_to);
+	
+	ClassDB::bind_method(D_METHOD("reset_rotation_directions"), &SpineTrackEntry::reset_rotation_directions);
+
+	BIND_ENUM_CONSTANT(MIXBLEND_SETUP);
+	BIND_ENUM_CONSTANT(MIXBLEND_FIRST);
+	BIND_ENUM_CONSTANT(MIXBLEND_REPLACE);
+	BIND_ENUM_CONSTANT(MIXBLEND_ADD);
 }
 
 SpineTrackEntry::SpineTrackEntry():track_entry(NULL) {}
 SpineTrackEntry::~SpineTrackEntry() {}
+
+int SpineTrackEntry::get_track_index(){
+	return track_entry->getTrackIndex();
+}
+
+Ref<SpineAnimation> SpineTrackEntry::get_animation(){
+	Ref<SpineAnimation> gd_anim(memnew(SpineAnimation));
+	gd_anim->set_spine_object(track_entry->getAnimation());
+	return gd_anim;
+}
+
+bool SpineTrackEntry::get_loop(){
+	return track_entry->getLoop();
+}
+void SpineTrackEntry::set_loop(bool v){
+	track_entry->setLoop(v);
+}
+
+bool SpineTrackEntry::get_hold_previous(){
+	return track_entry->getHoldPrevious();
+}
+void SpineTrackEntry::set_hold_previous(bool v){
+	track_entry->setHoldPrevious(v);
+}
+
+float SpineTrackEntry::get_delay(){
+	return track_entry->getDelay();
+}
+void SpineTrackEntry::set_delay(float v){
+	track_entry->setDelay(v);
+}
+
+float SpineTrackEntry::get_track_time(){
+	return track_entry->getTrackTime();
+}
+void SpineTrackEntry::set_track_time(float v){
+	track_entry->setTrackTime(v);
+}
+
+float SpineTrackEntry::get_track_end(){
+	return track_entry->getTrackEnd();
+}
+void SpineTrackEntry::set_track_end(float v){
+	track_entry->setTrackEnd(v);
+}
+
+float SpineTrackEntry::get_animation_start(){
+	return track_entry->getAnimationStart();
+}
+void SpineTrackEntry::set_animation_start(float v){
+	track_entry->setAnimationStart(v);
+}
+
+float SpineTrackEntry::get_animation_last(){
+	return track_entry->getAnimationLast();
+}
+void SpineTrackEntry::set_animation_last(float v){
+	track_entry->setAnimationLast(v);
+}
+
+float SpineTrackEntry::get_animation_time(){
+	return track_entry->getAnimationTime();
+}
+
+float SpineTrackEntry::get_time_scale(){
+	return track_entry->getTimeScale();
+}
+void SpineTrackEntry::set_time_scale(float v){
+	track_entry->setTimeScale(v);
+}
+
+float SpineTrackEntry::get_alpha(){
+	return track_entry->getAlpha();
+}
+void SpineTrackEntry::set_alpha(float v){
+	track_entry->setAlpha(v);
+}
+
+float SpineTrackEntry::get_event_threshold(){
+	return track_entry->getEventThreshold();
+}
+void SpineTrackEntry::set_event_threshold(float v){
+	track_entry->setEventThreshold(v);
+}
+
+float SpineTrackEntry::get_attachment_threshold(){
+	return track_entry->getAttachmentThreshold();
+}
+void SpineTrackEntry::set_attachment_threshold(float v){
+	track_entry->setAttachmentThreshold(v);
+}
+
+float SpineTrackEntry::get_draw_order_threshold(){
+	return track_entry->getDrawOrderThreshold();
+}
+void SpineTrackEntry::set_draw_order_threshold(float v){
+	track_entry->setDrawOrderThreshold(v);
+}
+
+Ref<SpineTrackEntry> SpineTrackEntry::get_next(){
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(track_entry->getNext());
+	return gd_entry;
+}
+
+bool SpineTrackEntry::is_complete(){
+	return track_entry->isComplete();
+}
+
+float SpineTrackEntry::get_mix_time(){
+	return track_entry->getMixTime();
+}
+void SpineTrackEntry::set_mix_time(float v){
+	track_entry->setMixTime(v);
+}
+
+float SpineTrackEntry::get_mix_duration(){
+	return track_entry->getMixDuration();
+}
+void SpineTrackEntry::set_mix_duration(float v){
+	track_entry->setMixDuration(v);
+}
+
+SpineTrackEntry::MixBlend SpineTrackEntry::get_mix_blend(){
+	int mb = track_entry->getMixBlend();
+	return (MixBlend) mb;
+}
+void SpineTrackEntry::set_mix_blend(SpineTrackEntry::MixBlend v){
+	int mb = (int) v;
+	track_entry->setMixBlend((spine::MixBlend)mb);
+}
+
+Ref<SpineTrackEntry> SpineTrackEntry::get_mixing_from(){
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(track_entry->getMixingFrom());
+	return gd_entry;
+}
+Ref<SpineTrackEntry> SpineTrackEntry::get_mixing_to(){
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(track_entry->getMixingTo());
+	return gd_entry;
+}
+
+void SpineTrackEntry::reset_rotation_directions(){
+	track_entry->resetRotationDirections();
+}
