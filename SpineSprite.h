@@ -12,7 +12,7 @@
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
 
-class SpineSprite : public Node2D {
+class SpineSprite : public Node2D, public spine::AnimationStateListenerObject {
     GDCLASS(SpineSprite, Node2D);
 protected:
     static void _bind_methods();
@@ -36,6 +36,8 @@ public:
 	void remove_mesh_instances();
 
 	void update_mesh_from_skeleton(Ref<SpineSkeleton> s);
+
+	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 
 	void _on_animation_data_created();
 	void _on_animation_data_changed();

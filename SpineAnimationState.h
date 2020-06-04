@@ -23,6 +23,9 @@ private:
 public:
 	void load_animation_state(Ref<SpineAnimationStateDataResource> ad);
 
+	inline void set_animation_state(spine::AnimationState *a){
+		animation_state = a;
+	}
 	inline spine::AnimationState *get_animation_state(){
 		return animation_state;
 	}

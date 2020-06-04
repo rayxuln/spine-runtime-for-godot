@@ -4,7 +4,6 @@
 
 #include "SpineAnimationState.h"
 
-
 void SpineAnimationState::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_animation", "anim_name", "loop", "track_id"), &SpineAnimationState::set_animation, DEFVAL(0), DEFVAL(true));
 	ClassDB::bind_method(D_METHOD("update", "delta"), &SpineAnimationState::update, DEFVAL(0));
@@ -21,6 +20,7 @@ void SpineAnimationState::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("disable_queue"), &SpineAnimationState::disable_queue);
 	ClassDB::bind_method(D_METHOD("enable_queue"), &SpineAnimationState::enable_queue);
 	ClassDB::bind_method(D_METHOD("reload"), &SpineAnimationState::reload_animation_state);
+
 }
 
 SpineAnimationState::SpineAnimationState():animation_state(NULL) {

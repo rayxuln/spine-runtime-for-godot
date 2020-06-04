@@ -4,7 +4,8 @@
 
 #include "SpineSprite.h"
 
-
+#include "SpineTrackEntry.h"
+#include "SpineEvent.h"
 
 void SpineSprite::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_animation_state_data_res", "animation_state_data_res"), &SpineSprite::set_animation_state_data_res);
@@ -15,6 +16,12 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_on_animation_data_changed"), &SpineSprite::_on_animation_data_changed);
 
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "skeleton")));
+	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
+	ADD_SIGNAL(MethodInfo("animation_interrupt", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
+	ADD_SIGNAL(MethodInfo("animation_end", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
+	ADD_SIGNAL(MethodInfo("animation_complete", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
+	ADD_SIGNAL(MethodInfo("animation_dispose", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
+	ADD_SIGNAL(MethodInfo("animation_event", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "animation_state_data_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAnimationStateDataResource"), "set_animation_state_data_res", "get_animation_state_data_res");
 }
@@ -58,6 +65,8 @@ void SpineSprite::_on_animation_data_created(){
 
 	animation_state = Ref<SpineAnimationState>(memnew(SpineAnimationState));
 	animation_state->load_animation_state(animation_state_data_res);
+	auto p_as = &animation_state;
+	animation_state->get_animation_state()->setListener(this);
 //	print_line("Run time animation state created.");
 
 	// add mesh instances related by current skeleton
@@ -364,5 +373,38 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 
 		mi_index += 1;
+	}
+}
+
+void SpineSprite::callback(spine::AnimationState *state, spine::EventType type, spine::TrackEntry *entry, spine::Event *event) {
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(entry);
+	Ref<SpineEvent> gd_event(memnew(SpineEvent));
+	gd_event->set_spine_object(event);
+	switch (type) {
+		case spine::EventType_Start:
+		{
+			emit_signal("animation_start", animation_state, gd_entry, gd_event);
+		}break;
+		case spine::EventType_Interrupt:
+		{
+			emit_signal("animation_interrupt", animation_state, gd_entry, gd_event);
+		}break;
+		case spine::EventType_End:
+		{
+			emit_signal("animation_end", animation_state, gd_entry, gd_event);
+		}break;
+		case spine::EventType_Complete:
+		{
+			emit_signal("animation_complete", animation_state, gd_entry, gd_event);
+		}break;
+		case spine::EventType_Dispose:
+		{
+			emit_signal("animation_dispose", animation_state, gd_entry, gd_event);
+		}break;
+		case spine::EventType_Event:
+		{
+			emit_signal("animation_event", animation_state, gd_entry, gd_event);
+		}break;
 	}
 }

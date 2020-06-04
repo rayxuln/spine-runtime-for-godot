@@ -29,6 +29,10 @@ public:
 	inline spine::Animation *get_spine_object(){
 		return animation;
 	}
+
+	String get_anim_name();
+	float get_duration();
+	void set_duration(float v);
 };
 
 #endif //GODOT_SPINEANIMATION_H
