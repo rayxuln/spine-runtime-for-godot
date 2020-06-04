@@ -18,8 +18,7 @@ public:
 //        Ref<Image> img;
 //		img.instance();
 //		print_line(Variant((int)ImageLoader::load_image(String(path.buffer()), img)));
-		Error r_err = OK;
-		Ref<Texture> tex = ResourceLoader::load(String(path.buffer()), "", &r_err);
+		Ref<Texture> tex = ResourceLoader::load(String(path.buffer()));
 //		print_line(Variant((int)r_err));
 
 		Ref<Texture> *p_tex = memnew(Ref<Texture>(tex));

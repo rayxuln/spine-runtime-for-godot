@@ -119,6 +119,17 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	auto sk = s->get_skeleton();
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{
+		// creat a mesh instance 2d for every slot
+		auto mesh_ins = memnew(MeshInstance2D);
+		add_child(mesh_ins);
+		mesh_ins->set_position(Vector2(0, 0));
+		mesh_instances.push_back(mesh_ins);
+
+		// creat a material
+		Ref<CanvasItemMaterial> mat(memnew(CanvasItemMaterial));
+		mesh_ins->set_material(mat);
+		mat->set_blend_mode(CanvasItemMaterial::BLEND_MODE_MIX);
+
 		spine::Slot *slot = sk->getDrawOrder()[i];
 
 		spine::Attachment *attachment = slot->getAttachment();
@@ -220,15 +231,11 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
 
 		// create mesh instances
-		auto mesh_ins = memnew(MeshInstance2D);
-		add_child(mesh_ins);
-		mesh_ins->set_position(Vector2(0, 0));
+
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
-		Ref<CanvasItemMaterial> mat(memnew(CanvasItemMaterial));
-		mesh_ins->set_material(mat);
-		mat->set_blend_mode(blend_mode);
-		mesh_instances.push_back(mesh_ins);
+
+
 	}
 }
 
@@ -252,13 +259,19 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	static unsigned short quad_indices[] = {0, 1, 2, 2, 3, 0};
 
 	auto sk = s->get_skeleton();
-	size_t mi_index = 0;
+//	size_t mi_index = 0;
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{
 		spine::Slot *slot = sk->getDrawOrder()[i];
 
 		spine::Attachment *attachment = slot->getAttachment();
-		if(!attachment) continue;
+		if(!attachment){
+			// set invisible to mesh instance
+			mesh_instances[i]->set_visible(false);
+			continue;
+		}
+		mesh_instances[i]->set_visible(true);
+
 
 		CanvasItemMaterial::BlendMode blend_mode;
 		switch (slot->getData().getBlendMode()) {
@@ -278,9 +291,11 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 				blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
 		}
 
+
 		spine::Color skeleton_color = sk->getColor();
 		spine::Color slot_color = slot->getColor();
 		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
+
 
 		Ref<Texture> tex;
 		PoolIntArray indices;
@@ -334,6 +349,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			}
 		}
 
+
 		// copy vertices, uvs, colors
 		PoolVector2Array v2_array, uv_array;
 		PoolColorArray color_array;
@@ -343,6 +359,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			uv_array.push_back(Vector2(vertices[j].u, vertices[j].v));
 			color_array.push_back(Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
 		}
+
 
 		// create array mesh
 		Ref<ArrayMesh> array_mesh = Ref<ArrayMesh>(memnew(ArrayMesh));
@@ -355,23 +372,24 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 		array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
 
+
 		// store the mesh and tex
-		Dictionary dic;
-		dic["mesh"] = array_mesh;
-		dic["tex"] = tex;
+//		Dictionary dic;
+//		dic["mesh"] = array_mesh;
+//		dic["tex"] = tex;
 
 		// update mesh instances
-		if(mi_index < mesh_instances.size())
-		{
-			auto mesh_ins = mesh_instances[mi_index];
-			mesh_ins->set_mesh(array_mesh);
-			mesh_ins->set_texture(tex);
-			Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
-			mat->set_blend_mode(blend_mode);
-		}
+//		if(mi_index < mesh_instances.size())
+//		{
+//		print_line(String("mesh_i: ") + Variant((uint64_t)i));
+		auto mesh_ins = mesh_instances[i];
+		mesh_ins->set_mesh(array_mesh);
+		mesh_ins->set_texture(tex);
+		Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
+		mat->set_blend_mode(blend_mode);
+//		}
 
-
-		mi_index += 1;
+//		mi_index += 1;
 	}
 }
 
