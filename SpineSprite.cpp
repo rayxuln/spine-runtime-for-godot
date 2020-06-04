@@ -15,13 +15,13 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_animation_state"), &SpineSprite::get_animation_state);
 	ClassDB::bind_method(D_METHOD("_on_animation_data_changed"), &SpineSprite::_on_animation_data_changed);
 
-	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "skeleton")));
-	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
-	ADD_SIGNAL(MethodInfo("animation_interrupt", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
-	ADD_SIGNAL(MethodInfo("animation_end", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
-	ADD_SIGNAL(MethodInfo("animation_complete", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
-	ADD_SIGNAL(MethodInfo("animation_dispose", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
-	ADD_SIGNAL(MethodInfo("animation_event", PropertyInfo(Variant::OBJECT, "animation_state"), PropertyInfo(Variant::OBJECT, "track_entry"), PropertyInfo(Variant::OBJECT, "event")));
+	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "skeleton", PROPERTY_HINT_TYPE_STRING, "SpineSkeleton")));
+	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
+	ADD_SIGNAL(MethodInfo("animation_interrupt", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
+	ADD_SIGNAL(MethodInfo("animation_end", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
+	ADD_SIGNAL(MethodInfo("animation_complete", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
+	ADD_SIGNAL(MethodInfo("animation_dispose", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
+	ADD_SIGNAL(MethodInfo("animation_event", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "animation_state_data_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAnimationStateDataResource"), "set_animation_state_data_res", "get_animation_state_data_res");
 }

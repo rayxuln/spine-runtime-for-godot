@@ -62,7 +62,7 @@ void SpineTrackEntry::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_mixing_from"), &SpineTrackEntry::get_mixing_from);
 	ClassDB::bind_method(D_METHOD("get_mixing_to"), &SpineTrackEntry::get_mixing_to);
-	
+
 	ClassDB::bind_method(D_METHOD("reset_rotation_directions"), &SpineTrackEntry::reset_rotation_directions);
 
 	BIND_ENUM_CONSTANT(MIXBLEND_SETUP);
