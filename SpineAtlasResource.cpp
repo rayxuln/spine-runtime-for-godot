@@ -14,12 +14,17 @@ public:
 
     virtual void load(spine::AtlasPage &page, const spine::String &path){
 //        print_line(String("Atlas tex path: ") + String(path.buffer()));
-        Ref<Image> img = memnew(Image);
-        ImageLoader::load_image(String(path.buffer()), img);
 
-		Ref<ImageTexture> *p_tex = memnew(Ref<ImageTexture>(memnew(ImageTexture)));
-        Ref<ImageTexture> &tex = *p_tex;
-        tex->create_from_image(img);
+//        Ref<Image> img;
+//		img.instance();
+//		print_line(Variant((int)ImageLoader::load_image(String(path.buffer()), img)));
+		Error r_err = OK;
+		Ref<Texture> tex = ResourceLoader::load(String(path.buffer()), "", &r_err);
+//		print_line(Variant((int)r_err));
+
+		Ref<Texture> *p_tex = memnew(Ref<Texture>(tex));
+//        Ref<ImageTexture> &tex = *p_tex;
+//        tex->create_from_image(img);
 		res.texes.append(tex);
         page.setRendererObject((void*)p_tex);
 
