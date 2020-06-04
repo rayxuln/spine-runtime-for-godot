@@ -65,7 +65,6 @@ void SpineSprite::_on_animation_data_created(){
 
 	animation_state = Ref<SpineAnimationState>(memnew(SpineAnimationState));
 	animation_state->load_animation_state(animation_state_data_res);
-	auto p_as = &animation_state;
 	animation_state->get_animation_state()->setListener(this);
 //	print_line("Run time animation state created.");
 

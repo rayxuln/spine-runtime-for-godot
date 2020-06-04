@@ -19,8 +19,8 @@ void SpineAnimationState::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_time_scale", "time_scale"), &SpineAnimationState::set_time_scale);
 	ClassDB::bind_method(D_METHOD("disable_queue"), &SpineAnimationState::disable_queue);
 	ClassDB::bind_method(D_METHOD("enable_queue"), &SpineAnimationState::enable_queue);
-	ClassDB::bind_method(D_METHOD("reload"), &SpineAnimationState::reload_animation_state);
-
+//	ClassDB::bind_method(D_METHOD("reload"), &SpineAnimationState::reload_animation_state);
+	ClassDB::bind_method(D_METHOD("get_current", "track_id"), &SpineAnimationState::get_current);
 }
 
 SpineAnimationState::SpineAnimationState():animation_state(NULL) {
@@ -62,36 +62,48 @@ void SpineAnimationState::reload_animation_state() {
 #define CHECK_V if(!animation_state){ERR_PRINT("The animation state is not loaded yet!");return;}
 #define CHECK_X(x) if(!animation_state){ERR_PRINT("The animation state is not loaded yet!");return x;}
 #define S_T(x) (spine::String(x.utf8()))
-void SpineAnimationState::set_animation(const String &anim_name, bool loop, uint64_t track) {
-	CHECK_V;
+Ref<SpineTrackEntry> SpineAnimationState::set_animation(const String &anim_name, bool loop, uint64_t track) {
+	CHECK_X(NULL);
 	auto skeleton_data = anim_state_data_res->get_skeleton();
 	auto anim = skeleton_data->find_animation(anim_name);
 	if(!anim.is_valid() || anim->get_spine_object() == NULL)
 	{
 		ERR_PRINT(String("Can not find animation: ") + anim_name)
-		return;
+		return NULL;
 	}
-	animation_state->setAnimation(track, anim->get_spine_object(), loop);
+	auto entry = animation_state->setAnimation(track, anim->get_spine_object(), loop);
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(entry);
+	return gd_entry;
 }
-void SpineAnimationState::add_animation(const String &anim_name, float delay, bool loop, uint64_t track) {
-	CHECK_V;
+Ref<SpineTrackEntry> SpineAnimationState::add_animation(const String &anim_name, float delay, bool loop, uint64_t track) {
+	CHECK_X(NULL);
 	auto skeleton_data = anim_state_data_res->get_skeleton();
 	auto anim = skeleton_data->find_animation(anim_name);
 	if(!anim.is_valid() || anim->get_spine_object() == NULL)
 	{
 		ERR_PRINT(String("Can not find animation: ") + anim_name)
-		return;
+		return NULL;
 	}
-	animation_state->addAnimation(track, anim->get_spine_object(), loop, delay);
+	auto entry = animation_state->addAnimation(track, anim->get_spine_object(), loop, delay);
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(entry);
+	return gd_entry;
 }
 
-void SpineAnimationState::set_empty_animation(uint64_t track_id, float mix_duration) {
-	CHECK_V;
-	animation_state->setEmptyAnimation(track_id, mix_duration);
+Ref<SpineTrackEntry> SpineAnimationState::set_empty_animation(uint64_t track_id, float mix_duration) {
+	CHECK_X(NULL);
+	auto entry = animation_state->setEmptyAnimation(track_id, mix_duration);
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(entry);
+	return gd_entry;
 }
-void SpineAnimationState::add_empty_animation(uint64_t track_id, float mix_duration, float delay) {
-	CHECK_V;
-	animation_state->addEmptyAnimation(track_id, mix_duration, delay);
+Ref<SpineTrackEntry> SpineAnimationState::add_empty_animation(uint64_t track_id, float mix_duration, float delay) {
+	CHECK_X(NULL);
+	auto entry = animation_state->addEmptyAnimation(track_id, mix_duration, delay);
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(entry);
+	return gd_entry;
 }
 void SpineAnimationState::set_empty_animations(float mix_duration) {
 	CHECK_V;
@@ -138,6 +150,13 @@ void SpineAnimationState::disable_queue() {
 void SpineAnimationState::enable_queue() {
 	CHECK_V;
 	animation_state->enableQueue();
+}
+
+Ref<SpineTrackEntry> SpineAnimationState::get_current(uint64_t track_index) {
+	CHECK_X(NULL);
+	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
+	gd_entry->set_spine_object(animation_state->getCurrent(track_index));
+	return gd_entry;
 }
 
 #undef CHECK_V

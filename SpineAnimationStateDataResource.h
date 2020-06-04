@@ -35,6 +35,10 @@ public:
 	void set_default_mix(float m);
 	float get_default_mix();
 
+	void set_mix(const String &from, const String &to, float mix_duration);
+	float get_mix(const String &from, const String &to);
+
+
 	void _on_skeleton_data_loaded();
 	void _on_skeleton_data_changed();
 

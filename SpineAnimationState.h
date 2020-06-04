@@ -9,6 +9,7 @@
 
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
+#include "SpineTrackEntry.h"
 
 class SpineAnimationState : public Reference{
 	GDCLASS(SpineAnimationState, Reference);
@@ -32,11 +33,11 @@ public:
 
 	void reload_animation_state();
 
-	void set_animation(const String &anim_name, bool loop, uint64_t track_id);
-	void add_animation(const String &anim_name, float delay, bool loop, uint64_t track_id);
+	Ref<SpineTrackEntry> set_animation(const String &anim_name, bool loop, uint64_t track_id);
+	Ref<SpineTrackEntry> add_animation(const String &anim_name, float delay, bool loop, uint64_t track_id);
 
-	void set_empty_animation(uint64_t track_id, float mix_duration);
-	void add_empty_animation(uint64_t track_id, float mix_duration, float delay);
+	Ref<SpineTrackEntry> set_empty_animation(uint64_t track_id, float mix_duration);
+	Ref<SpineTrackEntry> add_empty_animation(uint64_t track_id, float mix_duration, float delay);
 	void set_empty_animations(float mix_duration);
 
 	Ref<SpineAnimationStateDataResource> get_data();
@@ -52,6 +53,8 @@ public:
 
 	void clear_tracks();
 	void clear_track(uint64_t track_id);
+
+	Ref<SpineTrackEntry> get_current(uint64_t track_index);
 
 	SpineAnimationState();
 	~SpineAnimationState();
