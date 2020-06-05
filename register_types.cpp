@@ -15,6 +15,12 @@
 #include "SpineEventData.h"
 #include "SpineEvent.h"
 #include "SpineTrackEntry.h"
+#include "SpineBoneData.h"
+#include "SpineSlotData.h"
+#include "SpineAttachment.h"
+#include "SpineSkinAttachmentMapEntries.h"
+#include "SpineConstraintData.h"
+#include "SpineSkin.h"
 
 
 static Ref<ResourceFormatLoaderSpineAtlas> atlas_loader;
@@ -33,6 +39,13 @@ void register_spine_runtime_types(){
 	ClassDB::register_class<SpineEventData>();
 	ClassDB::register_class<SpineTrackEntry>();
 	ClassDB::register_class<SpineEvent>();
+	ClassDB::register_class<SpineBoneData>();
+	ClassDB::register_class<SpineSlotData>();
+	ClassDB::register_class<SpineAttachment>();
+	ClassDB::register_class<SpineSkinAttachmentMapEntry>();
+	ClassDB::register_class<SpineSkinAttachmentMapEntries>();
+	ClassDB::register_class<SpineConstraintData>();
+	ClassDB::register_class<SpineSkin>();
 
     atlas_loader.instance();
     ResourceLoader::add_resource_format_loader(atlas_loader);
