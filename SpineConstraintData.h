@@ -25,7 +25,7 @@ public:
 	inline void set_spine_object(spine::ConstraintData *c){
 		constraint_data = c;
 	}
-	inline spine::ConstraintData *get_spine_object(){
+	virtual inline spine::ConstraintData *get_spine_object(){
 		return constraint_data;
 	}
 
