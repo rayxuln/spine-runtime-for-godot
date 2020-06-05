@@ -28,6 +28,24 @@ void SpineSkeletonDataResource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_fps"), &SpineSkeletonDataResource::get_fps);
 	ClassDB::bind_method(D_METHOD("set_fps", "v"), &SpineSkeletonDataResource::set_fps);
 
+	ClassDB::bind_method(D_METHOD("find_bone", "bone_name"), &SpineSkeletonDataResource::find_bone);
+	ClassDB::bind_method(D_METHOD("find_slot", "slot_name"), &SpineSkeletonDataResource::find_slot);
+	ClassDB::bind_method(D_METHOD("find_skin", "skin_name"), &SpineSkeletonDataResource::find_skin);
+	ClassDB::bind_method(D_METHOD("find_event", "event_data_name"), &SpineSkeletonDataResource::find_event);
+	ClassDB::bind_method(D_METHOD("find_ik_constraint_data", "constraint_name"), &SpineSkeletonDataResource::find_ik_constraint);
+	ClassDB::bind_method(D_METHOD("find_transform_constraint_data", "constraint_name"), &SpineSkeletonDataResource::find_transform_constraint);
+	ClassDB::bind_method(D_METHOD("find_path_constraint_data", "constraint_name"), &SpineSkeletonDataResource::find_path_constraint);
+	ClassDB::bind_method(D_METHOD("get_all_bone_data"), &SpineSkeletonDataResource::get_bones);
+	ClassDB::bind_method(D_METHOD("get_all_slot_data"), &SpineSkeletonDataResource::get_slots);
+	ClassDB::bind_method(D_METHOD("get_skins"), &SpineSkeletonDataResource::get_skins);
+	ClassDB::bind_method(D_METHOD("get_default_skin"), &SpineSkeletonDataResource::get_default_skin);
+	ClassDB::bind_method(D_METHOD("set_default_skin", "v"), &SpineSkeletonDataResource::set_default_skin);
+	ClassDB::bind_method(D_METHOD("get_all_event_data"), &SpineSkeletonDataResource::get_events);
+	ClassDB::bind_method(D_METHOD("get_animations"), &SpineSkeletonDataResource::get_animations);
+	ClassDB::bind_method(D_METHOD("get_all_ik_constraint_data"), &SpineSkeletonDataResource::get_ik_constraints);
+	ClassDB::bind_method(D_METHOD("get_all_transform_constraint_data"), &SpineSkeletonDataResource::get_transform_constraints);
+	ClassDB::bind_method(D_METHOD("get_all_path_constraint_data"), &SpineSkeletonDataResource::get_path_constraints);
+
 	ADD_SIGNAL(MethodInfo("skeleton_data_loaded"));
 	ADD_SIGNAL(MethodInfo("atlas_res_changed"));
 	ADD_SIGNAL(MethodInfo("skeleton_json_res_changed"));
@@ -171,6 +189,188 @@ float SpineSkeletonDataResource::get_fps() {
 void SpineSkeletonDataResource::set_fps(float v) {
 	CHECK_V;
 	skeleton_data->setFps(v);
+}
+
+Ref<SpineBoneData> SpineSkeletonDataResource::find_bone(const String &bone_name){
+	auto b = skeleton_data->findBone(S_T(bone_name));
+	if(b == NULL) return NULL;
+	Ref<SpineBoneData> gd_b(memnew(SpineBoneData));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+
+Ref<SpineSlotData> SpineSkeletonDataResource::find_slot(const String &slot_name){
+	auto b = skeleton_data->findSlot(S_T(slot_name));
+	if(b == NULL) return NULL;
+	Ref<SpineSlotData> gd_b(memnew(SpineSlotData));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+
+Ref<SpineSkin> SpineSkeletonDataResource::find_skin(const String &skin_name){
+	auto b = skeleton_data->findSkin(S_T(skin_name));
+	if(b == NULL) return NULL;
+	Ref<SpineSkin> gd_b(memnew(SpineSkin));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+
+Ref<SpineEventData> SpineSkeletonDataResource::find_event(const String &event_data_name){
+	auto b = skeleton_data->findEvent(S_T(event_data_name));
+	if(b == NULL) return NULL;
+	Ref<SpineEventData> gd_b(memnew(SpineEventData));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+
+Ref<SpineIkConstraintData> SpineSkeletonDataResource::find_ik_constraint(const String &constraint_name){
+	auto b = skeleton_data->findIkConstraint(S_T(constraint_name));
+	if(b == NULL) return NULL;
+	Ref<SpineIkConstraintData> gd_b(memnew(SpineIkConstraintData));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+Ref<SpineTransformConstraintData> SpineSkeletonDataResource::find_transform_constraint(const String &constraint_name){
+	auto b = skeleton_data->findTransformConstraint(S_T(constraint_name));
+	if(b == NULL) return NULL;
+	Ref<SpineTransformConstraintData> gd_b(memnew(SpineTransformConstraintData));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+Ref<SpinePathConstraintData> SpineSkeletonDataResource::find_path_constraint(const String &constraint_name){
+	auto b = skeleton_data->findPathConstraint(S_T(constraint_name));
+	if(b == NULL) return NULL;
+	Ref<SpinePathConstraintData> gd_b(memnew(SpinePathConstraintData));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+
+Array SpineSkeletonDataResource::get_bones(){
+	auto bs = skeleton_data->getBones();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineBoneData>(NULL);
+		else {
+			Ref<SpineBoneData> gd_b(memnew(SpineBoneData));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+Array SpineSkeletonDataResource::get_slots(){
+	auto bs = skeleton_data->getSlots();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineSlotData>(NULL);
+		else {
+			Ref<SpineSlotData> gd_b(memnew(SpineSlotData));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+Array SpineSkeletonDataResource::get_skins(){
+	auto bs = skeleton_data->getSkins();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineSkin>(NULL);
+		else {
+			Ref<SpineSkin> gd_b(memnew(SpineSkin));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+
+Ref<SpineSkin> SpineSkeletonDataResource::get_default_skin(){
+	auto b = skeleton_data->getDefaultSkin();
+	if(b == NULL) return NULL;
+	Ref<SpineSkin> gd_b(memnew(SpineSkin));
+	gd_b->set_spine_object(b);
+	return gd_b;
+}
+void SpineSkeletonDataResource::set_default_skin(Ref<SpineSkin> v){
+	if(v.is_valid()){
+		skeleton_data->setDefaultSkin(v->get_spine_object());
+	} else
+		skeleton_data->setDefaultSkin(NULL);
+}
+
+Array SpineSkeletonDataResource::get_events(){
+	auto bs = skeleton_data->getEvents();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineEventData>(NULL);
+		else {
+			Ref<SpineEventData> gd_b(memnew(SpineEventData));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+Array SpineSkeletonDataResource::get_animations(){
+	auto bs = skeleton_data->getAnimations();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineAnimation>(NULL);
+		else {
+			Ref<SpineAnimation> gd_b(memnew(SpineAnimation));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+Array SpineSkeletonDataResource::get_ik_constraints(){
+	auto bs = skeleton_data->getIkConstraints();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineIkConstraintData>(NULL);
+		else {
+			Ref<SpineIkConstraintData> gd_b(memnew(SpineIkConstraintData));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+Array SpineSkeletonDataResource::get_transform_constraints(){
+	auto bs = skeleton_data->getTransformConstraints();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpineTransformConstraintData>(NULL);
+		else {
+			Ref<SpineTransformConstraintData> gd_b(memnew(SpineTransformConstraintData));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
+}
+Array SpineSkeletonDataResource::get_path_constraints(){
+	auto bs = skeleton_data->getPathConstraints();
+	Array gd_bs;
+	gd_bs.resize(bs.size());
+	for(size_t i=0; i < bs.size(); ++i){
+		if(bs[i] == NULL) gd_bs[i] = Ref<SpinePathConstraintData>(NULL);
+		else {
+			Ref<SpinePathConstraintData> gd_b(memnew(SpinePathConstraintData));
+			gd_b->set_spine_object(bs[i]);
+			gd_bs[i] = gd_b;
+		}
+	}
+	return gd_bs;
 }
 #undef S_T
 #undef CHECK_V
