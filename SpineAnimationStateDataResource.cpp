@@ -23,6 +23,8 @@ void SpineAnimationStateDataResource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_on_skeleton_data_changed"), &SpineAnimationStateDataResource::_on_skeleton_data_changed);
 	ClassDB::bind_method(D_METHOD("set_default_mix", "mix"), &SpineAnimationStateDataResource::set_default_mix);
 	ClassDB::bind_method(D_METHOD("get_default_mix"), &SpineAnimationStateDataResource::get_default_mix);
+	ClassDB::bind_method(D_METHOD("get_mix", "from", "to"), &SpineAnimationStateDataResource::get_mix);
+	ClassDB::bind_method(D_METHOD("set_mix", "from", "to", "mix"), &SpineAnimationStateDataResource::set_mix);
 
 	ADD_SIGNAL(MethodInfo("animation_state_data_created"));
 	ADD_SIGNAL(MethodInfo("skeleton_data_res_changed"));

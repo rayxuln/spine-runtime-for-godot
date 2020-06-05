@@ -80,7 +80,9 @@ int SpineTrackEntry::get_track_index(){
 
 Ref<SpineAnimation> SpineTrackEntry::get_animation(){
 	Ref<SpineAnimation> gd_anim(memnew(SpineAnimation));
-	gd_anim->set_spine_object(track_entry->getAnimation());
+	auto anim = track_entry->getAnimation();
+	if(anim == NULL) return NULL;
+	gd_anim->set_spine_object(anim);
 	return gd_anim;
 }
 
@@ -174,7 +176,9 @@ void SpineTrackEntry::set_draw_order_threshold(float v){
 
 Ref<SpineTrackEntry> SpineTrackEntry::get_next(){
 	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
-	gd_entry->set_spine_object(track_entry->getNext());
+	auto entry = track_entry->getNext();
+	if(entry == NULL) return NULL;
+	gd_entry->set_spine_object(entry);
 	return gd_entry;
 }
 
@@ -207,12 +211,16 @@ void SpineTrackEntry::set_mix_blend(SpineTrackEntry::MixBlend v){
 
 Ref<SpineTrackEntry> SpineTrackEntry::get_mixing_from(){
 	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
-	gd_entry->set_spine_object(track_entry->getMixingFrom());
+	auto entry = track_entry->getMixingFrom();
+	if(entry == NULL) return NULL;
+	gd_entry->set_spine_object(entry);
 	return gd_entry;
 }
 Ref<SpineTrackEntry> SpineTrackEntry::get_mixing_to(){
 	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
-	gd_entry->set_spine_object(track_entry->getMixingTo());
+	auto entry = track_entry->getMixingTo();
+	if(entry == NULL) return NULL;
+	gd_entry->set_spine_object(entry);
 	return gd_entry;
 }
 

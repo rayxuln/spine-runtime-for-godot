@@ -155,7 +155,9 @@ void SpineAnimationState::enable_queue() {
 Ref<SpineTrackEntry> SpineAnimationState::get_current(uint64_t track_index) {
 	CHECK_X(NULL);
 	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
-	gd_entry->set_spine_object(animation_state->getCurrent(track_index));
+	auto entry = animation_state->getCurrent(track_index);
+	if(entry == NULL) return NULL;
+	gd_entry->set_spine_object(entry);
 	return gd_entry;
 }
 
