@@ -11,7 +11,7 @@ void SpineSprite::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_animation_state_data_res", "animation_state_data_res"), &SpineSprite::set_animation_state_data_res);
     ClassDB::bind_method(D_METHOD("get_animation_state_data_res"), &SpineSprite::get_animation_state_data_res);
 	ClassDB::bind_method(D_METHOD("_on_animation_data_created"), &SpineSprite::_on_animation_data_created);
-	ClassDB::bind_method(D_METHOD("get_skeleton"), &SpineSprite::get_skeleton);
+	ClassDB::bind_method(D_METHOD("get_spine_object"), &SpineSprite::get_skeleton);
 	ClassDB::bind_method(D_METHOD("get_animation_state"), &SpineSprite::get_animation_state);
 	ClassDB::bind_method(D_METHOD("_on_animation_data_changed"), &SpineSprite::_on_animation_data_changed);
 
@@ -116,7 +116,7 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	static spine::Vector<Vertex> vertices;
 	static unsigned short quad_indices[] = {0, 1, 2, 2, 3, 0};
 
-	auto sk = s->get_skeleton();
+	auto sk = s->get_spine_object();
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{
 		// creat a mesh instance 2d for every slot
@@ -258,7 +258,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	static spine::Vector<Vertex> vertices;
 	static unsigned short quad_indices[] = {0, 1, 2, 2, 3, 0};
 
-	auto sk = s->get_skeleton();
+	auto sk = s->get_spine_object();
 //	size_t mi_index = 0;
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{

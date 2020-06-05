@@ -116,7 +116,7 @@ void SpineAnimationState::update(float delta){
 }
 bool SpineAnimationState::apply(Ref<SpineSkeleton> skeleton){
 	CHECK_X(false);
-	return animation_state->apply(*(skeleton->get_skeleton()));
+	return animation_state->apply(*(skeleton->get_spine_object()));
 }
 
 

@@ -7,9 +7,12 @@
 
 #include "core/variant_parser.h"
 
-#include "SpineSkeletonDataResource.h"
-
 #include <spine/spine.h>
+
+#include "SpineSkeletonDataResource.h"
+#include "SpineBone.h"
+#include "SpineSlot.h"
+
 
 class SpineSkeleton : public Reference{
 	GDCLASS(SpineSkeleton, Reference);
@@ -24,7 +27,10 @@ public:
 
 	void load_skeleton(Ref<SpineSkeletonDataResource> sd);
 
-	inline spine::Skeleton *get_skeleton(){
+	inline void set_spine_object(spine::Skeleton *s){
+		skeleton = s;
+	}
+	inline spine::Skeleton *get_spine_object(){
 		return skeleton;
 	}
 

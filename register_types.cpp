@@ -52,6 +52,11 @@ void register_spine_runtime_types(){
 	ClassDB::register_class<SpineIkConstraintData>();
 	ClassDB::register_class<SpineTransformConstraintData>();
 	ClassDB::register_class<SpinePathConstraintData>();
+	ClassDB::register_class<SpineBone>();
+	ClassDB::register_class<SpineSlot>();
+	ClassDB::register_class<SpineIkConstraint>();
+	ClassDB::register_class<SpinePathConstraint>();
+	ClassDB::register_class<SpineTransformConstraint>();
 
     atlas_loader.instance();
     ResourceLoader::add_resource_format_loader(atlas_loader);
