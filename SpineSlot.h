@@ -9,6 +9,10 @@
 
 #include <spine/spine.h>
 
+#include "SpineSlotData.h"
+#include "SpineSkeleton.h"
+#include "SpineAttachment.h"
+
 class SpineSlot : public Reference{
 	GDCLASS(SpineSlot, Reference);
 
@@ -28,6 +32,34 @@ public:
 	inline spine::Slot *get_spine_object(){
 		return slot;
 	}
+
+	void set_to_setup_pos();
+
+	Ref<SpineSlotData> get_data();
+
+	Ref<SpineBone> get_bone();
+
+	Ref<SpineSkeleton> get_skeleton();
+
+	Color get_color();
+	void set_color(Color v);
+
+	Color get_dark_color();
+	void set_dark_color(Color v);
+
+	bool has_dark_color();
+
+	Ref<SpineAttachment> get_attachment();
+	void set_attachment(Ref<SpineAttachment> v);
+
+	int get_attachment_state();
+	void set_attachment_state(int v);
+
+	float get_attachment_time();
+	void set_attachment_time(float v);
+
+	Array get_deform();
+	void set_deform(Array v);
 };
 
 #endif //GODOT_SPINESLOT_H

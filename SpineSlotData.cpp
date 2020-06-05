@@ -17,6 +17,9 @@ void SpineSlotData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_blend_mode"), &SpineSlotData::get_blend_mode);
 	ClassDB::bind_method(D_METHOD("set_blend_mode", "v"), &SpineSlotData::set_blend_mode);
 
+	ClassDB::bind_method(D_METHOD("set_color", "v"), &SpineSlotData::set_color);
+	ClassDB::bind_method(D_METHOD("set_dark_color", "v"), &SpineSlotData::set_dark_color);
+
 	BIND_ENUM_CONSTANT(BLENDMODE_NORMAL);
 	BIND_ENUM_CONSTANT(BLENDMODE_ADDITIVE);
 	BIND_ENUM_CONSTANT(BLENDMODE_MULTIPLY);
@@ -43,13 +46,21 @@ Ref<SpineBoneData> SpineSlotData::get_bone_data(){
 }
 
 Color SpineSlotData::get_color(){
-	auto c = slot_data->getColor();
+	auto &c = slot_data->getColor();
 	return Color(c.r, c.g, c.b, c.a);
+}
+void SpineSlotData::set_color(Color v){
+	auto &c = slot_data->getColor();
+	c.set(v.r, v.g, v.b, v.a);
 }
 
 Color SpineSlotData::get_dark_color(){
-	auto c = slot_data->getDarkColor();
+	auto &c = slot_data->getDarkColor();
 	return Color(c.r, c.g, c.b, c.a);
+}
+void SpineSlotData::set_dark_color(Color v){
+	auto &c = slot_data->getDarkColor();
+	c.set(v.r, v.g, v.b, v.a);
 }
 
 bool SpineSlotData::has_dark_color(){

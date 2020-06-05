@@ -44,8 +44,10 @@ public:
 	Ref<SpineBoneData> get_bone_data();
 
 	Color get_color();
+	void set_color(Color c);
 
 	Color get_dark_color();
+	void set_dark_color(Color c);
 
 	bool has_dark_color();
 	void set_has_dark_color(bool v);
