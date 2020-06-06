@@ -10,8 +10,11 @@
 #include <spine/spine.h>
 
 #include "SpineSlotData.h"
-#include "SpineSkeleton.h"
 #include "SpineAttachment.h"
+
+class SpineSkeleton;
+
+class SpineBone;
 
 class SpineSlot : public Reference{
 	GDCLASS(SpineSlot, Reference);

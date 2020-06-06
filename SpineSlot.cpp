@@ -4,6 +4,10 @@
 
 #include "SpineSlot.h"
 
+#include "SpineBone.h"
+#include "SpineSkeleton.h"
+
+
 void SpineSlot::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_to_setup_pos"), &SpineSlot::set_to_setup_pos);
 	ClassDB::bind_method(D_METHOD("get_data"), &SpineSlot::get_data);
@@ -112,11 +116,8 @@ Array SpineSlot::get_deform(){
 }
 void SpineSlot::set_deform(Array gd_ds){
 	auto &ds = slot->getDeform();
-	if(gd_ds.size() != ds.size()){
-		ERR_PRINT("The provided deform array's size is not equal to its.");
-		return;
-	}
-	for(size_t i=0; i<ds.size(); ++i){
+	ds.setSize(gd_ds.size(), 0);
+	for(size_t i=0; i < gd_ds.size(); ++i){
 		ds[i] = gd_ds[i];
 	}
 }

@@ -9,6 +9,10 @@
 
 #include <spine/spine.h>
 
+#include "SpineIkConstraintData.h"
+
+class SpineBone;
+
 class SpineIkConstraint : public Reference {
 	GDCLASS(SpineIkConstraint, Reference);
 
@@ -28,6 +32,37 @@ public:
 	inline spine::IkConstraint *get_spine_object(){
 		return ik_constraint;
 	}
+
+	void apply();
+
+	void update();
+
+	int get_order();
+
+	Ref<SpineIkConstraintData> get_data();
+
+	Array get_bones();
+
+	Ref<SpineBone> get_target();
+	void set_target(Ref<SpineBone> v);
+
+	int get_bend_direction();
+	void set_bend_direction(int v);
+
+	bool get_compress();
+	void set_compress(bool v);
+
+	bool get_stretch();
+	void set_stretch(bool v);
+
+	float get_mix();
+	void set_mix(float v);
+
+	float get_softness();
+	void set_softness(float v);
+
+	bool is_active();
+	void set_active(bool v);
 
 };
 
