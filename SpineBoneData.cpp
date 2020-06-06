@@ -6,7 +6,7 @@
 
 void SpineBoneData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_index"), &SpineBoneData::get_index);
-	ClassDB::bind_method(D_METHOD("get_name"), &SpineBoneData::get_name);
+	ClassDB::bind_method(D_METHOD("get_bone_name"), &SpineBoneData::get_bone_name);
 	ClassDB::bind_method(D_METHOD("get_parent"), &SpineBoneData::get_parent);
 
 	ClassDB::bind_method(D_METHOD("get_length"), &SpineBoneData::get_length);
@@ -53,7 +53,7 @@ int SpineBoneData::get_index(){
 	return bone_data->getIndex();
 }
 
-String SpineBoneData::get_name(){
+String SpineBoneData::get_bone_name(){
 	return bone_data->getName().buffer();
 }
 

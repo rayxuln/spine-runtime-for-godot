@@ -41,7 +41,7 @@ public:
 
 	Ref<SpineEventData> get_data();
 
-	String get_name();
+	String get_event_name();
 
 	float get_time();
 

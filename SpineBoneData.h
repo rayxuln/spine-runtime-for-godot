@@ -39,7 +39,7 @@ public:
 
 	int get_index();
 
-	String get_name();
+	String get_bone_name();
 
 	Ref<SpineBoneData> get_parent();
 

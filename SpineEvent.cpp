@@ -6,7 +6,7 @@
 
 void SpineEvent::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_data"), &SpineEvent::get_data);
-	ClassDB::bind_method(D_METHOD("get_name"), &SpineEvent::get_name);
+	ClassDB::bind_method(D_METHOD("get_event_name"), &SpineEvent::get_event_name);
 	ClassDB::bind_method(D_METHOD("get_time"), &SpineEvent::get_time);
 	ClassDB::bind_method(D_METHOD("get_int_value"), &SpineEvent::get_int_value);
 	ClassDB::bind_method(D_METHOD("set_int_value", "v"), &SpineEvent::set_int_value);
@@ -36,7 +36,7 @@ Ref<SpineEventData> SpineEvent::get_data(){
 	return event_data;
 }
 
-String SpineEvent::get_name() {
+String SpineEvent::get_event_name() {
 	return event->getData().getName().buffer();
 }
 

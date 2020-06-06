@@ -31,7 +31,7 @@ public:
 		return attachment;
 	}
 
-	String get_name();
+	String get_attachment_name();
 
 	Ref<SpineAttachment> copy();
 };

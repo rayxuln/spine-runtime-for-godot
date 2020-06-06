@@ -6,7 +6,7 @@
 
 void SpineSlotData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_index"), &SpineSlotData::get_index);
-	ClassDB::bind_method(D_METHOD("get_name"), &SpineSlotData::get_name);
+	ClassDB::bind_method(D_METHOD("get_slot_name"), &SpineSlotData::get_slot_name);
 	ClassDB::bind_method(D_METHOD("get_bone_data"), &SpineSlotData::get_bone_data);
 	ClassDB::bind_method(D_METHOD("get_color"), &SpineSlotData::get_color);
 	ClassDB::bind_method(D_METHOD("get_dark_color"), &SpineSlotData::get_dark_color);
@@ -34,7 +34,7 @@ int SpineSlotData::get_index(){
 	return slot_data->getIndex();
 }
 
-String SpineSlotData::get_name(){
+String SpineSlotData::get_slot_name(){
 	return slot_data->getName().buffer();
 }
 

@@ -5,7 +5,7 @@
 #include "SpineAttachment.h"
 
 void SpineAttachment::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_name"), &SpineAttachment::get_name);
+	ClassDB::bind_method(D_METHOD("get_attachment_name"), &SpineAttachment::get_attachment_name);
 	ClassDB::bind_method(D_METHOD("copy"), &SpineAttachment::copy);
 }
 
@@ -17,7 +17,7 @@ SpineAttachment::~SpineAttachment() {
 	}
 }
 
-String SpineAttachment::get_name(){
+String SpineAttachment::get_attachment_name(){
 	return attachment->getName().buffer();
 }
 

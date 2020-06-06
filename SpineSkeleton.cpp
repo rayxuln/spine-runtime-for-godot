@@ -34,8 +34,8 @@ void SpineSkeleton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("find_slot_index", "slot_name"), &SpineSkeleton::find_slot_index);
 	ClassDB::bind_method(D_METHOD("set_skin_by_name", "skin_name"), &SpineSkeleton::set_skin_by_name);
 	ClassDB::bind_method(D_METHOD("set_skin", "new_skin"), &SpineSkeleton::set_skin);
-	ClassDB::bind_method(D_METHOD("get_attachment_by_slot_name"), &SpineSkeleton::get_attachment_by_slot_name);
-	ClassDB::bind_method(D_METHOD("get_attachment_by_slot_index"), &SpineSkeleton::get_attachment_by_slot_index);
+	ClassDB::bind_method(D_METHOD("get_attachment_by_slot_name", "slot_name", "attachment_name"), &SpineSkeleton::get_attachment_by_slot_name);
+	ClassDB::bind_method(D_METHOD("get_attachment_by_slot_index", "slot_index", "attachment_name"), &SpineSkeleton::get_attachment_by_slot_index);
 //
 //	void set_attachment(const String &slot_name, const String &attachment_name);
 //
