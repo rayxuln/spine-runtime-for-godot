@@ -18,6 +18,20 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_current_animations"), &SpineSprite::get_current_animations);
 	ClassDB::bind_method(D_METHOD("set_current_animations", "current_animations"), &SpineSprite::set_current_animations);
 
+	ClassDB::bind_method(D_METHOD("get_select_track_id"), &SpineSprite::get_select_track_id);
+	ClassDB::bind_method(D_METHOD("set_select_track_id", "track_id"), &SpineSprite::set_select_track_id);
+	ClassDB::bind_method(D_METHOD("get_clear_track"), &SpineSprite::get_clear_track);
+	ClassDB::bind_method(D_METHOD("set_clear_track", "v"), &SpineSprite::set_clear_track);
+	ClassDB::bind_method(D_METHOD("get_clear_tracks"), &SpineSprite::get_clear_tracks);
+	ClassDB::bind_method(D_METHOD("set_clear_tracks", "v"), &SpineSprite::set_clear_tracks);
+
+	ClassDB::bind_method(D_METHOD("get_empty_animation_duration"), &SpineSprite::get_empty_animation_duration);
+	ClassDB::bind_method(D_METHOD("set_empty_animation_duration", "track_id"), &SpineSprite::set_empty_animation_duration);
+	ClassDB::bind_method(D_METHOD("get_set_empty_animation"), &SpineSprite::get_set_empty_animation);
+	ClassDB::bind_method(D_METHOD("set_set_empty_animation", "v"), &SpineSprite::set_set_empty_animation);
+	ClassDB::bind_method(D_METHOD("get_set_empty_animations"), &SpineSprite::get_set_empty_animations);
+	ClassDB::bind_method(D_METHOD("set_set_empty_animations", "v"), &SpineSprite::set_set_empty_animations);
+
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "skeleton", PROPERTY_HINT_TYPE_STRING, "SpineSkeleton")));
 	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
 	ADD_SIGNAL(MethodInfo("animation_interrupt", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
@@ -28,8 +42,19 @@ void SpineSprite::_bind_methods() {
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "animation_state_data_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAnimationStateDataResource"), "set_animation_state_data_res", "get_animation_state_data_res");
 
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "select_track_id"), "set_select_track_id", "get_select_track_id");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_track_trigger"), "set_clear_track", "get_clear_track");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_tracks_trigger"), "set_clear_tracks", "get_clear_tracks");
+
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "empty_animation_duration"), "set_empty_animation_duration", "get_empty_animation_duration");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animation_trigger"), "set_set_empty_animation", "get_set_empty_animation");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animations_trigger"), "set_set_empty_animations", "get_set_empty_animations");
+
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations", PropertyHint::PROPERTY_HINT_TYPE_STRING, "Dictionary"), "set_current_animations", "get_current_animations");
 }
+
+SpineSprite::SpineSprite():select_track_id(0),empty_animation_duration(0.2f) {}
+SpineSprite::~SpineSprite() {}
 
 void SpineSprite::_notification(int p_what) {
 	switch (p_what) {
@@ -440,7 +465,6 @@ void SpineSprite::set_current_animations(Array as) {
 
 	// validate it then play the animations
 	if(animation_state.is_valid() && skeleton.is_valid()){
-		animation_state->clear_tracks();
 		for(size_t i=0; i<current_animations.size(); ++i){
 			auto a = current_animations[i];
 			if(a.get_type() == Variant::DICTIONARY){
@@ -488,4 +512,52 @@ void SpineSprite::set_current_animations(Array as) {
 			}
 		}
 	}
+}
+
+int SpineSprite::get_select_track_id(){
+	return select_track_id;
+}
+void SpineSprite::set_select_track_id(int v){
+	select_track_id = v;
+
+	if(select_track_id < 0) select_track_id = 0;
+}
+
+bool SpineSprite::get_clear_track(){
+	return false;
+}
+void SpineSprite::set_clear_track(bool v){
+	if(v && animation_state.is_valid() && skeleton.is_valid())
+		animation_state->clear_track(select_track_id);
+}
+
+bool SpineSprite::get_clear_tracks(){
+	return false;
+}
+void SpineSprite::set_clear_tracks(bool v){
+	if(v && animation_state.is_valid() && skeleton.is_valid())
+		animation_state->clear_tracks();
+}
+
+float SpineSprite::get_empty_animation_duration(){
+	return empty_animation_duration;
+}
+void SpineSprite::set_empty_animation_duration(float v){
+	empty_animation_duration = v;
+}
+
+bool SpineSprite::get_set_empty_animation(){
+	return false;
+}
+void SpineSprite::set_set_empty_animation(bool v){
+	if(v && animation_state.is_valid() && skeleton.is_valid())
+		animation_state->set_empty_animation(select_track_id, empty_animation_duration);
+}
+
+bool SpineSprite::get_set_empty_animations(){
+	return false;
+}
+void SpineSprite::set_set_empty_animations(bool v){
+	if(v && animation_state.is_valid() && skeleton.is_valid())
+		animation_state->set_empty_animations(empty_animation_duration);
 }
