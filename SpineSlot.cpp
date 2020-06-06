@@ -34,7 +34,7 @@ void SpineSlot::set_to_setup_pos(){
 }
 
 Ref<SpineSlotData> SpineSlot::get_data(){
-	auto sd = slot->getData();
+	auto &sd = slot->getData();
 	Ref<SpineSlotData> gd_sd(memnew(SpineSlotData));
 	gd_sd->set_spine_object(&sd);
 	return gd_sd;
