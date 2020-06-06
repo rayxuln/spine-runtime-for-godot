@@ -137,13 +137,16 @@ Ref<SpineSkeletonJsonDataResource> SpineSkeletonDataResource::get_skeleton_json_
 #define S_T(x) (spine::String(x.utf8()))
 int SpineSkeletonDataResource::find_bone_index(const String &bone_name) {
 	CHECK_X(-1);
+	if(bone_name.empty()) return -1;
 	return skeleton_data->findBoneIndex(S_T(bone_name));
 }
 int SpineSkeletonDataResource::find_slot_index(const String &slot_name) {
+	if(slot_name.empty()) return -1;
 	CHECK_X(-1);
 	return skeleton_data->findSlotIndex(S_T(slot_name));
 }
 int SpineSkeletonDataResource::find_path_constraint_index(const String &path_constraint_name) {
+	if(path_constraint_name.empty()) return -1;
 	CHECK_X(-1);
 	return skeleton_data->findPathConstraintIndex(S_T(path_constraint_name));
 }
@@ -204,6 +207,7 @@ void SpineSkeletonDataResource::set_fps(float v) {
 }
 
 Ref<SpineBoneData> SpineSkeletonDataResource::find_bone(const String &bone_name){
+	if(bone_name.empty()) return NULL;
 	auto b = skeleton_data->findBone(S_T(bone_name));
 	if(b == NULL) return NULL;
 	Ref<SpineBoneData> gd_b(memnew(SpineBoneData));
@@ -212,6 +216,7 @@ Ref<SpineBoneData> SpineSkeletonDataResource::find_bone(const String &bone_name)
 }
 
 Ref<SpineSlotData> SpineSkeletonDataResource::find_slot(const String &slot_name){
+	if(slot_name.empty()) return NULL;
 	auto b = skeleton_data->findSlot(S_T(slot_name));
 	if(b == NULL) return NULL;
 	Ref<SpineSlotData> gd_b(memnew(SpineSlotData));
@@ -220,6 +225,7 @@ Ref<SpineSlotData> SpineSkeletonDataResource::find_slot(const String &slot_name)
 }
 
 Ref<SpineSkin> SpineSkeletonDataResource::find_skin(const String &skin_name){
+	if(skin_name.empty()) return NULL;
 	auto b = skeleton_data->findSkin(S_T(skin_name));
 	if(b == NULL) return NULL;
 	Ref<SpineSkin> gd_b(memnew(SpineSkin));
@@ -228,6 +234,7 @@ Ref<SpineSkin> SpineSkeletonDataResource::find_skin(const String &skin_name){
 }
 
 Ref<SpineEventData> SpineSkeletonDataResource::find_event(const String &event_data_name){
+	if(event_data_name.empty()) return NULL;
 	auto b = skeleton_data->findEvent(S_T(event_data_name));
 	if(b == NULL) return NULL;
 	Ref<SpineEventData> gd_b(memnew(SpineEventData));
@@ -236,6 +243,7 @@ Ref<SpineEventData> SpineSkeletonDataResource::find_event(const String &event_da
 }
 
 Ref<SpineIkConstraintData> SpineSkeletonDataResource::find_ik_constraint(const String &constraint_name){
+	if(constraint_name.empty()) return NULL;
 	auto b = skeleton_data->findIkConstraint(S_T(constraint_name));
 	if(b == NULL) return NULL;
 	Ref<SpineIkConstraintData> gd_b(memnew(SpineIkConstraintData));
@@ -243,6 +251,7 @@ Ref<SpineIkConstraintData> SpineSkeletonDataResource::find_ik_constraint(const S
 	return gd_b;
 }
 Ref<SpineTransformConstraintData> SpineSkeletonDataResource::find_transform_constraint(const String &constraint_name){
+	if(constraint_name.empty()) return NULL;
 	auto b = skeleton_data->findTransformConstraint(S_T(constraint_name));
 	if(b == NULL) return NULL;
 	Ref<SpineTransformConstraintData> gd_b(memnew(SpineTransformConstraintData));
@@ -250,6 +259,7 @@ Ref<SpineTransformConstraintData> SpineSkeletonDataResource::find_transform_cons
 	return gd_b;
 }
 Ref<SpinePathConstraintData> SpineSkeletonDataResource::find_path_constraint(const String &constraint_name){
+	if(constraint_name.empty()) return NULL;
 	auto b = skeleton_data->findPathConstraint(S_T(constraint_name));
 	if(b == NULL) return NULL;
 	Ref<SpinePathConstraintData> gd_b(memnew(SpinePathConstraintData));

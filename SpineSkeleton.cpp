@@ -149,6 +149,7 @@ void SpineSkeleton::set_slots_to_setup_pose(){
 }
 
 Ref<SpineBone> SpineSkeleton::find_bone(const String &name){
+	if(name.empty()) return NULL;
 	auto b = skeleton->findBone(S_T(name));
 	if(b == NULL) return NULL;
 	Ref<SpineBone> gd_b(memnew(SpineBone));
@@ -156,10 +157,12 @@ Ref<SpineBone> SpineSkeleton::find_bone(const String &name){
 	return gd_b;
 }
 int SpineSkeleton::find_bone_index(const String &name){
+	if(name.empty()) return -1;
 	return skeleton->findBoneIndex(S_T(name));
 }
 
 Ref<SpineSlot> SpineSkeleton::find_slot(const String &name){
+	if(name.empty()) return NULL;
 	auto s = skeleton->findSlot(S_T(name));
 	if(s == NULL) return NULL;
 	Ref<SpineSlot> gd_s(memnew(SpineSlot));
@@ -167,6 +170,7 @@ Ref<SpineSlot> SpineSkeleton::find_slot(const String &name){
 	return gd_s;
 }
 int SpineSkeleton::find_slot_index(const String &name){
+	if(name.empty()) return -1;
 	return skeleton->findSlotIndex(S_T(name));
 }
 
@@ -203,6 +207,7 @@ void SpineSkeleton::set_attachment(const String &slot_name, const String &attach
 }
 
 Ref<SpineIkConstraint> SpineSkeleton::find_ik_constraint(const String &constraint_name){
+	if(constraint_name.empty()) return NULL;
 	auto c = skeleton->findIkConstraint(S_T(constraint_name));
 	if(c == NULL) return NULL;
 	Ref<SpineIkConstraint> gd_c(memnew(SpineIkConstraint));
@@ -210,6 +215,7 @@ Ref<SpineIkConstraint> SpineSkeleton::find_ik_constraint(const String &constrain
 	return gd_c;
 }
 Ref<SpineTransformConstraint> SpineSkeleton::find_transform_constraint(const String &constraint_name){
+	if(constraint_name.empty()) return NULL;
 	auto c = skeleton->findTransformConstraint(S_T(constraint_name));
 	if(c == NULL) return NULL;
 	Ref<SpineTransformConstraint> gd_c(memnew(SpineTransformConstraint));
@@ -217,6 +223,7 @@ Ref<SpineTransformConstraint> SpineSkeleton::find_transform_constraint(const Str
 	return gd_c;
 }
 Ref<SpinePathConstraint> SpineSkeleton::find_path_constraint(const String &constraint_name){
+	if(constraint_name.empty()) return NULL;
 	auto c = skeleton->findPathConstraint(S_T(constraint_name));
 	if(c == NULL) return NULL;
 	Ref<SpinePathConstraint> gd_c(memnew(SpinePathConstraint));

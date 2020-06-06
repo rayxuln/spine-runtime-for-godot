@@ -32,6 +32,10 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_set_empty_animations"), &SpineSprite::get_set_empty_animations);
 	ClassDB::bind_method(D_METHOD("set_set_empty_animations", "v"), &SpineSprite::set_set_empty_animations);
 
+	ClassDB::bind_method(D_METHOD("get_bind_slot_nodes"), &SpineSprite::get_bind_slot_nodes);
+	ClassDB::bind_method(D_METHOD("set_bind_slot_nodes", "v"), &SpineSprite::set_bind_slot_nodes);
+
+
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "skeleton", PROPERTY_HINT_TYPE_STRING, "SpineSkeleton")));
 	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
 	ADD_SIGNAL(MethodInfo("animation_interrupt", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
@@ -50,7 +54,8 @@ void SpineSprite::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animation_trigger"), "set_set_empty_animation", "get_set_empty_animation");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animations_trigger"), "set_set_empty_animations", "get_set_empty_animations");
 
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations", PropertyHint::PROPERTY_HINT_TYPE_STRING, "Dictionary"), "set_current_animations", "get_current_animations");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations"), "set_current_animations", "get_current_animations");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "bind_slot_nodes"), "set_bind_slot_nodes", "get_bind_slot_nodes");
 }
 
 SpineSprite::SpineSprite():select_track_id(0),empty_animation_duration(0.2f) {}
@@ -73,8 +78,73 @@ void SpineSprite::_notification(int p_what) {
 			update_mesh_from_skeleton(skeleton);
 
 			update();
+
+			update_bind_slot_nodes();
 		} break;
 	}
+}
+
+void SpineSprite::update_bind_slot_nodes(){
+	if(animation_state.is_valid() && skeleton.is_valid()){
+		for(size_t i=0, n=bind_slot_nodes.size(); i<n; ++i){
+			auto a = bind_slot_nodes[i];
+			if(a.get_type() == Variant::DICTIONARY){
+				auto d = (Dictionary) a;
+				if(d.has("slot_name") && d.has("node_path")){
+					NodePath node_path = d["node_path"];
+					Node *node = get_node_or_null(node_path);
+					if(node && node->is_class("Node2D")){
+						Node2D *node2d = (Node2D*) node;
+
+						String slot_name = d["slot_name"];
+						auto slot = skeleton->find_slot(slot_name);
+						if(slot.is_valid()){
+							auto bone = slot->get_bone();
+							if(bone.is_valid())
+							{
+								update_bind_slot_node_transform(bone, node2d);
+							}
+						}
+
+					}
+				}
+			}else if(a.get_type() == Variant::ARRAY){
+				auto as = (Array) a;// 0: slot_name, 1: node_path
+				if(as.size() >= 2 && as[0].get_type() == Variant::STRING && as[1].get_type() == Variant::NODE_PATH){
+					NodePath node_path = as[1];
+					Node *node = get_node_or_null(node_path);
+					if(node && node->is_class("Node2D")){
+						Node2D *node2d = (Node2D*) node;
+
+						String slot_name = as[0];
+						auto slot = skeleton->find_slot(slot_name);
+						if(slot.is_valid()){
+							auto bone = slot->get_bone();
+							if(bone.is_valid())
+							{
+								update_bind_slot_node_transform(bone, node2d);
+							}
+						}
+
+					}
+				}
+			}
+		}
+	}
+}
+void SpineSprite::update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d){
+	// In godot the y-axis is nag to spine
+	node2d->set_transform(Transform2D(
+			bone->get_a(), bone->get_c(),
+			bone->get_b(), bone->get_d(),
+			bone->get_world_x(), -bone->get_world_y())
+	);
+	// Fix the rotation
+	auto pos = node2d->get_position();
+	node2d->translate(Vector2(-pos.x, -pos.y));
+	auto rotation = 360 - node2d->get_rotation_degrees();
+	node2d->set_rotation_degrees(rotation);
+	node2d->translate(pos);
 }
 
 void SpineSprite::set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &s) {
@@ -560,4 +630,66 @@ bool SpineSprite::get_set_empty_animations(){
 void SpineSprite::set_set_empty_animations(bool v){
 	if(v && animation_state.is_valid() && skeleton.is_valid())
 		animation_state->set_empty_animations(empty_animation_duration);
+}
+
+Array SpineSprite::get_bind_slot_nodes(){
+	return bind_slot_nodes;
+}
+void SpineSprite::set_bind_slot_nodes(Array v) {
+	bind_slot_nodes = v;
+}
+
+void SpineSprite::bind_slot_with_node_2d(const String &slot_name, Node2D *n){
+	auto node_path = n->get_path_to(this);
+
+	// check if has the same binding
+	for(size_t i=0, size=bind_slot_nodes.size(); i<size; ++i){
+		auto a = bind_slot_nodes[i];
+		if(a.get_type() == Variant::DICTIONARY){
+			auto d = (Dictionary) a;
+			if(d.has("slot_name") && d.has("node_path")){
+				if(slot_name == d["slot_name"] && node_path == d["node_path"]){
+					return;
+				}
+			}
+		}else if(a.get_type() == Variant::ARRAY){
+			auto as = (Array) a;
+			if(as.size() >= 2 && as[0].get_type() == Variant::STRING && as[1].get_type() == Variant::NODE_PATH){
+				if(slot_name == as[0] && node_path == as[1]){
+					return;
+				}
+			}
+		}
+	}
+
+	Array bound;
+	bound.resize(2);
+	bound[0] = slot_name;
+	bound[1] = node_path;
+
+	bind_slot_nodes.append(bound);
+}
+void SpineSprite::unbind_slot_with_node_2d(const String &slot_name, Node2D *n){
+	auto node_path = n->get_path_to(this);
+
+	for(size_t i=0, size=bind_slot_nodes.size(); i<size; ++i){
+		auto a = bind_slot_nodes[i];
+		if(a.get_type() == Variant::DICTIONARY){
+			auto d = (Dictionary) a;
+			if(d.has("slot_name") && d.has("node_path")){
+				if(slot_name == d["slot_name"] && node_path == d["node_path"]){
+					bind_slot_nodes.remove(i);
+					return;
+				}
+			}
+		}else if(a.get_type() == Variant::ARRAY){
+			auto as = (Array) a;
+			if(as.size() >= 2 && as[0].get_type() == Variant::STRING && as[1].get_type() == Variant::NODE_PATH){
+				if(slot_name == as[0] && node_path == as[1]){
+					bind_slot_nodes.remove(i);
+					return;
+				}
+			}
+		}
+	}
 }

@@ -29,6 +29,7 @@ private:
 	Array current_animations;
 	int select_track_id;
 	float empty_animation_duration;
+	Array bind_slot_nodes;
 public:
 	SpineSprite();
 	~SpineSprite();
@@ -43,6 +44,9 @@ public:
 	void remove_mesh_instances();
 
 	void update_mesh_from_skeleton(Ref<SpineSkeleton> s);
+
+	void update_bind_slot_nodes();
+	void update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d);
 
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 
@@ -70,6 +74,12 @@ public:
 
 	bool get_set_empty_animations();
 	void set_set_empty_animations(bool v);
+
+	Array get_bind_slot_nodes();
+	void set_bind_slot_nodes(Array v);
+
+	void bind_slot_with_node_2d(const String &slot_name, Node2D *n);
+	void unbind_slot_with_node_2d(const String &slot_name, Node2D *n);
 };
 
 
