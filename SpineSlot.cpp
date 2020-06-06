@@ -41,14 +41,14 @@ Ref<SpineSlotData> SpineSlot::get_data(){
 }
 
 Ref<SpineBone> SpineSlot::get_bone(){
-	auto b = slot->getBone();
+	auto &b = slot->getBone();
 	Ref<SpineBone> gd_b(memnew(SpineBone));
 	gd_b->set_spine_object(&b);
 	return gd_b;
 }
 
 Ref<SpineSkeleton> SpineSlot::get_skeleton(){
-	auto s = slot->getSkeleton();
+	auto &s = slot->getSkeleton();
 	Ref<SpineSkeleton> gd_s(memnew(SpineSkeleton));
 	gd_s->set_spine_object(&s);
 	return gd_s;
