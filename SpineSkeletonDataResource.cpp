@@ -46,12 +46,15 @@ void SpineSkeletonDataResource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_all_transform_constraint_data"), &SpineSkeletonDataResource::get_transform_constraints);
 	ClassDB::bind_method(D_METHOD("get_all_path_constraint_data"), &SpineSkeletonDataResource::get_path_constraints);
 
+	ClassDB::bind_method(D_METHOD("get_animation_names"), &SpineSkeletonDataResource::get_animation_names);
+
 	ADD_SIGNAL(MethodInfo("skeleton_data_loaded"));
 	ADD_SIGNAL(MethodInfo("atlas_res_changed"));
 	ADD_SIGNAL(MethodInfo("skeleton_json_res_changed"));
 
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "atlas_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAtlasResource"), "set_atlas_res", "get_atlas_res");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "skeleton_json_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineSkeletonJsonDataResource"), "set_skeleton_json_res", "get_skeleton_json_res");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "animation_names", PropertyHint::PROPERTY_HINT_TYPE_STRING, "String"), "", "get_animation_names");
 }
 
 SpineSkeletonDataResource::SpineSkeletonDataResource():valid(false),spine_object(false),skeleton_data(NULL) {
@@ -146,6 +149,9 @@ int SpineSkeletonDataResource::find_path_constraint_index(const String &path_con
 }
 Ref<SpineAnimation> SpineSkeletonDataResource::find_animation(const String &animation_name) {
 	CHECK_X(NULL);
+	if(animation_name.empty()){
+		return NULL;
+	}
 	auto a = skeleton_data->findAnimation(S_T(animation_name));
 	if(!a) return NULL;
 	Ref<SpineAnimation> sa(memnew(SpineAnimation));
@@ -381,3 +387,22 @@ Array SpineSkeletonDataResource::get_path_constraints(){
 #undef S_T
 #undef CHECK_V
 #undef CHECK_X
+
+//External feature functions
+Array SpineSkeletonDataResource::get_animation_names() {
+	if(!is_skeleton_data_loaded()){
+		return Array();
+	}
+	auto as = skeleton_data->getAnimations();
+	Array res;
+	res.resize(as.size());
+	for(size_t i=0; i<res.size(); ++i){
+		auto a = as[i];
+		if(a){
+			res[i] = a->getName().buffer();
+		}else{
+			res[i] = "";
+		}
+	}
+	return res;
+}

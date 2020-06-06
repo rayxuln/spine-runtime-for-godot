@@ -61,6 +61,8 @@ public:
 
 	bool is_skeleton_data_loaded();
 
+	Array get_animation_names();
+
 	// spine api
 	Ref<SpineBoneData> find_bone(const String &bone_name);
 

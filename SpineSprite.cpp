@@ -456,7 +456,7 @@ void SpineSprite::set_current_animations(Array as) {
 						bool loop = d.has("loop") ? ((bool)d["loop"]) : true;
 						animation_state->set_animation(animation_name, loop, track_id);
 					} else{
-						print_line(String("Can't not find animation '") + animation_name + String("'"));
+//						print_line(String("Can't not find animation '") + animation_name + String("'"));
 						continue;
 					}
 				}
@@ -474,9 +474,16 @@ void SpineSprite::set_current_animations(Array as) {
 					if(anim.is_valid()){
 						animation_state->set_animation_by_ref(anim, loop, track_id);
 					} else{
-						print_line(String("Can't not find animation '") + anim_name + String("'"));
+//						print_line(String("Can't not find animation '") + anim_name + String("'"));
 						continue;
 					}
+				}
+			}else if(a.get_type() == Variant::STRING){
+				auto anim = skeleton->get_data()->find_animation(a);
+				if(anim.is_valid()){
+					animation_state->set_animation_by_ref(anim, true, i);
+				} else{
+					continue;
 				}
 			}
 		}
