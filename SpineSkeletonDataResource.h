@@ -30,11 +30,21 @@ private:
 	Ref<SpineAtlasResource> atlas_res;
 	Ref<SpineSkeletonJsonDataResource> skeleton_json_res;
 	bool valid;
+	bool spine_object;
 
 	spine::SkeletonData *skeleton_data;
 
 	void update_skeleton_data();
 public:
+
+	inline void set_spine_object(spine::SkeletonData *s){
+		skeleton_data = s;
+		if(s)
+			spine_object = true;
+	}
+	inline spine::SkeletonData *get_spine_object(){
+		return skeleton_data;
+	}
 
 	void load_res(spine::Atlas *a, const String &json_path);
 
