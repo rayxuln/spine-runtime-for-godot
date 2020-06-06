@@ -15,6 +15,9 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_animation_state"), &SpineSprite::get_animation_state);
 	ClassDB::bind_method(D_METHOD("_on_animation_data_changed"), &SpineSprite::_on_animation_data_changed);
 
+	ClassDB::bind_method(D_METHOD("get_current_animations"), &SpineSprite::get_current_animations);
+	ClassDB::bind_method(D_METHOD("set_current_animations", "current_animations"), &SpineSprite::set_current_animations);
+
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "skeleton", PROPERTY_HINT_TYPE_STRING, "SpineSkeleton")));
 	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
 	ADD_SIGNAL(MethodInfo("animation_interrupt", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
@@ -24,6 +27,8 @@ void SpineSprite::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("animation_event", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "animation_state_data_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAnimationStateDataResource"), "set_animation_state_data_res", "get_animation_state_data_res");
+
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations", PropertyHint::PROPERTY_HINT_TYPE_STRING, "Dictionary"), "set_current_animations", "get_current_animations");
 }
 
 void SpineSprite::_notification(int p_what) {
@@ -423,5 +428,57 @@ void SpineSprite::callback(spine::AnimationState *state, spine::EventType type, 
 		{
 			emit_signal("animation_event", animation_state, gd_entry, gd_event);
 		}break;
+	}
+}
+
+// External feature functions
+Array SpineSprite::get_current_animations() {
+	return current_animations;
+}
+void SpineSprite::set_current_animations(Array as) {
+	current_animations = as;
+
+	// validate it then play the animations
+	if(animation_state.is_valid() && skeleton.is_valid()){
+		animation_state->clear_tracks();
+		for(size_t i=0; i<current_animations.size(); ++i){
+			auto a = current_animations[i];
+			if(a.get_type() == Variant::DICTIONARY){
+				Dictionary d = a;
+				if(d.has("animation_name") && d.has("track_id")){
+					String animation_name = d["animation_name"];
+					int track_id = d["track_id"];
+					if(track_id < 0){
+						print_line(String("track_id at ") + String(Variant((int)i)) + String(" can not less than 0!"));
+						continue;
+					}
+					if(skeleton->get_data()->find_animation(animation_name).is_valid()){
+						bool loop = d.has("loop") ? ((bool)d["loop"]) : true;
+						animation_state->set_animation(animation_name, loop, track_id);
+					} else{
+						print_line(String("Can't not find animation '") + animation_name + String("'"));
+						continue;
+					}
+				}
+			}else if(a.get_type() == Variant::ARRAY){
+				Array as = a;
+				if(as.size() >= 1 && as[0].get_type() == Variant::STRING){
+					String anim_name = as[0];
+					bool loop = as.size() >= 2 && as[1].get_type() == Variant::BOOL ? (bool)as[1] : true;
+					int track_id = as.size() >= 3 && as[2].get_type() == Variant::INT ? (int)as[2] : (int)i;
+					if(track_id < 0){
+						print_line(String("track_id at ") + String(Variant((int)i)) + String(" can not less than 0!"));
+						continue;
+					}
+					auto anim = skeleton->get_data()->find_animation(anim_name);
+					if(anim.is_valid()){
+						animation_state->set_animation_by_ref(anim, loop, track_id);
+					} else{
+						print_line(String("Can't not find animation '") + anim_name + String("'"));
+						continue;
+					}
+				}
+			}
+		}
 	}
 }

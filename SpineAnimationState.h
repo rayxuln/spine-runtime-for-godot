@@ -34,6 +34,11 @@ public:
 	void reload_animation_state();
 
 	Ref<SpineTrackEntry> set_animation(const String &anim_name, bool loop, uint64_t track_id);
+	inline void set_animation_by_ref(Ref<SpineAnimation> anim, bool loop, uint64_t track_id){
+		if(anim.is_valid()){
+			animation_state->setAnimation(track_id, anim->get_spine_object(), loop);
+		}
+	}
 	Ref<SpineTrackEntry> add_animation(const String &anim_name, float delay, bool loop, uint64_t track_id);
 
 	Ref<SpineTrackEntry> set_empty_animation(uint64_t track_id, float mix_duration);

@@ -25,6 +25,8 @@ private:
 	Ref<SpineAnimationState> animation_state;
 
 	Vector<MeshInstance2D*> mesh_instances;
+
+	Array current_animations;
 public:
     void set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &a);
     Ref<SpineAnimationStateDataResource> get_animation_state_data_res();
@@ -41,6 +43,10 @@ public:
 
 	void _on_animation_data_created();
 	void _on_animation_data_changed();
+
+	// External feature functions
+	Array get_current_animations();
+	void set_current_animations(Array as);
 };
 
 
