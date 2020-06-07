@@ -7,6 +7,7 @@
 #include "SpineSkeleton.h"
 
 void SpineBone::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("update_world_transform"), &SpineBone::update_world_transform);
 //	void set_to_setup_pose();
 //
 //	Vector2 world_to_local(Vector2 world_position);
@@ -167,6 +168,10 @@ void SpineBone::_bind_methods() {
 
 SpineBone::SpineBone():bone(NULL) {}
 SpineBone::~SpineBone() {}
+
+void SpineBone::update_world_transform(){
+	bone->updateWorldTransform();
+}
 
 void SpineBone::set_to_setup_pose(){
 	bone->setToSetupPose();

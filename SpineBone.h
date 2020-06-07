@@ -38,6 +38,8 @@ public:
 		return bone;
 	}
 
+	void update_world_transform();
+
 	void set_to_setup_pose();
 
 	Vector2 world_to_local(Vector2 world_position);
