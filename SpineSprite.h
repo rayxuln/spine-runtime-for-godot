@@ -50,6 +50,7 @@ public:
 	void update_bind_slot_nodes();
 	void update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d);
 	void update_bind_slot_node_draw_order(const String &slot_name, Node2D *node2d);
+	Node *find_child_node_by_node(Node *node);
 
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 

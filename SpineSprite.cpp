@@ -141,10 +141,19 @@ void SpineSprite::update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *n
 void SpineSprite::update_bind_slot_node_draw_order(const String &slot_name, Node2D *node2d){
 	auto mesh_ins = find_node(slot_name);
 	if(mesh_ins){
-		auto id = mesh_ins->get_index();
-		move_child(node2d, id);
-	}
+		auto pos = mesh_ins->get_index();
 
+		// get child
+		auto node = find_child_node_by_node(node2d);
+		if(node && node->get_index() != pos+1){
+			move_child(node, pos+1);
+		}
+	}
+}
+Node *SpineSprite::find_child_node_by_node(Node *node){
+	if(node == NULL) return NULL;
+	while(node && node->get_parent() != this) node = node->get_parent();
+	return node;
 }
 
 void SpineSprite::set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &s) {
