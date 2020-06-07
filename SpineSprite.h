@@ -5,12 +5,12 @@
 #ifndef GODOT_SPINESPRITE_H
 #define GODOT_SPINESPRITE_H
 
-#include <scene/2d/mesh_instance_2d.h>
 #include <scene/resources/texture.h>
 
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
+#include "SpineSpriteMeshInstance2D.h"
 
 class SpineSprite : public Node2D, public spine::AnimationStateListenerObject {
     GDCLASS(SpineSprite, Node2D);
@@ -19,12 +19,13 @@ protected:
 
 	void _notification(int p_what);
 private:
+
     Ref<SpineAnimationStateDataResource> animation_state_data_res;
 
 	Ref<SpineSkeleton> skeleton;
 	Ref<SpineAnimationState> animation_state;
 
-	Vector<MeshInstance2D*> mesh_instances;
+	Vector<SpineSpriteMeshInstance2D*> mesh_instances;
 
 	Array current_animations;
 	int select_track_id;
@@ -42,11 +43,13 @@ public:
 
 	void gen_mesh_from_skeleton(Ref<SpineSkeleton> s);
 	void remove_mesh_instances();
+	void remove_redundant_mesh_instances();
 
 	void update_mesh_from_skeleton(Ref<SpineSkeleton> s);
 
 	void update_bind_slot_nodes();
 	void update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d);
+	void update_bind_slot_node_draw_order(const String &slot_name, Node2D *node2d);
 
 	virtual void callback(spine::AnimationState* state, spine::EventType type, spine::TrackEntry* entry, spine::Event* event);
 

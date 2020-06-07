@@ -6,7 +6,9 @@
 #define GODOT_SPINEBONE_H
 
 #include "core/variant_parser.h"
+#include <scene/2d/node_2d.h>
 
+#include <scene/2d/node_2d.h>
 #include <spine/spine.h>
 
 #include "SpineBoneData.h"
@@ -130,6 +132,9 @@ public:
 
 	bool is_active();
 	void set_active(bool v);
+
+	// External feature functions
+	void apply_world_transform_2d(Variant o);
 };
 
 #endif //GODOT_SPINEBONE_H

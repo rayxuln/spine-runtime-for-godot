@@ -24,6 +24,7 @@
 #include "SpineIkConstraintData.h"
 #include "SpineTransformConstraintData.h"
 #include "SpinePathConstraintData.h"
+#include "SpineSpriteMeshInstance2D.h"
 
 
 static Ref<ResourceFormatLoaderSpineAtlas> atlas_loader;
@@ -57,6 +58,7 @@ void register_spine_runtime_types(){
 	ClassDB::register_class<SpineIkConstraint>();
 	ClassDB::register_class<SpinePathConstraint>();
 	ClassDB::register_class<SpineTransformConstraint>();
+	ClassDB::register_class<SpineSpriteMeshInstance2D>();
 
     atlas_loader.instance();
     ResourceLoader::add_resource_format_loader(atlas_loader);

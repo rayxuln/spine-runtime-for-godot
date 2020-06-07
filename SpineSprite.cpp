@@ -65,6 +65,7 @@ void SpineSprite::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY:{
 			set_process_internal(true);
+			remove_redundant_mesh_instances();
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			if (!(skeleton.is_valid() && animation_state.is_valid()) || mesh_instances.size() == 0)
@@ -103,6 +104,7 @@ void SpineSprite::update_bind_slot_nodes(){
 							if(bone.is_valid())
 							{
 								update_bind_slot_node_transform(bone, node2d);
+								update_bind_slot_node_draw_order(slot_name, node2d);
 							}
 						}
 
@@ -123,6 +125,7 @@ void SpineSprite::update_bind_slot_nodes(){
 							if(bone.is_valid())
 							{
 								update_bind_slot_node_transform(bone, node2d);
+								update_bind_slot_node_draw_order(slot_name, node2d);
 							}
 						}
 
@@ -133,18 +136,15 @@ void SpineSprite::update_bind_slot_nodes(){
 	}
 }
 void SpineSprite::update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d){
-	// In godot the y-axis is nag to spine
-	node2d->set_transform(Transform2D(
-			bone->get_a(), bone->get_c(),
-			bone->get_b(), bone->get_d(),
-			bone->get_world_x(), -bone->get_world_y())
-	);
-	// Fix the rotation
-	auto pos = node2d->get_position();
-	node2d->translate(Vector2(-pos.x, -pos.y));
-	auto rotation = 360 - node2d->get_rotation_degrees();
-	node2d->set_rotation_degrees(rotation);
-	node2d->translate(pos);
+	bone->apply_world_transform_2d(node2d);
+}
+void SpineSprite::update_bind_slot_node_draw_order(const String &slot_name, Node2D *node2d){
+	auto mesh_ins = find_node(slot_name);
+	if(mesh_ins){
+		auto id = mesh_ins->get_index();
+		move_child(node2d, id);
+	}
+
 }
 
 void SpineSprite::set_animation_state_data_res(const Ref<SpineAnimationStateDataResource> &s) {
@@ -220,9 +220,10 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{
 		// creat a mesh instance 2d for every slot
-		auto mesh_ins = memnew(MeshInstance2D);
+		auto mesh_ins = memnew(SpineSpriteMeshInstance2D);
 		add_child(mesh_ins);
 		mesh_ins->set_position(Vector2(0, 0));
+		mesh_ins->set_owner(this);
 		mesh_instances.push_back(mesh_ins);
 
 		// creat a material
@@ -231,6 +232,10 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		mat->set_blend_mode(CanvasItemMaterial::BLEND_MODE_MIX);
 
 		spine::Slot *slot = sk->getDrawOrder()[i];
+		mesh_ins->set_name(slot->getData().getName().buffer());
+		Ref<SpineSlot> gd_slot(memnew(SpineSlot));
+		gd_slot->set_spine_object(slot);
+		mesh_ins->set_slot(gd_slot);
 
 		spine::Attachment *attachment = slot->getAttachment();
 		if(!attachment) continue;
@@ -346,6 +351,30 @@ void SpineSprite::remove_mesh_instances() {
 		memdelete(mesh_instances[i]);
 	}
 	mesh_instances.clear();
+}
+
+void SpineSprite::remove_redundant_mesh_instances() {
+	Vector<Node*> ms;
+	// remove the redundant mesh instances that added by duplicating
+//	print_line("start clearing");
+	for(size_t i=0, n=get_child_count(); i<n; ++i){
+		auto node = get_child(i);
+//		print_line(String("get a node: ") + node->get_name());
+		if(node && node->is_class("SpineSpriteMeshInstance2D")){
+			if(mesh_instances.find((SpineSpriteMeshInstance2D*)node) == -1)
+			{
+//				print_line("marked clear");
+				ms.push_back(node);
+			}
+
+		}
+	}
+	for(size_t i=0, n=ms.size(); i<n; ++i){
+		remove_child(ms[i]);
+		memdelete(ms[i]);
+	}
+	ms.clear();
+//	print_line("end clearing");
 }
 
 void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
