@@ -342,7 +342,8 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		as[ArrayMesh::ARRAY_COLOR] = color_array;
 		as[ArrayMesh::ARRAY_INDEX] = indices;
 
-		array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
+		if(v2_array.size() > 0)
+			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
 
 		// create mesh instances
 
@@ -508,7 +509,8 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		as[ArrayMesh::ARRAY_COLOR] = color_array;
 		as[ArrayMesh::ARRAY_INDEX] = indices;
 
-		array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
+		if(v2_array.size() > 0)
+			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
 
 
 		// store the mesh and tex
