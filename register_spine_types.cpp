@@ -1,5 +1,5 @@
 
-#include "register_types.h"
+#include "register_spine_types.h"
 
 #include "core/class_db.h"
 
