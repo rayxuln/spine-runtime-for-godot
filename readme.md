@@ -1,4 +1,8 @@
 # Spine Runtime for Godot Engine
+runtime version 3.8.95
+
+
+
 作者: Raiix
 
 本项目为Godot引擎的模组，用于加载Spine的骨骼动画并渲染播放。
