@@ -525,8 +525,8 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		auto mesh_ins = mesh_instances[i];
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
-		Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
-		mat->set_blend_mode(blend_mode);
+		//Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
+		//mat->set_blend_mode(blend_mode);
 //		}
 
 //		mi_index += 1;
