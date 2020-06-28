@@ -25,6 +25,8 @@ public:
 //        Ref<ImageTexture> &tex = *p_tex;
 //        tex->create_from_image(img);
 		res.texes.append(tex);
+		Array pointer;
+		pointer.append(p_tex);
 
 		String temppath = String(path.buffer());
 		String newpath = temppath.substr(0, temppath.length() - 4) + "_n" + temppath.right(temppath.length() - 4);
@@ -34,18 +36,29 @@ public:
 //        Ref<ImageTexture> &tex = *p_tex;
 //        tex->create_from_image(img);
 			res.normal_texes.append(normal_tex);
-		}
+			pointer.append(normal_tex);
 
-        page.setRendererObject((void*)p_tex);
+		}
+		res.pointers.append(pointer);
+		Array *p_pointer = memnew(Array(pointer));
+		page.setRendererObject((void*)p_pointer);		
 
 		page.width = tex->get_width();
 		page.height = tex->get_height();
     }
 
-    virtual void unload(void *vp_tex){
-        Ref<ImageTexture> &tex = *((Ref<ImageTexture> *)vp_tex);
-        tex.unref();
-		memfree((Ref<ImageTexture>*)vp_tex);
+    virtual void unload(void *vp_array){
+		Array &array = *((Array *)vp_array);
+		for (int i = 0; i < array.size(); i++){
+			Array temparray = array.get(i);
+			for (int j = 0; j < temparray.size(); j++){
+				Variant vp_tex= array.get(i).get(j); 
+				Ref<ImageTexture> tex = (Ref<ImageTexture>)vp_tex;
+				tex.unref();
+				memfree(*tex);
+			}
+		}
+		memfree((Array*)vp_array);
     }
 };
 
