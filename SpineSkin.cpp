@@ -78,7 +78,11 @@ String SpineSkin::get_skin_name(){
 
 void SpineSkin::add_skin(Ref<SpineSkin> other){
 	if(other.is_valid() && other->get_spine_object()){
-		skin->addSkin(other->get_spine_object());
+		if (skin){
+			skin->addSkin(other->get_spine_object());
+		} else{
+			skin->copySkin(other->get_spine_object());
+		}
 	} else{
 		ERR_PRINT("other is NULL!");
 	}
