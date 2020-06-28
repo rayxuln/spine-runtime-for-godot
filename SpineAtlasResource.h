@@ -26,11 +26,15 @@ private:
 
 public:
 	Array texes;
+    Array normal_texes;
 
     Error load_file(const String &p_path);
 
 	void set_textures(const Array &ts);
 	Array get_textures();
+
+	void set_normal_textures(const Array &ts);
+	Array get_normal_textures();    
 
 	inline spine::Atlas *get_spine_atlas(){return atlas;}
 
