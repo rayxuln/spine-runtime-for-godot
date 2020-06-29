@@ -271,13 +271,19 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
 
 		Ref<Texture> tex;
+		Ref<Texture> normal_tex;
 		PoolIntArray indices;
 		size_t v_num = 0;
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
 			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
 
-			tex = *((Ref<ImageTexture>*)((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject());
+			//tex = *((Ref<ImageTexture>*)((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject());
+			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject();
+			// print_line(String("From gen_mesh: ") + String(" ro ") + String(Variant((long long) p_spine_renderer_object)));
+			tex = p_spine_renderer_object->tex;
+			normal_tex = p_spine_renderer_object->normal_tex;
+			// print_line(String("From gen_mesh: ") + String(Variant(tex)) + String(", ") + String(Variant(normal_tex)));
 
 			v_num = 4;
 			vertices.setSize(v_num, Vertex());
@@ -300,7 +306,12 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		}else if(attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 			spine::MeshAttachment *mesh = (spine::MeshAttachment*) attachment;
 
-			tex = *(Ref<ImageTexture>*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+			//tex = *(Ref<ImageTexture>*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+			// print_line(String("From gen_mesh: ") + String(" ro ") + String(Variant((long long) p_spine_renderer_object)));
+			tex = p_spine_renderer_object->tex;
+			normal_tex = p_spine_renderer_object->normal_tex;
+			// print_line(String("From gen_mesh: ") + String(Variant(tex)) + String(", ") + String(Variant(normal_tex)));
 
 			v_num = mesh->getWorldVerticesLength()/2;
 			vertices.setSize(v_num, Vertex());
@@ -345,9 +356,9 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
 
 		// create mesh instances
-
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
+		mesh_ins->set_normal_map(normal_tex);
 
 
 	}
@@ -417,13 +428,17 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 
 		Ref<Texture> tex;
+		Ref<Texture> normal_tex;
 		PoolIntArray indices;
 		size_t v_num = 0;
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
 			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
 
-			tex = *((Ref<ImageTexture>*)((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject());
+			//tex = *((Ref<ImageTexture>*)((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject());
+			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject();
+			tex = p_spine_renderer_object->tex;
+			normal_tex = p_spine_renderer_object->normal_tex;
 
 			v_num = 4;
 			vertices.setSize(v_num, Vertex());
@@ -446,7 +461,10 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		}else if(attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 			spine::MeshAttachment *mesh = (spine::MeshAttachment*) attachment;
 
-			tex = *(Ref<ImageTexture>*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+			//tex = *(Ref<ImageTexture>*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
+			tex = p_spine_renderer_object->tex;
+			normal_tex = p_spine_renderer_object->normal_tex;
 
 			v_num = mesh->getWorldVerticesLength()/2;
 			vertices.setSize(v_num, Vertex());
@@ -505,6 +523,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		auto mesh_ins = mesh_instances[i];
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
+		mesh_ins->set_normal_map(normal_tex);
 
 		if (mesh_ins->get_material()->is_class("CanvasItemMaterial")){
 			Ref<CanvasItemMaterial> mat = mesh_ins->get_material();

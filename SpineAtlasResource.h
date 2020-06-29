@@ -14,7 +14,7 @@
 #include <spine/Atlas.h>
 #include <scene/resources/texture.h>
 #include <core/io/image_loader.h>
-#include "SpineAtlasResourceMap.h"
+#include "SpineRendererObject.h"
 
 class SpineAtlasResource : public Resource{
     GDCLASS(SpineAtlasResource, Resource);
