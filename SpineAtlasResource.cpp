@@ -25,7 +25,23 @@ public:
 //        Ref<ImageTexture> &tex = *p_tex;
 //        tex->create_from_image(img);
 		res.texes.append(tex);
-        page.setRendererObject((void*)p_tex);
+		//Array pointer;
+		//pointer.append(p_tex);		
+
+		String temppath = String(path.buffer());
+		String newpath = temppath.substr(0, temppath.length() - 4) + "_n" + temppath.right(temppath.length() - 4);
+		if (ResourceLoader::exists(newpath)){
+			//Ref<Texture> normal_tex = ResourceLoader::load(newpath);
+			//Ref<Texture> *p_normal_tex = memnew(Ref<Texture>(normal_tex));
+//        Ref<ImageTexture> &tex = *p_tex;
+//        tex->create_from_image(img);
+			//res.normal_texes.append(normal_tex);
+			//pointer.append(normal_tex);
+
+		}
+		//res.pointers.append(pointer);
+		//Array *p_pointer = memnew(Array(pointer));
+		page.setRendererObject((void*)p_tex);		
 
 		page.width = tex->get_width();
 		page.height = tex->get_height();
@@ -56,8 +72,11 @@ SpineAtlasResource::~SpineAtlasResource() {
 void SpineAtlasResource::_bind_methods(){
 	ClassDB::bind_method(D_METHOD("get_textures"), &SpineAtlasResource::get_textures);
 	ClassDB::bind_method(D_METHOD("set_textures", "array"), &SpineAtlasResource::set_textures);
+	ClassDB::bind_method(D_METHOD("get_normal_textures"), &SpineAtlasResource::get_normal_textures);
+	ClassDB::bind_method(D_METHOD("set_normal_textures", "array"), &SpineAtlasResource::set_normal_textures);
 
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "textures"), "set_textures", "get_textures");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "normal_textures"), "set_normal_textures", "get_normal_textures");
 }
 
 void SpineAtlasResource::set_textures(const Array &ts) {
@@ -72,3 +91,14 @@ Array SpineAtlasResource::get_textures() {
 	return texes;
 }
 
+void SpineAtlasResource::set_normal_textures(const Array &ts) {
+	static bool has_start = false;
+	normal_texes = ts;
+	if(has_start) return;
+	has_start = true;
+	reload_from_file();
+	has_start = false;
+}
+Array SpineAtlasResource::get_normal_textures() {
+	return normal_texes;
+}

@@ -14,7 +14,7 @@
 #include <spine/Atlas.h>
 #include <scene/resources/texture.h>
 #include <core/io/image_loader.h>
-
+#include "SpineAtlasResourceMap.h"
 
 class SpineAtlasResource : public Resource{
     GDCLASS(SpineAtlasResource, Resource);
@@ -26,11 +26,16 @@ private:
 
 public:
 	Array texes;
+    Array normal_texes;
+    Array map;
 
     Error load_file(const String &p_path);
 
 	void set_textures(const Array &ts);
 	Array get_textures();
+
+	void set_normal_textures(const Array &ts);
+	Array get_normal_textures();    
 
 	inline spine::Atlas *get_spine_atlas(){return atlas;}
 

@@ -235,20 +235,14 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		mesh_ins->set_owner(this);
 		mesh_instances.push_back(mesh_ins);
 
-		// creat a material
-		Ref<CanvasItemMaterial> mat(memnew(CanvasItemMaterial));
-		mesh_ins->set_material(mat);
-		mat->set_blend_mode(CanvasItemMaterial::BLEND_MODE_MIX);
-
 		spine::Slot *slot = sk->getDrawOrder()[i];
 		mesh_ins->set_name(slot->getData().getName().buffer());
 		Ref<SpineSlot> gd_slot(memnew(SpineSlot));
 		gd_slot->set_spine_object(slot);
 		mesh_ins->set_slot(gd_slot);
 
-		spine::Attachment *attachment = slot->getAttachment();
-		if(!attachment) continue;
-
+			// creat a material
+		Ref<CanvasItemMaterial> mat(memnew(CanvasItemMaterial));
 		CanvasItemMaterial::BlendMode blend_mode;
 		switch (slot->getData().getBlendMode()) {
 			case spine::BlendMode_Normal:
@@ -265,7 +259,12 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 				break;
 			default:
 				blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
-		}
+		}		
+		mat->set_blend_mode(blend_mode);		
+		mesh_ins->set_material(mat);	
+
+		spine::Attachment *attachment = slot->getAttachment();
+		if(!attachment) continue;
 
 		spine::Color skeleton_color = sk->getColor();
 		spine::Color slot_color = slot->getColor();
@@ -412,25 +411,6 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		mesh_instances[i]->set_visible(true);
 
 
-		CanvasItemMaterial::BlendMode blend_mode;
-		switch (slot->getData().getBlendMode()) {
-			case spine::BlendMode_Normal:
-				blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
-				break;
-			case spine::BlendMode_Additive:
-				blend_mode = CanvasItemMaterial::BLEND_MODE_ADD;
-				break;
-			case spine::BlendMode_Multiply:
-				blend_mode = CanvasItemMaterial::BLEND_MODE_MUL;
-				break;
-			case spine::BlendMode_Screen:
-				blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
-				break;
-			default:
-				blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
-		}
-
-
 		spine::Color skeleton_color = sk->getColor();
 		spine::Color slot_color = slot->getColor();
 		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
@@ -525,9 +505,28 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		auto mesh_ins = mesh_instances[i];
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
-		Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
-		mat->set_blend_mode(blend_mode);
-//		}
+
+		if (mesh_ins->get_material()->is_class("CanvasItemMaterial")){
+			Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
+			CanvasItemMaterial::BlendMode blend_mode;
+			switch (slot->getData().getBlendMode()) {
+				case spine::BlendMode_Normal:
+					blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
+					break;
+				case spine::BlendMode_Additive:
+					blend_mode = CanvasItemMaterial::BLEND_MODE_ADD;
+					break;
+				case spine::BlendMode_Multiply:
+					blend_mode = CanvasItemMaterial::BLEND_MODE_MUL;
+					break;
+				case spine::BlendMode_Screen:
+					blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
+					break;
+				default:
+					blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
+			}		
+			mat->set_blend_mode(blend_mode);
+		}
 
 //		mi_index += 1;
 	}
