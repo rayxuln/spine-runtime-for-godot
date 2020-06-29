@@ -13,44 +13,45 @@ public:
     RaiixSpineTextureLoader(SpineAtlasResource &r):res(r){}
 
     virtual void load(spine::AtlasPage &page, const spine::String &path){
-//        print_line(String("Atlas tex path: ") + String(path.buffer()));
+		//Ref<Texture> *p_tex = memnew(Ref<Texture>(tex));
+		auto p_spine_renderer_object = memnew(SpineRendererObject);
 
-//        Ref<Image> img;
-//		img.instance();
-//		print_line(Variant((int)ImageLoader::load_image(String(path.buffer()), img)));
+		// Load texture (e.g. tex.png)
 		Ref<Texture> tex = ResourceLoader::load(String(path.buffer()));
-//		print_line(Variant((int)r_err));
-
-		Ref<Texture> *p_tex = memnew(Ref<Texture>(tex));
-//        Ref<ImageTexture> &tex = *p_tex;
-//        tex->create_from_image(img);
 		res.texes.append(tex);
-		//Array pointer;
-		//pointer.append(p_tex);		
+		p_spine_renderer_object->tex = tex;
 
+		// Load normal texture (e.g. tex_n.png)
 		String temppath = String(path.buffer());
 		String newpath = temppath.substr(0, temppath.length() - 4) + "_n" + temppath.right(temppath.length() - 4);
 		if (ResourceLoader::exists(newpath)){
-			//Ref<Texture> normal_tex = ResourceLoader::load(newpath);
-			//Ref<Texture> *p_normal_tex = memnew(Ref<Texture>(normal_tex));
-//        Ref<ImageTexture> &tex = *p_tex;
-//        tex->create_from_image(img);
-			//res.normal_texes.append(normal_tex);
-			//pointer.append(normal_tex);
+			Ref<Texture> normal_tex = ResourceLoader::load(newpath);
+			res.normal_texes.append(normal_tex);
+			p_spine_renderer_object->normal_tex = normal_tex;
 
+			// print_line(String("From atlas resource load: ") + String(" ro ") + String(Variant((long long) p_spine_renderer_object)));
+			// print_line(String("From atlas resource load: ") + String(Variant(p_spine_renderer_object->tex)) + String(", ") + String(Variant(p_spine_renderer_object->normal_tex)));
 		}
-		//res.pointers.append(pointer);
-		//Array *p_pointer = memnew(Array(pointer));
-		page.setRendererObject((void*)p_tex);		
+
+		page.setRendererObject((void*)p_spine_renderer_object);		
 
 		page.width = tex->get_width();
 		page.height = tex->get_height();
     }
 
-    virtual void unload(void *vp_tex){
-        Ref<ImageTexture> &tex = *((Ref<ImageTexture> *)vp_tex);
+    virtual void unload(void *p){
+		// print_line("I'm out.");
+		auto p_spine_renderer_object = (SpineRendererObject*) p;
+        Ref<Texture> &tex = p_spine_renderer_object->tex;
+		Ref<Texture> &normal_tex = p_spine_renderer_object->normal_tex;
+
+		res.texes.remove(res.texes.find(tex));
+		res.normal_texes.remove(res.normal_texes.find(normal_tex));
+
         tex.unref();
-		memfree((Ref<ImageTexture>*)vp_tex);
+		normal_tex.unref();
+
+		memdelete(p_spine_renderer_object);
     }
 };
 
