@@ -72,6 +72,9 @@ void SpineSprite::_notification(int p_what) {
 				return;
 
 			animation_state->update(get_process_delta_time());
+			if (!is_visible_in_tree())
+				return;
+				
 			animation_state->apply(skeleton);
 
 			skeleton->update_world_transform();
