@@ -34,6 +34,8 @@ void SpineSprite::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_bind_slot_nodes"), &SpineSprite::get_bind_slot_nodes);
 	ClassDB::bind_method(D_METHOD("set_bind_slot_nodes", "v"), &SpineSprite::set_bind_slot_nodes);
+	ClassDB::bind_method(D_METHOD("get_overlap"), &SpineSprite::get_overlap);
+	ClassDB::bind_method(D_METHOD("set_overlap", "v"), &SpineSprite::set_overlap);	
 
 
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "skeleton", PROPERTY_HINT_TYPE_STRING, "SpineSkeleton")));
@@ -55,7 +57,8 @@ void SpineSprite::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animations_trigger"), "set_set_empty_animations", "get_set_empty_animations");
 
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations"), "set_current_animations", "get_current_animations");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "bind_slot_nodes"), "set_bind_slot_nodes", "get_bind_slot_nodes");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "bind_slot_nodes"), "set_bind_slot_nodes", "get_bind_slot_nodes");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "overlap"), "set_overlap", "get_overlap");
 }
 
 SpineSprite::SpineSprite():select_track_id(0),empty_animation_duration(0.2f) {}
@@ -277,6 +280,7 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		Ref<Texture> normal_tex;
 		PoolIntArray indices;
 		size_t v_num = 0;
+		int parent_z = get_z_index();
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
 			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
@@ -362,8 +366,9 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
 		mesh_ins->set_normal_map(normal_tex);
-
-
+		if (overlap){
+			mesh_ins->set_z_index(parent_z + i);
+		}
 	}
 }
 
@@ -434,6 +439,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		Ref<Texture> normal_tex;
 		PoolIntArray indices;
 		size_t v_num = 0;
+		int parent_z = get_z_index();
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
 			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
@@ -527,6 +533,9 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
 		mesh_ins->set_normal_map(normal_tex);
+		if (overlap){
+			mesh_ins->set_z_index(parent_z + i);
+		}
 
 		if (mesh_ins->get_material()->is_class("CanvasItemMaterial")){
 			Ref<CanvasItemMaterial> mat = mesh_ins->get_material();
@@ -698,6 +707,13 @@ Array SpineSprite::get_bind_slot_nodes(){
 }
 void SpineSprite::set_bind_slot_nodes(Array v) {
 	bind_slot_nodes = v;
+}
+
+bool SpineSprite::get_overlap(){
+	return overlap;
+}
+void SpineSprite::set_overlap(bool v){
+	overlap = v;
 }
 
 void SpineSprite::bind_slot_with_node_2d(const String &slot_name, Node2D *n){

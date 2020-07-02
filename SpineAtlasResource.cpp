@@ -46,7 +46,9 @@ public:
 		Ref<Texture> &normal_tex = p_spine_renderer_object->normal_tex;
 
 		res.texes.remove(res.texes.find(tex));
-		res.normal_texes.remove(res.normal_texes.find(normal_tex));
+		int normal_position = res.normal_texes.find(normal_tex);
+		if (normal_position != -1)
+		res.normal_texes.remove(normal_position);
 
         tex.unref();
 		normal_tex.unref();

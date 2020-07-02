@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SpineAnimationState" inherits="Node2D" version="3.2">
+    <brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+	</members>
+	<signals>    
+	</signals>
+	</signals>
+	<constants>
+	</constants>
+</class>    
