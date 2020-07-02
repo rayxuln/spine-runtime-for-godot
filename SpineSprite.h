@@ -31,6 +31,7 @@ private:
 	int select_track_id;
 	float empty_animation_duration;
 	Array bind_slot_nodes;
+	bool overlap = false;
 public:
 	SpineSprite();
 	~SpineSprite();
@@ -84,6 +85,10 @@ public:
 
 	void bind_slot_with_node_2d(const String &slot_name, Node2D *n);
 	void unbind_slot_with_node_2d(const String &slot_name, Node2D *n);
+
+	//allow z-manipulation
+	bool get_overlap();
+	void set_overlap(bool v);
 };
 
 

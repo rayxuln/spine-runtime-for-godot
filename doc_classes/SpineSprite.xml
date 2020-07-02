@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SpineSprite" inherits="Node2D" version="3.2">
+	<brief_description>
+	Node2d to display and play Spine2d animations
+	</brief_description>
+	<description>
+	Node2d to load spine projects and atlas. Able to play animations.
+	</description>
+	<tutorials>
+		<link>https://http://en.esotericsoftware.com/spine-runtime-architecture</link>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="overlap" type="bool" setter="set_overlap" getter="get_overlap">
+			Allows overlapping of multiple Spine objects by manipulating the z-index of children
+			Makes it possible to play animations involving multiple skeletons
+		</member>
+	</members>
+	<signals>
+		<signal name="animation_state_ready">
+			<description>
+				Emitted when animation is ready to play
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="track_entry" type="SpineTrackEntry">
+			</argument>
+		</signal>
+		<signal name="animation_start">
+			<description>
+				Emitted when animation starts playing
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="skeleton" type="SpineSkeleton">
+			</argument>
+			<argument index="2" name="event" type="SpineEvent">
+			</argument>
+		</signal>
+		<signal name="animation_interrupt">
+			<description>
+				Emitted when animation paying has been disrupted.
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="skeleton" type="SpineSkeleton">
+			</argument>
+			<argument index="2" name="event" type="SpineEvent">
+			</argument>
+		</signal>
+		<signal name="animation_end">
+			<description>
+				Emitted when animation playing has reached its end
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="skeleton" type="SpineSkeleton">
+			</argument>
+			<argument index="2" name="event" type="SpineEvent">
+			</argument>
+		</signal>
+		<signal name="animation_complete">
+			<description>
+				Emitted when animation playing has finished
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="skeleton" type="SpineSkeleton">
+			</argument>
+			<argument index="2" name="event" type="SpineEvent">
+			</argument>
+		</signal>
+		<signal name="animation_dispose">
+			<description>
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="skeleton" type="SpineSkeleton">
+			</argument>
+			<argument index="2" name="event" type="SpineEvent">
+			</argument>
+		</signal>
+		<signal name="animation_event">
+			<description>
+				Emitted when event in animation is hit
+			</description>
+			<argument index="0" name="animation_state" type="SpineAnimationState">
+			</argument>
+			<argument index="1" name="skeleton" type="SpineSkeleton">
+			</argument>
+			<argument index="2" name="event" type="SpineEvent">
+			</argument>
+		</signal>
+	</signals>
+	</signals>
+	<constants>
+	</constants>
+</class>
