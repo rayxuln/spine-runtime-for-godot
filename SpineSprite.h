@@ -32,6 +32,8 @@ private:
 	float empty_animation_duration;
 	Array bind_slot_nodes;
 	bool overlap = false;
+
+	Array meshes;
 public:
 	SpineSprite();
 	~SpineSprite();
@@ -89,6 +91,7 @@ public:
 	//allow z-manipulation
 	bool get_overlap();
 	void set_overlap(bool v);
+
 };
 
 

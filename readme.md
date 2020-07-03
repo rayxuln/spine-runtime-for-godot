@@ -10,6 +10,10 @@ Applicable to Spine3.8.x version.
 # Description
 Added SpineSprite node for loading Spine's skeletal animation (need to provide .atlas file, picture file and .json file, atlas resource will automatically load picture), and provide methods for controlling animation playback, animation mixing, etc. At the same time, it provides corresponding signals for processing the events emitted by the skeleton animation.
 
+# Gotchas
+Compiling godot for debug (-Od flag) will severely impact performance
+Compile with -O2 flag for godot engine and run linker can double fps
+
 # Compilation instructions
 Clone this repository to the `godot/modules/` folder as `spine_runtime`, then compile the engine.
 
