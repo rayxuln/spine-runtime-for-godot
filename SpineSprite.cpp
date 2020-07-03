@@ -271,110 +271,10 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 		spine::Attachment *attachment = slot->getAttachment();
 		if(!attachment) continue;
-
-		spine::Color skeleton_color = sk->getColor();
-		spine::Color slot_color = slot->getColor();
-		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
-
-		Ref<Texture> tex;
-		Ref<Texture> normal_tex;
-		PoolIntArray indices;
-		size_t v_num = 0;
-		int parent_z = get_z_index();
-		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
-		{
-			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
-
-			//tex = *((Ref<ImageTexture>*)((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject());
-			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)region_attachment->getRendererObject())->page->getRendererObject();
-			// print_line(String("From gen_mesh: ") + String(" ro ") + String(Variant((long long) p_spine_renderer_object)));
-			tex = p_spine_renderer_object->tex;
-			normal_tex = p_spine_renderer_object->normal_tex;
-			// print_line(String("From gen_mesh: ") + String(Variant(tex)) + String(", ") + String(Variant(normal_tex)));
-
-			v_num = 4;
-			vertices.setSize(v_num, Vertex());
-
-
-			region_attachment->computeWorldVertices(slot->getBone(), &(vertices.buffer()->x), 0, sizeof(Vertex) / sizeof(float));
-
-			for (size_t j=0, l=0; j < 4; ++j, l+=2)
-			{
-				Vertex &vertex = vertices[j];
-				vertex.color.set(tint);
-				vertex.u = region_attachment->getUVs()[l];
-				vertex.v = region_attachment->getUVs()[l+1];
-			}
-
-			for(auto x : quad_indices)
-			{
-				indices.push_back(x);
-			}
-		}else if(attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
-			spine::MeshAttachment *mesh = (spine::MeshAttachment*) attachment;
-
-			//tex = *(Ref<ImageTexture>*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
-			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
-			// print_line(String("From gen_mesh: ") + String(" ro ") + String(Variant((long long) p_spine_renderer_object)));
-			tex = p_spine_renderer_object->tex;
-			normal_tex = p_spine_renderer_object->normal_tex;
-			// print_line(String("From gen_mesh: ") + String(Variant(tex)) + String(", ") + String(Variant(normal_tex)));
-
-			v_num = mesh->getWorldVerticesLength()/2;
-			vertices.setSize(v_num, Vertex());
-
-			mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), &(vertices.buffer()->x), 0, sizeof(Vertex) / sizeof(float));
-
-			for(size_t j=0, l=0; j < v_num; ++j, l+=2)
-			{
-				Vertex &vertex = vertices[j];
-				vertex.color.set(tint);
-				vertex.u = mesh->getUVs()[l];
-				vertex.v = mesh->getUVs()[l+1];
-			}
-
-			auto &ids = mesh->getTriangles();
-			for(size_t j=0; j<ids.size(); ++j)
-			{
-				indices.push_back(ids[j]);
-			}
-		}
-
-		// copy vertices, uvs, colors
-		PoolVector2Array v2_array, uv_array;
-		PoolColorArray color_array;
-		for(size_t j=0; j < v_num; ++j)
-		{
-			v2_array.push_back(Vector2(vertices[j].x, -vertices[j].y));
-			uv_array.push_back(Vector2(vertices[j].u, vertices[j].v));
-			color_array.push_back(Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
-		}
-
-		// create array mesh
-		Ref<ArrayMesh> array_mesh = Ref<ArrayMesh>(memnew(ArrayMesh));
-		meshes.push_back(array_mesh);
-		Array as;
-		as.resize(ArrayMesh::ARRAY_MAX);
-		as[ArrayMesh::ARRAY_VERTEX] = v2_array;
-		as[ArrayMesh::ARRAY_TEX_UV] = uv_array;
-		as[ArrayMesh::ARRAY_COLOR] = color_array;
-		as[ArrayMesh::ARRAY_INDEX] = indices;
-
-		if(v2_array.size() > 0)
-			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
-
-		// create mesh instances
-		mesh_ins->set_mesh(array_mesh);
-		mesh_ins->set_texture(tex);
-		mesh_ins->set_normal_map(normal_tex);
-		if (overlap){
-			mesh_ins->set_z_index(parent_z + i);
-		}
 	}
 }
 
 void SpineSprite::remove_mesh_instances() {
-	meshes.clear();	 //TODO more cleanup needed here?
 	for(size_t i=0;i < mesh_instances.size();++i)
 	{
 		remove_child(mesh_instances[i]);
@@ -403,7 +303,7 @@ void SpineSprite::remove_redundant_mesh_instances() {
 		remove_child(ms[i]);
 		memdelete(ms[i]);
 	}
-	ms.clear(); //TODO do meshes need cleaning too?
+	ms.clear();
 //	print_line("end clearing");
 }
 
@@ -439,7 +339,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 		Ref<Texture> tex;
 		Ref<Texture> normal_tex;
-		Vector<int> indices;
+		PoolIntArray indices;
 		size_t v_num = 0;
 		int parent_z = get_z_index();
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
@@ -472,6 +372,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		}else if(attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 			spine::MeshAttachment *mesh = (spine::MeshAttachment*) attachment;
 
+			//tex = *(Ref<ImageTexture>*)((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
 			auto p_spine_renderer_object = (SpineRendererObject*) ((spine::AtlasRegion*)mesh->getRendererObject())->page->getRendererObject();
 			tex = p_spine_renderer_object->tex;
 			normal_tex = p_spine_renderer_object->normal_tex;
@@ -490,58 +391,47 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			}
 
 			auto &ids = mesh->getTriangles();
-			indices.resize(ids.size());
 			for(size_t j=0; j<ids.size(); ++j)
 			{
-				indices.set(j, ids[j]);
+				indices.push_back(ids[j]);
 			}
-		} //81fps
+		}
 
 
 		// copy vertices, uvs, colors
-		Vector<Vector2> v2_array, uv_array;
-		Vector<Color> color_array;
-		v2_array.resize(v_num);
-		uv_array.resize(v_num);
-		color_array.resize(v_num);
+		PoolVector2Array v2_array, uv_array;
+		PoolColorArray color_array;
 		for(size_t j=0; j < v_num; ++j)
 		{
-			v2_array.set(j, Vector2(vertices[j].x, -vertices[j].y));
-			uv_array.set(j, Vector2(vertices[j].u, vertices[j].v));
-			color_array.set(j, Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
-		} //53 fps to 81fps in change
+			v2_array.push_back(Vector2(vertices[j].x, -vertices[j].y));
+			uv_array.push_back(Vector2(vertices[j].u, vertices[j].v));
+			color_array.push_back(Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
+		}
 
-		auto mesh_ins = mesh_instances[i];
-		Ref<ArrayMesh> array_mesh = meshes[i];	
 
 		// create array mesh
-		if(v2_array.size() > 0){		
-			//array_mesh = Ref<ArrayMesh>(memnew(ArrayMesh)); //sucks the fps right out, meshinstance should have a mesh by now	
-			//RID id = RID(array_mesh);
-			Array as;
-			as.resize(ArrayMesh::ARRAY_MAX);
-			as[ArrayMesh::ARRAY_VERTEX] = v2_array;
-			as[ArrayMesh::ARRAY_TEX_UV] = uv_array;
-			as[ArrayMesh::ARRAY_COLOR] = color_array;
-			as[ArrayMesh::ARRAY_INDEX] = indices;
-			//continue; //100fps	
-			array_mesh->surface_remove(0);
-			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as); //expensive as hell
-			/*
-			VisualServer::get_singleton()->canvas_item_add_triangle_array(mesh_ins->get_canvas_item(),
-				indices,
-				v2_array,
-				color_array,
-				uv_array,
-				Vector<int>(),    // bones
-				Vector<float>(),  // weights
-				tex->get_rid(),
-				-1,               // int p_count = -1
-				normal_tex->get_rid(),
-				true);*/
-		}
-		// 43 fps 51fps after first change; now 61
+		Ref<ArrayMesh> array_mesh = Ref<ArrayMesh>(memnew(ArrayMesh));
+		Array as;
+		as.resize(ArrayMesh::ARRAY_MAX);
+		as[ArrayMesh::ARRAY_VERTEX] = v2_array;
+		as[ArrayMesh::ARRAY_TEX_UV] = uv_array;
+		as[ArrayMesh::ARRAY_COLOR] = color_array;
+		as[ArrayMesh::ARRAY_INDEX] = indices;
 
+		if(v2_array.size() > 0)
+			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
+
+
+		// store the mesh and tex
+//		Dictionary dic;
+//		dic["mesh"] = array_mesh;
+//		dic["tex"] = tex;
+
+		// update mesh instances
+//		if(mi_index < mesh_instances.size())
+//		{
+//		print_line(String("mesh_i: ") + Variant((uint64_t)i));
+		auto mesh_ins = mesh_instances[i];
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
 		mesh_ins->set_normal_map(normal_tex);
@@ -569,7 +459,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 					blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
 			}		
 			mat->set_blend_mode(blend_mode);
-		} //45fps now 80fps
+		}
 
 //		mi_index += 1;
 	}
