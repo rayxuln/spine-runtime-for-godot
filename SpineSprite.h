@@ -33,7 +33,6 @@ private:
 	Array bind_slot_nodes;
 	bool overlap = false;
 
-	Array meshes;
 public:
 	SpineSprite();
 	~SpineSprite();

@@ -391,9 +391,10 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			}
 
 			auto &ids = mesh->getTriangles();
+			indices.resize(ids.size());
 			for(size_t j=0; j<ids.size(); ++j)
 			{
-				indices.push_back(ids[j]);
+				indices.set(j, ids[j]);
 			}
 		}
 
@@ -401,11 +402,14 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		// copy vertices, uvs, colors
 		PoolVector2Array v2_array, uv_array;
 		PoolColorArray color_array;
+		v2_array.resize(v_num);
+		uv_array.resize(v_num);
+		color_array.resize(v_num);		
 		for(size_t j=0; j < v_num; ++j)
 		{
-			v2_array.push_back(Vector2(vertices[j].x, -vertices[j].y));
-			uv_array.push_back(Vector2(vertices[j].u, vertices[j].v));
-			color_array.push_back(Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
+			v2_array.set(j, Vector2(vertices[j].x, -vertices[j].y));
+			uv_array.set(j, Vector2(vertices[j].u, vertices[j].v));
+			color_array.set(j, Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
 		}
 
 
