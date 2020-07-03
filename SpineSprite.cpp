@@ -365,9 +365,12 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 				vertex.v = region_attachment->getUVs()[l+1];
 			}
 
+			indices.resize(sizeof(quad_indices)/sizeof(quad_indices[0]));
+			int j = 0;
 			for(auto x : quad_indices)
 			{
-				indices.push_back(x);
+				indices.set(j, x);
+				j++;
 			}
 		}else if(attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 			spine::MeshAttachment *mesh = (spine::MeshAttachment*) attachment;
@@ -425,16 +428,6 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		if(v2_array.size() > 0)
 			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
 
-
-		// store the mesh and tex
-//		Dictionary dic;
-//		dic["mesh"] = array_mesh;
-//		dic["tex"] = tex;
-
-		// update mesh instances
-//		if(mi_index < mesh_instances.size())
-//		{
-//		print_line(String("mesh_i: ") + Variant((uint64_t)i));
 		auto mesh_ins = mesh_instances[i];
 		mesh_ins->set_mesh(array_mesh);
 		mesh_ins->set_texture(tex);
