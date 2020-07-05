@@ -7,6 +7,8 @@
 
 #include <scene/resources/texture.h>
 
+#include <spine/spine.h>
+
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
@@ -31,6 +33,7 @@ private:
 	int select_track_id;
 	float empty_animation_duration;
 	Array bind_slot_nodes;
+	spine::SkeletonClipping *skeleton_clip;
 	bool overlap = false;
 
 public:
