@@ -229,7 +229,6 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		spine::Color color;
 	};
 	static spine::Vector<Vertex> vertices;
-	static unsigned short quad_indices[] = {0, 1, 2, 2, 3, 0};
 
 	auto sk = s->get_spine_object();
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
@@ -331,17 +330,15 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		}
 		mesh_instances[i]->set_visible(true);
 
-
 		spine::Color skeleton_color = sk->getColor();
 		spine::Color slot_color = slot->getColor();
 		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
-
 
 		Ref<Texture> tex;
 		Ref<Texture> normal_tex;
 		PoolIntArray indices;
 		size_t v_num = 0;
-		int parent_z = get_z_index();
+
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
 			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
@@ -401,39 +398,38 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			}
 		}
 
+		auto mesh_ins = mesh_instances[i];	
+		VisualServer::get_singleton()->canvas_item_clear(mesh_ins->get_canvas_item());	
 
-		// copy vertices, uvs, colors
-		PoolVector2Array v2_array, uv_array;
-		PoolColorArray color_array;
-		v2_array.resize(v_num);
-		uv_array.resize(v_num);
-		color_array.resize(v_num);		
-		for(size_t j=0; j < v_num; ++j)
-		{
-			v2_array.set(j, Vector2(vertices[j].x, -vertices[j].y));
-			uv_array.set(j, Vector2(vertices[j].u, vertices[j].v));
-			color_array.set(j, Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
-		}
+		if (indices.size() > 0){
 
+			Vector<Vector2> p_points, p_uvs;
+			Vector<Color> p_colors;
+			Vector<int> p_indices;
+			p_points.resize(v_num);
+			p_uvs.resize(v_num);
+			p_colors.resize(v_num);		
+			for (size_t j = 0; j < v_num; j++) {
+				p_points.set(j, Vector2(vertices[j].x, -vertices[j].y));
+				p_uvs.set(j, Vector2(vertices[j].u, vertices[j].v));
+				p_colors.set(j, Color(vertices[j].color.r, vertices[j].color.g, vertices[j].color.b, vertices[j].color.a));
+			}
+			p_indices.resize(indices.size());
+			for(size_t j=0; j<indices.size(); ++j)
+			{
+				p_indices.set(j, indices[j]);
+			}		
 
-		// create array mesh
-		Ref<ArrayMesh> array_mesh = Ref<ArrayMesh>(memnew(ArrayMesh));
-		Array as;
-		as.resize(ArrayMesh::ARRAY_MAX);
-		as[ArrayMesh::ARRAY_VERTEX] = v2_array;
-		as[ArrayMesh::ARRAY_TEX_UV] = uv_array;
-		as[ArrayMesh::ARRAY_COLOR] = color_array;
-		as[ArrayMesh::ARRAY_INDEX] = indices;
-
-		if(v2_array.size() > 0)
-			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, as);
-
-		auto mesh_ins = mesh_instances[i];
-		mesh_ins->set_mesh(array_mesh);
-		mesh_ins->set_texture(tex);
-		mesh_ins->set_normal_map(normal_tex);
-		if (overlap){
-			mesh_ins->set_z_index(parent_z + i);
+			VisualServer::get_singleton()->canvas_item_add_triangle_array(mesh_ins->get_canvas_item(),
+					p_indices,
+					p_points,
+					p_colors,
+					p_uvs,
+					Vector<int>(),
+					Vector<float>(),
+					tex.is_null() ? RID() : tex->get_rid(),
+					-1,
+					normal_tex.is_null() ? RID() : normal_tex->get_rid());
 		}
 
 		if (mesh_ins->get_material()->is_class("CanvasItemMaterial")){
@@ -457,8 +453,6 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			}		
 			mat->set_blend_mode(blend_mode);
 		}
-
-//		mi_index += 1;
 	}
 }
 
