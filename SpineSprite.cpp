@@ -229,7 +229,6 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		spine::Color color;
 	};
 	static spine::Vector<Vertex> vertices;
-	static unsigned short quad_indices[] = {0, 1, 2, 2, 3, 0};
 
 	auto sk = s->get_spine_object();
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
@@ -331,17 +330,15 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		}
 		mesh_instances[i]->set_visible(true);
 
-
 		spine::Color skeleton_color = sk->getColor();
 		spine::Color slot_color = slot->getColor();
 		spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
-
 
 		Ref<Texture> tex;
 		Ref<Texture> normal_tex;
 		PoolIntArray indices;
 		size_t v_num = 0;
-		int parent_z = get_z_index();
+
 		if(attachment->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
 			spine::RegionAttachment *region_attachment = (spine::RegionAttachment*)attachment;
