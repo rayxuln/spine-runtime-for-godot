@@ -61,12 +61,8 @@ void SpineSprite::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "overlap"), "set_overlap", "get_overlap");
 }
 
-SpineSprite::SpineSprite():select_track_id(0),empty_animation_duration(0.2f) {
-		skeleton_clip = new spine::SkeletonClipping();
-}
-SpineSprite::~SpineSprite() {
-	delete skeleton_clip;
-}
+SpineSprite::SpineSprite():select_track_id(0),empty_animation_duration(0.2f) {}
+SpineSprite::~SpineSprite() {}
 
 void SpineSprite::_notification(int p_what) {
 	switch (p_what) {
@@ -235,7 +231,6 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	static spine::Vector<Vertex> vertices;
 
 	auto sk = s->get_spine_object();
-
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{
 		// creat a mesh instance 2d for every slot
@@ -387,21 +382,20 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 			mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), &(vertices.buffer()->x), 0, sizeof(Vertex) / sizeof(float));
 
+			for(size_t j=0, l=0; j < v_num; ++j, l+=2)
+			{
+				Vertex &vertex = vertices[j];
+				vertex.color.set(tint);
+				vertex.u = mesh->getUVs()[l];
+				vertex.v = mesh->getUVs()[l+1];
+			}
+
 			auto &ids = mesh->getTriangles();
 			indices.resize(ids.size());
 			for(size_t j=0; j<ids.size(); ++j)
 			{
 				indices.set(j, ids[j]);
 			}
-			if (skeleton_clip->isClipping()){
-			}
-
-		}else if(attachment->getRTTI().isExactly(spine::ClippingAttachment::rtti)){
-			spine::ClippingAttachment *clip = (spine::ClippingAttachment*) attachment;
-			skeleton_clip->clipStart(*slot, clip);
-			continue;
-		}else{
-			skeleton_clip->clipEnd(*slot);
 		}
 
 		auto mesh_ins = mesh_instances[i];	
