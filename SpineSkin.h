@@ -32,6 +32,8 @@ public:
 		return skin;
 	}
 
+	Ref<SpineSkin> init(const String &name);
+
 	void set_attachment(uint64_t slot_index, const String &name, Ref<SpineAttachment> attachment);
 
 	Ref<SpineAttachment> get_attachment(uint64_t slot_index, const String &name);

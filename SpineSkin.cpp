@@ -8,6 +8,7 @@
 #include "SpineConstraintData.h"
 
 void SpineSkin::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("init", "name"), &SpineSkin::init);
 	ClassDB::bind_method(D_METHOD("set_attachment", "slot_index", "name", "attachment"), &SpineSkin::set_attachment);
 	ClassDB::bind_method(D_METHOD("get_attachment", "slot_index", "name"), &SpineSkin::get_attachment);
 	ClassDB::bind_method(D_METHOD("remove_attachment", "slot_index", "name"), &SpineSkin::remove_attachment);
@@ -25,6 +26,11 @@ SpineSkin::SpineSkin():skin(NULL) {}
 SpineSkin::~SpineSkin() {}
 
 #define S_T(x) (spine::String(x.utf8()))
+Ref<SpineSkin> SpineSkin::init(const String &name){
+	skin = new spine::Skin(S_T(name));
+	return this;
+}
+
 void SpineSkin::set_attachment(uint64_t slot_index, const String &name, Ref<SpineAttachment> attachment){
 	if(!attachment.is_valid()){
 		ERR_PRINT("attachment is invalid!");
@@ -78,11 +84,7 @@ String SpineSkin::get_skin_name(){
 
 void SpineSkin::add_skin(Ref<SpineSkin> other){
 	if(other.is_valid() && other->get_spine_object()){
-		if (skin){
-			skin->addSkin(other->get_spine_object());
-		} else{
-			skin->copySkin(other->get_spine_object());
-		}
+		skin->addSkin(other->get_spine_object());
 	} else{
 		ERR_PRINT("other is NULL!");
 	}
