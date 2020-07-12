@@ -35,6 +35,8 @@ private:
 	bool overlap = false;
 	Ref<PackedSpineSkinResource> skin;
 
+	spine::SkeletonClipping *skeleton_clipper;
+
 public:
 	SpineSprite();
 	~SpineSprite();
