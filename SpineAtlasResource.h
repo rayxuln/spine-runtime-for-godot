@@ -27,7 +27,6 @@ private:
 public:
 	Array texes;
     Array normal_texes;
-    Array map;
 
     Error load_file(const String &p_path);
 
