@@ -305,16 +305,24 @@ void SpineSprite::remove_redundant_mesh_instances() {
 //	print_line("end clearing");
 }
 
+#define TEMP_COPY(t, get_res) do{auto &temp_uvs = get_res;        \
+								t.setSize(temp_uvs.size(), 0);    \
+								for(size_t j=0;j<t.size();++j)    \
+								{                                 \
+								t[j] = temp_uvs[j];               \
+								}}while(false);
 void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	static const unsigned short VERTEX_STRIDE = 2;
-	static spine::Vector<float> vertices;
-	static spine::Vector<float> uvs;
-	static spine::Vector<unsigned short> indices;
+	static const unsigned short UV_STRIDE = 2;
 	static unsigned short quad_indices[] = { 0, 1, 2, 2, 3, 0 };
 
 	auto sk = s->get_spine_object();
 	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
 	{
+		spine::Vector<float> vertices;
+		spine::Vector<float> uvs;
+		spine::Vector<unsigned short> indices;
+
 		spine::Slot *slot = sk->getDrawOrder()[i];
 
 		spine::Attachment *attachment = slot->getAttachment();
@@ -348,7 +356,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 
 			region_attachment->computeWorldVertices(slot->getBone(), vertices, 0);
 
-			uvs = region_attachment->getUVs();
+			TEMP_COPY(uvs, region_attachment->getUVs());
 
 			indices.setSize(sizeof(quad_indices) / sizeof(unsigned short), 0);
 			for (size_t j = 0, qn = indices.size();j<qn;++j) {
@@ -362,12 +370,14 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			normal_tex = p_spine_renderer_object->normal_tex;
 
 			v_num = mesh->getWorldVerticesLength()/VERTEX_STRIDE;
-			vertices.setSize(v_num * VERTEX_STRIDE, 0);
+			vertices.setSize(mesh->getWorldVerticesLength(), 0);
 
 			mesh->computeWorldVertices(*slot, vertices);
 
-			uvs = mesh->getUVs();
-			indices = mesh->getTriangles();
+//			uvs = mesh->getUVs();
+//			indices = mesh->getTriangles();
+			TEMP_COPY(uvs, mesh->getUVs());
+			TEMP_COPY(indices, mesh->getTriangles());
 		} else if (attachment->getRTTI().isExactly(spine::ClippingAttachment::rtti)) {
 			auto clip = (spine::ClippingAttachment *) attachment;
 			skeleton_clipper->clipStart(*slot, clip);
@@ -477,6 +487,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 	}
 	skeleton_clipper->clipEnd();
 }
+#undef TEMP_COPY
 
 void SpineSprite::callback(spine::AnimationState *state, spine::EventType type, spine::TrackEntry *entry, spine::Event *event) {
 	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
