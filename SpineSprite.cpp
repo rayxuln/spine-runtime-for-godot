@@ -362,6 +362,12 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 			for (size_t j = 0, qn = indices.size();j<qn;++j) {
 				indices[j] = quad_indices[j];
 			}
+
+			auto attachment_color = region_attachment->getColor();
+			tint.r *= attachment_color.r;
+			tint.g *= attachment_color.g;
+			tint.b *= attachment_color.b;
+			tint.a *= attachment_color.a;
 		}else if(attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
 			spine::MeshAttachment *mesh = (spine::MeshAttachment*) attachment;
 
@@ -378,6 +384,12 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 //			indices = mesh->getTriangles();
 			TEMP_COPY(uvs, mesh->getUVs());
 			TEMP_COPY(indices, mesh->getTriangles());
+
+			auto attachment_color = mesh->getColor();
+			tint.r *= attachment_color.r;
+			tint.g *= attachment_color.g;
+			tint.b *= attachment_color.b;
+			tint.a *= attachment_color.a;
 		} else if (attachment->getRTTI().isExactly(spine::ClippingAttachment::rtti)) {
 			auto clip = (spine::ClippingAttachment *) attachment;
 			skeleton_clipper->clipStart(*slot, clip);
