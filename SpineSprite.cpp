@@ -502,10 +502,18 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 #undef TEMP_COPY
 
 void SpineSprite::callback(spine::AnimationState *state, spine::EventType type, spine::TrackEntry *entry, spine::Event *event) {
-	Ref<SpineTrackEntry> gd_entry(memnew(SpineTrackEntry));
-	gd_entry->set_spine_object(entry);
-	Ref<SpineEvent> gd_event(memnew(SpineEvent));
-	gd_event->set_spine_object(event);
+	Ref<SpineTrackEntry> gd_entry(NULL);
+	Ref<SpineEvent> gd_event(NULL);
+
+	if(entry){
+		gd_entry = Ref<SpineTrackEntry>(memnew(SpineTrackEntry));
+		gd_entry->set_spine_object(entry);
+	}
+	if(event){
+		gd_event = Ref<SpineEvent>(memnew(SpineEvent));
+		gd_event->set_spine_object(event);
+	}
+
 	switch (type) {
 		case spine::EventType_Start:
 		{
