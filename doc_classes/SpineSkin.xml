@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="SpineSprite" inherits="Node2D" version="3.2">
+<class name="SpineSkin" inherits="Node2D" version="3.2">
 	<brief_description>
 	Object to work with skins
 	</brief_description>
@@ -13,7 +13,7 @@
     <members>
     </members>
     <signals>
-    </signal>
+    </signals>
 	<constants>
 	</constants>
 </class>
