@@ -98,6 +98,7 @@ public:
 
 	void set_skin(Ref<PackedSpineSkinResource> v);
 	Ref<PackedSpineSkinResource> get_skin();
+	void _on_skin_property_changed();
 	void update_runtime_skin();
 
 	Ref<SpineSkin> gen_spine_skin_from_packed_resource(Ref<PackedSpineSkinResource> res);
