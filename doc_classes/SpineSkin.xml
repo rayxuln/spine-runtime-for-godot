@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SpineSkin" inherits="Node2D" version="3.2">
+	<brief_description>
+	Object to work with skins
+	</brief_description>
+	<description>
+	Instantiated by using var skin = SpineSkin.new().init(name)
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+    <members>
+    </members>
+    <signals>
+    </signals>
+	<constants>
+	</constants>
+</class>

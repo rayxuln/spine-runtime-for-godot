@@ -38,7 +38,6 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_overlap", "v"), &SpineSprite::set_overlap);	
 	ClassDB::bind_method(D_METHOD("set_skin", "v"), &SpineSprite::set_skin);
 	ClassDB::bind_method(D_METHOD("get_skin"), &SpineSprite::get_skin);
-	ClassDB::bind_method(D_METHOD("_on_skin_property_changed"), &SpineSprite::_on_skin_property_changed);
 	ClassDB::bind_method(D_METHOD("gen_spine_skin_from_packed_resource", "res"), &SpineSprite::gen_spine_skin_from_packed_resource);
 
 
@@ -666,7 +665,6 @@ void SpineSprite::set_skin(Ref<PackedSpineSkinResource> v)
 {
 	skin = v;
 	if(skin.is_valid()){
-		skin->connect("property_changed", this, "_on_skin_property_changed");
 		update_runtime_skin();
 	}
 }
@@ -681,9 +679,6 @@ void SpineSprite::update_runtime_skin(){
 		skeleton->set_skin(new_skin);
 		skeleton->set_to_setup_pose();
 	}
-}
-void SpineSprite::_on_skin_property_changed(){
-	update_runtime_skin();
 }
 
 Ref<SpineSkin> SpineSprite::gen_spine_skin_from_packed_resource(Ref<PackedSpineSkinResource> res){
