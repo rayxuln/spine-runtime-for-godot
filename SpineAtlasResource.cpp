@@ -12,17 +12,43 @@ public:
 
     RaiixSpineTextureLoader(SpineAtlasResource &r):res(r){}
 
+    String fixPathIssue(const String &path){
+        if(path.size() > 5 && path[4] == '/' && path[5] == '/') return path;
+        const String prefix = "res:/";
+        auto i = path.find(prefix);
+//        print_line(String("Found i at ") + String(Variant(i)));
+        auto sub_str_pos = i+prefix.size()-1;
+        if(sub_str_pos < 0) return path;
+        auto res = path.substr(sub_str_pos);
+//        print_line(String("rest of it: ") + res);
+        if(res.size() > 0)
+        {
+            if(res[0] != '/')
+            {
+                return prefix + "/" + res;
+            } else
+            {
+                return  prefix + res;
+            }
+        }
+        return path;
+    }
+
     virtual void load(spine::AtlasPage &page, const spine::String &path){
 		//Ref<Texture> *p_tex = memnew(Ref<Texture>(tex));
 		auto p_spine_renderer_object = memnew(SpineRendererObject);
 
+//		print_line(String("Spine is loading texture: ") + String(path.buffer()));
+        auto fixed_path = fixPathIssue(String(path.buffer()));
+//        print_line("Fixed path: " + fixed_path);
+
 		// Load texture (e.g. tex.png)
-		Ref<Texture> tex = ResourceLoader::load(String(path.buffer()));
+		Ref<Texture> tex = ResourceLoader::load(fixed_path);
 		res.texes.append(tex);
 		p_spine_renderer_object->tex = tex;
 
 		// Load normal texture (e.g. tex_n.png)
-		String temppath = String(path.buffer());
+		String temppath = fixed_path;
 		String newpath = temppath.substr(0, temppath.length() - 4) + "_n" + temppath.right(temppath.length() - 4);
 		if (ResourceLoader::exists(newpath)){
 			Ref<Texture> normal_tex = ResourceLoader::load(newpath);

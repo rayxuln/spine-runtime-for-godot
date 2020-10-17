@@ -41,6 +41,7 @@ void RaiixSpineExtension::_free(void *mem, const char *file, int line){
 char *RaiixSpineExtension::_readFile(const spine::String &path, int *length){
     Error error;
     auto res = FileAccess::get_file_as_array(String(path.buffer()), &error);
+//    std::cout<<"Spine is loading something: "<<path.buffer()<<std::endl;
     if (error != OK){
         if(length) *length = 0;
         return NULL;
