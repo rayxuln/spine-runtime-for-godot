@@ -34,7 +34,7 @@ public:
 		skeleton = s;
 		spine_object = true;
 	}
-	inline spine::Skeleton *get_spine_object(){
+	inline spine::Skeleton *get_spine_object() const {
 		return skeleton;
 	}
 
@@ -71,7 +71,7 @@ public:
 
 	Ref<SpineBone> get_root_bone();
 
-	Ref<SpineSkeletonDataResource> get_data();
+	Ref<SpineSkeletonDataResource> get_data() const;
 
 	Array get_bones();
 	Array get_slots();

@@ -6,6 +6,8 @@
 #define GODOT_SPINESPRITE_H
 
 #include <scene/resources/texture.h>
+#include <scene/resources/shape_2d.h>
+#include <scene/2d/collision_object_2d.h>
 
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
@@ -19,6 +21,17 @@ protected:
     static void _bind_methods();
 
 	void _notification(int p_what);
+
+	void _build_bounding_box_polygon();
+	void _add_shapes_to_parent();
+
+	void _update_in_shape_owner(bool p_xform_only = false);
+	
+	Vector<Vector<Vector2>> _decompose_in_convex(Vector<Point2> p_polygon);
+	void draw_bounding_boxes(Ref<SpineSkeleton> s);
+	void _draw_polygon(Vector<Point2> p, Color color, bool one_way_collision);
+
+	virtual void _validate_property(PropertyInfo &property) const;
 private:
 
     Ref<SpineAnimationStateDataResource> animation_state_data_res;
@@ -37,6 +50,13 @@ private:
 
 	spine::SkeletonClipping *skeleton_clipper;
 
+	// Bounding box. Behaves like a CollisionPolygon2D or CollisionShape2D and sets a shape on its parent
+	CollisionObject2D *parent;
+	String bounding_box_slot_name;
+	uint32_t owner_id;
+	Ref<Shape2D> shapes;
+	Vector<Point2> polygon;
+	Color colors;
 public:
 	SpineSprite();
 	~SpineSprite();
@@ -103,6 +123,15 @@ public:
 
 	Ref<SpineSkin> gen_spine_skin_from_packed_resource(Ref<PackedSpineSkinResource> res);
 
+	// Bounding box
+	Ref<Shape2D> get_bounding_box(const String& p_slot_name);
+	Color get_bounding_box_color(const String& p_slot_name);
+
+	void set_bounding_box_slot_name(const String& p_slot_name);
+	String get_bounding_box_slot_name() const;
+
+	void set_bounding_box_attachment_name(const String& p_attachment_name);
+	String get_bounding_box_attachment_name() const;
 };
 
 

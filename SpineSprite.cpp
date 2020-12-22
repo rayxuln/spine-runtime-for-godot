@@ -7,6 +7,9 @@
 #include "SpineTrackEntry.h"
 #include "SpineEvent.h"
 
+#include <scene/resources/convex_polygon_shape_2d.h>
+#include <core/engine.h>
+
 void SpineSprite::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_animation_state_data_res", "animation_state_data_res"), &SpineSprite::set_animation_state_data_res);
     ClassDB::bind_method(D_METHOD("get_animation_state_data_res"), &SpineSprite::get_animation_state_data_res);
@@ -41,6 +44,11 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_on_skin_property_changed"), &SpineSprite::_on_skin_property_changed);
 	ClassDB::bind_method(D_METHOD("gen_spine_skin_from_packed_resource", "res"), &SpineSprite::gen_spine_skin_from_packed_resource);
 
+	ClassDB::bind_method(D_METHOD("get_bounding_box", "slot_name"), &SpineSprite::get_bounding_box);
+
+	ClassDB::bind_method(D_METHOD("get_bounding_box_slot_name"), &SpineSprite::get_bounding_box_slot_name);
+	ClassDB::bind_method(D_METHOD("set_bounding_box_slot_name", "slot_name"), &SpineSprite::set_bounding_box_slot_name);
+
 
 	ADD_SIGNAL(MethodInfo("animation_state_ready", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "skeleton", PROPERTY_HINT_TYPE_STRING, "SpineSkeleton")));
 	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
@@ -51,6 +59,8 @@ void SpineSprite::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("animation_event", PropertyInfo(Variant::OBJECT, "animation_state", PROPERTY_HINT_TYPE_STRING, "SpineAnimationState"), PropertyInfo(Variant::OBJECT, "track_entry", PROPERTY_HINT_TYPE_STRING, "SpineTrackEntry"), PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_TYPE_STRING, "SpineEvent")));
 
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "animation_state_data_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAnimationStateDataResource"), "set_animation_state_data_res", "get_animation_state_data_res");
+
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "bounding_box_slot_name"), "set_bounding_box_slot_name", "get_bounding_box_slot_name");
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "select_track_id"), "set_select_track_id", "get_select_track_id");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_track_trigger"), "set_clear_track", "get_clear_track");
@@ -66,17 +76,253 @@ void SpineSprite::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "packed_skin_resource", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "PackedSpineSkinResource"), "set_skin", "get_skin");
 }
 
+void SpineSprite::_validate_property(PropertyInfo &property) const {
+	if (!skeleton.is_valid())
+		return;
+
+	if (property.name == "bounding_box_slot_name") {
+		property.hint = PROPERTY_HINT_ENUM;
+
+		List<StringName> names;
+		spine::Skeleton* sk = skeleton->get_spine_object();
+		for(size_t i = 0, n = sk->getSlots().size(); i < n; ++i)
+		{
+			spine::Slot *slot = sk->getSlots()[i];
+
+			spine::Attachment *attachment = slot->getAttachment();
+			if (attachment && attachment->getRTTI().isExactly(spine::BoundingBoxAttachment::rtti))
+			{
+				names.push_back(StringName(slot->getData().getName().buffer()));
+			}
+		}
+
+		names.sort_custom<StringName::AlphCompare>();
+
+		bool current_found = false;
+
+		for (List<StringName>::Element *E = names.front(); E; E = E->next()) {
+			if (E->prev()) {
+				property.hint_string += ",";
+			}
+
+			property.hint_string += String(E->get());
+			if (bounding_box_slot_name == E->get()) {
+				current_found = true;
+			}
+		}
+
+		if (!current_found) {
+			if (property.hint_string == String()) {
+				property.hint_string = String(bounding_box_slot_name);
+			} else {
+				property.hint_string = String(bounding_box_slot_name) + "," + property.hint_string;
+			}
+		}
+	} else if (property.name == "current_animations") {
+		property.hint = PROPERTY_HINT_ENUM;
+
+		Array animations = skeleton->get_data()->get_animation_names();
+
+		for (int i = 0; i < animations.size(); i++) {
+			if (i > 0) {
+				property.hint_string += ",";
+			}
+
+			property.hint_string += String(animations[i]);
+			print_line(String(animations[i]));
+		}
+	}
+}
+
 SpineSprite::SpineSprite() :
-		select_track_id(0), empty_animation_duration(0.2f), skeleton_clipper(NULL) {
+		select_track_id(0), empty_animation_duration(0.2f), skeleton_clipper(NULL), parent(NULL), bounding_box_slot_name("") {
 	skeleton_clipper = new spine::SkeletonClipping();
+
+	shapes = Ref<Shape2D>();
+	polygon = Vector<Point2>();
+	colors = Color(1, 1, 1, 0.5);
 }
 SpineSprite::~SpineSprite() {
 	delete skeleton_clipper;
 }
 
+void SpineSprite::set_bounding_box_slot_name(const String &p_slot_name) {
+	bounding_box_slot_name = p_slot_name;
+
+	_build_bounding_box_polygon();
+	if (parent) {
+		_add_shapes_to_parent();
+	}
+}
+
+String SpineSprite::get_bounding_box_slot_name() const {
+	return bounding_box_slot_name;
+}
+
+Vector<Vector<Vector2>> SpineSprite::_decompose_in_convex(Vector<Point2> p_polygon) {
+	Vector<Vector<Vector2> > decomp = Geometry::decompose_polygon_in_convex(p_polygon);
+	return decomp;
+}
+
+Ref<Shape2D> SpineSprite::get_bounding_box(const String &p_slot_name) {
+	ERR_FAIL_COND_V(skeleton == NULL, Ref<Shape2D>());
+
+	Ref<SpineSlot> slot = skeleton->find_slot(p_slot_name.utf8().get_data());
+	ERR_FAIL_COND_V(slot == NULL, Ref<Shape2D>());
+
+	Ref<SpineAttachment> attachment = slot->get_attachment();
+	ERR_FAIL_COND_V(attachment == NULL, Ref<Shape2D>());
+
+	spine::BoundingBoxAttachment *bbox = dynamic_cast<spine::BoundingBoxAttachment*>(attachment->get_spine_object());
+	ERR_FAIL_COND_V(bbox == NULL, Ref<Shape2D>());
+
+	spine::Vector<float> vertices;
+	vertices.setSize(bbox->getWorldVerticesLength(), 0);
+	spine::Slot spine_object = *slot->get_spine_object();
+	bbox->computeWorldVertices(spine_object, vertices);
+
+	polygon.resize(vertices.size() / 2);
+	for (int idx = 0; idx < vertices.size() / 2; idx++)
+		polygon.write[idx] = Vector2(vertices[idx * 2], -vertices[idx * 2 + 1]);
+
+	ConvexPolygonShape2D *shape = memnew(ConvexPolygonShape2D);
+	shape->set_points(polygon);
+
+	return shape;
+}
+
+Color SpineSprite::get_bounding_box_color(const String &p_slot_name) {
+	ERR_FAIL_COND_V(skeleton == NULL, get_tree()->get_debug_collisions_color());
+
+	Ref<SpineSlot> slot = skeleton->find_slot(p_slot_name.utf8().get_data());
+	ERR_FAIL_COND_V(slot == NULL, get_tree()->get_debug_collisions_color());
+
+	Ref<SpineAttachment> attachment = slot->get_attachment();
+	ERR_FAIL_COND_V(attachment == NULL, get_tree()->get_debug_collisions_color());
+
+	spine::BoundingBoxAttachment *bbox = dynamic_cast<spine::BoundingBoxAttachment*>(attachment->get_spine_object());
+	ERR_FAIL_COND_V(bbox == NULL, get_tree()->get_debug_collisions_color());
+
+	return Color(bbox->getColor().r, bbox->getColor().g, bbox->getColor().b, bbox->getColor().a);
+}
+
+void SpineSprite::_build_bounding_box_polygon() {
+	// Need to set properties in editor
+	shapes = Ref<Shape2D>();
+	colors = Color(1, 1, 1, 0.5);
+	polygon.clear();
+
+	if (bounding_box_slot_name == "") {
+		return;
+	}
+
+	shapes = get_bounding_box(bounding_box_slot_name);
+	colors = get_bounding_box_color(bounding_box_slot_name);
+}
+
+
+void SpineSprite::_add_shapes_to_parent() {
+	parent->shape_owner_clear_shapes(owner_id);
+
+	if (shapes.is_valid()) {
+		parent->shape_owner_add_shape(owner_id, shapes);
+	}
+}
+
+void SpineSprite::_update_in_shape_owner(bool p_xform_only) {
+
+	parent->shape_owner_set_transform(owner_id, get_transform());
+	if (p_xform_only)
+		return;
+	//parent->shape_owner_set_disabled(owner_id, disabled); TODO
+	//parent->shape_owner_set_one_way_collision(owner_id, one_way_collision); TODO
+	//parent->shape_owner_set_one_way_collision_margin(owner_id, one_way_collision_margin); TODO
+}
+
+
+void SpineSprite::_draw_polygon(Vector<Point2> poly, Color color, bool one_way_collision) {
+	Color c(color.r, color.g, color.b, 0.4);
+
+	int polygon_count = poly.size();
+	for (int i = 0; i < polygon_count; i++) {
+		Vector2 p = poly[i];
+		Vector2 n = poly[(i + 1) % polygon_count];
+		// draw line with width <= 1, so it does not scale with zoom and break pixel exact editing
+		draw_line(p, n, color, 1);
+	}
+#define DEBUG_DECOMPOSE
+#if defined(TOOLS_ENABLED) && defined(DEBUG_DECOMPOSE)
+
+	Vector<Vector<Vector2> > decomp = _decompose_in_convex(poly);
+
+	for (int i = 0; i < decomp.size(); i++) {
+		draw_colored_polygon(decomp[i], c);
+	}
+#else
+	draw_colored_polygon(poly, c);
+#endif
+
+	if (one_way_collision) {
+		Color dcol = Color(color.r, color.g, color.b, 0.9);
+		dcol.a = 1.0;
+		Vector2 line_to(0, 20);
+		draw_line(Vector2(), line_to, dcol, 3);
+		Vector<Vector2> pts;
+		float tsize = 8;
+		pts.push_back(line_to + (Vector2(0, tsize)));
+		pts.push_back(line_to + (Vector2(Math_SQRT12 * tsize, 0)));
+		pts.push_back(line_to + (Vector2(-Math_SQRT12 * tsize, 0)));
+		Vector<Color> cols;
+		for (int i = 0; i < 3; i++)
+			cols.push_back(dcol);
+
+		draw_primitive(pts, cols, Vector<Vector2>()); //small arrow
+	}
+}
+
 void SpineSprite::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_READY:{
+		case NOTIFICATION_PARENTED: {
+
+			parent = Object::cast_to<CollisionObject2D>(get_parent());
+			if (parent) {
+				owner_id = parent->create_shape_owner(this);
+				_add_shapes_to_parent();
+				_update_in_shape_owner();
+			}
+		} break;
+		case NOTIFICATION_ENTER_TREE: {
+
+			if (parent) {
+				_update_in_shape_owner();
+			}
+
+		} break;
+		case NOTIFICATION_LOCAL_TRANSFORM_CHANGED: {
+
+			if (parent) {
+				_update_in_shape_owner(true);
+			}
+
+		} break;
+		case NOTIFICATION_UNPARENTED: {
+			if (parent) {
+				parent->remove_shape_owner(owner_id);
+			}
+			owner_id = 0;
+			parent = NULL;
+		} break;
+		case NOTIFICATION_DRAW: {
+			// Draw collision boxes
+			if (!Engine::get_singleton()->is_editor_hint() && !get_tree()->is_debugging_collisions_hint()) {
+				break;
+			}
+
+			if (skeleton.is_valid()) {
+				draw_bounding_boxes(skeleton);
+			}
+		} break;
+		case NOTIFICATION_READY: {
 			set_process_internal(true);
 			remove_redundant_mesh_instances();
 		} break;
@@ -303,6 +549,44 @@ void SpineSprite::remove_redundant_mesh_instances() {
 	}
 	ms.clear();
 //	print_line("end clearing");
+}
+
+void SpineSprite::draw_bounding_boxes(Ref<SpineSkeleton> s) {
+	static const unsigned short VERTEX_STRIDE = 2;
+
+	auto sk = s->get_spine_object();
+
+	for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
+	{
+		spine::Slot *slot = sk->getDrawOrder()[i];
+
+		spine::Attachment *attachment = slot->getAttachment();
+		if(!attachment){
+			// set invisible to mesh instance
+			continue;
+		}
+
+		if(attachment->getRTTI().isExactly(spine::BoundingBoxAttachment::rtti))
+		{
+			spine::BoundingBoxAttachment *bounding_box_attachment = (spine::BoundingBoxAttachment*)attachment;
+
+			if (bounding_box_attachment->getDeformAttachment()) {
+				bounding_box_attachment = (spine::BoundingBoxAttachment*)bounding_box_attachment->getDeformAttachment();
+			}
+
+			spine::Vector<float> vertices;
+			vertices.setSize(bounding_box_attachment->getWorldVerticesLength(), 0);
+			bounding_box_attachment->computeWorldVertices(*slot, vertices);
+
+			Vector<Point2> bbox_poly = Vector<Point2>();
+			bbox_poly.resize(vertices.size() / 2);
+			for (int idx = 0; idx < vertices.size() / 2; idx++)
+				bbox_poly.write[idx] = Vector2(vertices[idx * 2], -vertices[idx * 2 + 1]);
+
+			auto c = bounding_box_attachment->getColor();
+			_draw_polygon(bbox_poly, Color(c.r, c.g, c.b, c.a), false);
+		}
+	}
 }
 
 #define TEMP_COPY(t, get_res) do{auto &temp_uvs = get_res;        \

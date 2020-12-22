@@ -38,10 +38,15 @@ using namespace spine;
 RTTI_IMPL(BoundingBoxAttachment, VertexAttachment)
 
 BoundingBoxAttachment::BoundingBoxAttachment(const String &name) : VertexAttachment(name) {
+	_color = Color(1, 1, 1, 1);
 }
 
 Attachment* BoundingBoxAttachment::copy() {
 	BoundingBoxAttachment* copy = new (__FILE__, __LINE__) BoundingBoxAttachment(getName());
 	copyTo(copy);
 	return copy;
+}
+
+Color& BoundingBoxAttachment::getColor() {
+	return _color;
 }

@@ -32,6 +32,7 @@
 
 #include <spine/VertexAttachment.h>
 #include <spine/SpineObject.h>
+#include <spine/Color.h>
 
 namespace spine {
 	/// Attachment that has a polygon for bounds checking.
@@ -41,6 +42,12 @@ namespace spine {
 		explicit BoundingBoxAttachment(const String& name);
 
 		virtual Attachment* copy();
+
+	private:
+		Color _color;
+
+	public:
+		Color& getColor();
 	};
 }
 

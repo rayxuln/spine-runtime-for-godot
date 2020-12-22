@@ -602,6 +602,15 @@ SkeletonData *SkeletonJson::readSkeletonData(const char *json) {
 							int vertexCount = Json::getInt(attachmentMap, "vertexCount", 0) << 1;
 							readVertices(attachmentMap, box, vertexCount);
 							_attachmentLoader->configureAttachment(attachment);
+
+							color = Json::getString(attachmentMap, "color", 0);
+							if (color) {
+								box->getColor().r = toColor(color, 0);
+								box->getColor().g = toColor(color, 1);
+								box->getColor().b = toColor(color, 2);
+								box->getColor().a = toColor(color, 3);
+							}
+
 							break;
 						}
 						case AttachmentType_Path: {
