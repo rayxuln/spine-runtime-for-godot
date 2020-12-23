@@ -58,6 +58,8 @@ private:
 	Vector<Point2> polygon;
 	Color colors;
 public:
+	static const Color DEFAULT_COLOR;
+
 	SpineSprite();
 	~SpineSprite();
 

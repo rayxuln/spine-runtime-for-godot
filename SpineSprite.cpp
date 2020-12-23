@@ -10,6 +10,8 @@
 #include <scene/resources/convex_polygon_shape_2d.h>
 #include <core/engine.h>
 
+const Color SpineSprite::DEFAULT_COLOR = Color(0.9,0.2,0.2,0.4);
+
 void SpineSprite::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_animation_state_data_res", "animation_state_data_res"), &SpineSprite::set_animation_state_data_res);
     ClassDB::bind_method(D_METHOD("get_animation_state_data_res"), &SpineSprite::get_animation_state_data_res);
@@ -192,16 +194,17 @@ Ref<Shape2D> SpineSprite::get_bounding_box(const String &p_slot_name) {
 }
 
 Color SpineSprite::get_bounding_box_color(const String &p_slot_name) {
-	ERR_FAIL_COND_V(skeleton == NULL, get_tree()->get_debug_collisions_color());
+	ERR_FAIL_COND_V(skeleton == NULL, SpineSprite::DEFAULT_COLOR);
+	
 
 	Ref<SpineSlot> slot = skeleton->find_slot(p_slot_name.utf8().get_data());
-	ERR_FAIL_COND_V(slot == NULL, get_tree()->get_debug_collisions_color());
+	ERR_FAIL_COND_V(slot == NULL, SpineSprite::DEFAULT_COLOR);
 
 	Ref<SpineAttachment> attachment = slot->get_attachment();
-	ERR_FAIL_COND_V(attachment == NULL, get_tree()->get_debug_collisions_color());
+	ERR_FAIL_COND_V(attachment == NULL, SpineSprite::DEFAULT_COLOR);
 
 	spine::BoundingBoxAttachment *bbox = dynamic_cast<spine::BoundingBoxAttachment*>(attachment->get_spine_object());
-	ERR_FAIL_COND_V(bbox == NULL, get_tree()->get_debug_collisions_color());
+	ERR_FAIL_COND_V(bbox == NULL, SpineSprite::DEFAULT_COLOR);
 
 	return Color(bbox->getColor().r, bbox->getColor().g, bbox->getColor().b, bbox->getColor().a);
 }
@@ -395,6 +398,11 @@ void SpineSprite::update_bind_slot_nodes(){
 				}
 			}
 		}
+	}
+
+	_build_bounding_box_polygon();
+	if (parent) {
+		_add_shapes_to_parent();
 	}
 }
 void SpineSprite::update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d){
