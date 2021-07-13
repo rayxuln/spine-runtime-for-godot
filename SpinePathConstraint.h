@@ -33,7 +33,8 @@ public:
 		return path_constraint;
 	}
 
-	void apply();
+	// The spine-runtime-cpp 4.0 seems to not have a apply function implementation.
+	// void apply(); 
 
 	void update();
 
@@ -45,11 +46,14 @@ public:
 	float get_spacing();
 	void set_spacing(float v);
 
-	float get_rotate_mix();
-	void set_rotate_mix(float v);
+	float get_mix_rotate();
+	void set_mix_rotate(float v);
 
-	float get_translate_mix();
-	void set_translate_mix(float v);
+	float get_mix_x();
+	void set_mix_x(float v);
+
+	float get_mix_y();
+	void set_mix_y(float v);
 
 	Array get_bones();
 

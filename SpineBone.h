@@ -129,9 +129,6 @@ public:
 	float get_world_scale_x();
 	float get_world_scale_y();
 
-	bool is_applied_valid();
-	void set_applied_valid(bool v);
-
 	bool is_active();
 	void set_active(bool v);
 

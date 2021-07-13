@@ -158,8 +158,6 @@ void SpineBone::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_world_rotation_y"), &SpineBone::get_world_rotation_y);
 	ClassDB::bind_method(D_METHOD("get_world_scale_x"), &SpineBone::get_world_scale_x);
 	ClassDB::bind_method(D_METHOD("get_world_scale_y"), &SpineBone::get_world_scale_y);
-	ClassDB::bind_method(D_METHOD("is_applied_valid"), &SpineBone::is_applied_valid);
-	ClassDB::bind_method(D_METHOD("set_applied_valid", "v"), &SpineBone::set_applied_valid);
 	ClassDB::bind_method(D_METHOD("is_active"), &SpineBone::is_active);
 	ClassDB::bind_method(D_METHOD("set_active", "v"), &SpineBone::set_active);
 
@@ -396,13 +394,6 @@ float SpineBone::get_world_scale_x(){
 }
 float SpineBone::get_world_scale_y(){
 	return bone->getWorldScaleY();
-}
-
-bool SpineBone::is_applied_valid(){
-	return bone->isAppliedValid();
-}
-void SpineBone::set_applied_valid(bool v){
-	bone->setAppliedValid(v);
 }
 
 bool SpineBone::is_active(){

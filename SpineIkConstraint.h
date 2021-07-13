@@ -33,7 +33,8 @@ public:
 		return ik_constraint;
 	}
 
-	void apply();
+	// The spine-runtime-cpp 4.0 seems to not have a apply function implementation.
+	// void apply(); 
 
 	void update();
 
