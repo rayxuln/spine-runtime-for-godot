@@ -61,7 +61,7 @@ public:
 		// Load normal texture (e.g. n_tex.png)
 		String temppath = fixed_path;
 		String newpath = vformat("%s/%s_%s", temppath.get_base_dir(), normal_tex_prefix, temppath.get_file());
-        print_line(vformat("try n tex: %s", newpath));
+//        print_line(vformat("try n tex: %s", newpath));
 		if (ResourceLoader::exists(newpath)){
 			Ref<Texture> normal_tex = ResourceLoader::load(newpath);
 			if (ntex_list) ntex_list->append(normal_tex);
