@@ -1,7 +1,8 @@
 # Spine Runtime for Godot Engine
 [简体中文](readme_zh.md)
 
-runtime version 3.8.95
+spine runtime version 4.0.x
+godot engine version 3.x
 
 This project is a module of Godot engine, used to load Spine's skeleton animation and render and play.
 
