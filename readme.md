@@ -18,4 +18,6 @@ Compile with -O2 flag for godot engine and run linker can double fps
 Clone this repository to the `godot/modules/` folder as `spine_runtime`, then compile the engine.
 
 # License
-According to Spine's official statement, the use of spine-runtime is required under [Spine Runtime License] (https://github.com/EsotericSoftware/spine-runtimes/blob/3.8/LICENSE "Spine Runtime License").
+According to Spine's official statement, the use of spine-runtime-cpp is required under [Spine Runtime License] (https://github.com/EsotericSoftware/spine-runtimes/blob/3.8/LICENSE "Spine Runtime License").
+
+Other code except those under `spine-cpp` folder is under MIT license.

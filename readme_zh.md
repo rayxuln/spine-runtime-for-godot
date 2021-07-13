@@ -11,3 +11,5 @@
 
 # 许可证
 按照Spine官方声明的，使用spine-runtime需在 [Spine Runtime许可证](https://github.com/EsotericSoftware/spine-runtimes/blob/3.8/LICENSE "Spine Runtime License") 下进行。
+
+除了`spine-cpp`文件夹下的其他代码，均为MIT协议。
