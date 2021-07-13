@@ -74,10 +74,10 @@ bool SpineSkeletonDataResource::is_skeleton_data_loaded() {
 	return valid || spine_object;
 }
 
-void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_path) {
+void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_string) {
 	auto path = get_path();
 	spine::SkeletonJson json(a);
-	auto temp_skeleton_data = json.readSkeletonDataFile(spine::String(json_path.utf8()));
+	auto temp_skeleton_data = json.readSkeletonData(json_string.utf8());
 	if(!temp_skeleton_data)
 	{
 		print_error(String("Error happened while loading skeleton json data: ") + path);
@@ -96,9 +96,9 @@ void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_pat
 }
 
 void SpineSkeletonDataResource::update_skeleton_data() {
-	if(atlas_res != NULL && !skeleton_json_res.is_null())
+	if(atlas_res.is_valid() && skeleton_json_res.is_valid())
 	{
-		load_res(atlas_res->get_spine_atlas(), skeleton_json_res->get_path());
+		load_res(atlas_res->get_spine_atlas(), skeleton_json_res->get_json_string());
 		if(valid)
 		{
 			emit_signal("skeleton_data_loaded");
