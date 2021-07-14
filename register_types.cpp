@@ -87,6 +87,7 @@ void register_spine_runtime_types(){
 	ClassDB::register_class<PackedSpineSkinResource>();
 	ClassDB::register_class<SpineTimeline>();
 	ClassDB::register_class<SpineConstant>();
+	ClassDB::register_class<SpineCollisionShape>();
 
     atlas_loader.instance();
     ResourceLoader::add_resource_format_loader(atlas_loader);

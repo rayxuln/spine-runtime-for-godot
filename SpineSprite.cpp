@@ -831,7 +831,7 @@ void SpineSprite::gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s) {
     // create collision shape for every slot
     for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
     {
-        auto collision_shape = memnew(CollisionPolygon2D);
+        auto collision_shape = memnew(SpineCollisionShape);
         add_child(collision_shape);
         collision_shape->set_position(Vector2(0, 0));
         collision_shape->set_owner(this);
@@ -847,22 +847,21 @@ void SpineSprite::gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s) {
 
 void SpineSprite::remove_redundant_collision_shapes() {
     Vector<Node*> ms;
+    for(size_t i=0, n=get_child_count(); i<n; ++i){
+        auto node = get_child(i);
+        if(node && node->is_class("SpineCollisionShape")){
+            if(collision_shapes.find((SpineCollisionShape*)node) == -1)
+            {
+                ms.push_back(node);
+            }
 
-    for (size_t i=0; i<get_child_count(); ++i) {
-        auto child = get_child(i);
-        if (child->get_owner() != this || !child->is_class("CollisionPolygon2D")) {
-            continue;
         }
-        if (collision_shapes.find((CollisionPolygon2D*)child) >= 0) {
-            continue;
-        }
-        ms.push_back(child);
     }
-
-    for (size_t i=0; i<ms.size(); ++i) {
+    for(size_t i=0, n=ms.size(); i<n; ++i){
         remove_child(ms[i]);
         memdelete(ms[i]);
     }
+    ms.clear();
 }
 
 void SpineSprite::remove_collision_shapes() {

@@ -13,6 +13,7 @@
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
 #include "SpineSpriteMeshInstance2D.h"
+#include "SpineCollisionShape.h"
 #include "PackedSpineSkinResource.h"
 
 class SpineSprite : public Node2D, public spine::AnimationStateListenerObject {
@@ -36,7 +37,7 @@ private:
 	Ref<SpineAnimationState> animation_state;
 
 	Vector<SpineSpriteMeshInstance2D*> mesh_instances;
-	Vector<CollisionPolygon2D*> collision_shapes;
+	Vector<SpineCollisionShape*> collision_shapes;
 
 	Array current_animations;
 	int select_track_id;
