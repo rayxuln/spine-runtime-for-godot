@@ -15,6 +15,9 @@ void SpineTrackEntry::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_hold_previous"), &SpineTrackEntry::get_hold_previous);
 	ClassDB::bind_method(D_METHOD("set_hold_previous", "v"), &SpineTrackEntry::set_hold_previous);
 
+    ClassDB::bind_method(D_METHOD("get_reverse"), &SpineTrackEntry::get_reverse);
+    ClassDB::bind_method(D_METHOD("set_reverse", "v"), &SpineTrackEntry::set_reverse);
+
 	ClassDB::bind_method(D_METHOD("get_delay"), &SpineTrackEntry::get_delay);
 	ClassDB::bind_method(D_METHOD("set_delay", "v"), &SpineTrackEntry::set_delay);
 
@@ -226,4 +229,12 @@ Ref<SpineTrackEntry> SpineTrackEntry::get_mixing_to(){
 
 void SpineTrackEntry::reset_rotation_directions(){
 	track_entry->resetRotationDirections();
+}
+
+bool SpineTrackEntry::get_reverse() {
+    return track_entry->getReverse();
+}
+
+void SpineTrackEntry::set_reverse(bool v) {
+    track_entry->setReverse(v);
 }
