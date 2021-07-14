@@ -51,6 +51,7 @@ public:
 		Ref<Texture> tex = ResourceLoader::load(fixed_path, "", false, &err);
 		if (err != OK) {
             print_error(vformat("Can't load texture: \"%s\"", String(path.buffer())));
+            page.setRendererObject((void*)memnew(SpineRendererObject {nullptr}));
             return;
 		}
 
@@ -83,8 +84,8 @@ public:
         Ref<Texture> &tex = p_spine_renderer_object->tex;
 		Ref<Texture> &normal_tex = p_spine_renderer_object->normal_tex;
 
-        tex.unref();
-		normal_tex.unref();
+		if (tex.is_valid()) tex.unref();
+		if (normal_tex.is_valid()) normal_tex.unref();
 
 		memdelete(p_spine_renderer_object);
     }

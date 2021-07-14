@@ -8,7 +8,13 @@
 
 #include "core/variant_parser.h"
 
+#include "SpineConstant.h"
+
 #include <spine/spine.h>
+
+class SpineEvent;
+class SpineSkeleton;
+class SpineTimeline;
 
 class SpineAnimation : public Reference{
 	GDCLASS(SpineAnimation, Reference);
@@ -29,6 +35,12 @@ public:
 	inline spine::Animation *get_spine_object(){
 		return animation;
 	}
+
+	// Vector<Ref<SpineEvent>> pEvents
+    void apply(Ref<SpineSkeleton> skeleton, float lastTime, float time, bool loop, Array pEvents, float alpha, SpineConstant::MixBlend blend, SpineConstant::MixDirection direction);
+
+    Array get_timelines(); // Vector<Ref<SpineTimeline>>
+    bool has_timeline(Array ids); // Vector<SpineConstant::PropertyId>
 
 	String get_anim_name();
 	float get_duration();
