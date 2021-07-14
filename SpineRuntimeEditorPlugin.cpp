@@ -2,7 +2,6 @@
 // Created by Raiix on 2021/7/13.
 //
 
-#define TOOLS_ENABLED
 #ifdef TOOLS_ENABLED
 #include "SpineRuntimeEditorPlugin.h"
 

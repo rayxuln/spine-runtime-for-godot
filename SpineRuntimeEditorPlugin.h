@@ -5,7 +5,6 @@
 #ifndef GODOT_SPINERUNTIMEEDITORPLUGIN_H
 #define GODOT_SPINERUNTIMEEDITORPLUGIN_H
 
-#define TOOLS_ENABLED
 #ifdef TOOLS_ENABLED
 #include "editor/editor_node.h"
 

@@ -38,7 +38,6 @@ static Ref<ResourceFormatLoaderSpineSkeletonJsonData> json_skeleton_loader;
 static Ref<ResourceFormatSaverSpineSkeletonJsonData> json_skeleton_saver;
 
 // editor plugin
-#define TOOLS_ENABLED
 #ifdef TOOLS_ENABLED
 #include "editor/editor_export.h"
 #include "editor/editor_node.h"

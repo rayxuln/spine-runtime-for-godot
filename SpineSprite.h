@@ -7,6 +7,8 @@
 
 #include <scene/resources/texture.h>
 
+#include <scene/2d/collision_polygon_2d.h>
+
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
@@ -19,6 +21,13 @@ protected:
     static void _bind_methods();
 
 	void _notification(int p_what);
+
+public:
+    enum ProcessMode {
+        ProcessMode_Process,
+        ProcessMode_Physics,
+        ProcessMode_Manual
+    };
 private:
 
     Ref<SpineAnimationStateDataResource> animation_state_data_res;
@@ -27,13 +36,20 @@ private:
 	Ref<SpineAnimationState> animation_state;
 
 	Vector<SpineSpriteMeshInstance2D*> mesh_instances;
+	Vector<CollisionPolygon2D*> collision_shapes;
 
 	Array current_animations;
 	int select_track_id;
 	float empty_animation_duration;
 	Array bind_slot_nodes;
-	bool overlap = false;
+	bool overlap;
 	Ref<PackedSpineSkinResource> skin;
+
+	bool disable_collision_shapes;
+	bool display_collision_shapes;
+	bool create_collision_shapes;
+
+    ProcessMode process_mode;
 
 	spine::SkeletonClipping *skeleton_clipper;
 
@@ -53,6 +69,11 @@ public:
 
 	void update_mesh_from_skeleton(Ref<SpineSkeleton> s);
 
+	void gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s);
+    void update_collision_shape_from_skeleton(Ref<SpineSkeleton> s);
+    void remove_collision_shapes();
+    void remove_redundant_collision_shapes();
+
 	void update_bind_slot_nodes();
 	void update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d);
 	void update_bind_slot_node_draw_order(const String &slot_name, Node2D *node2d);
@@ -63,6 +84,7 @@ public:
 	void _on_animation_data_created();
 	void _on_animation_data_changed();
 
+	void _update_all(float delta);
 
 	// External feature functions
 	Array get_current_animations();
@@ -103,7 +125,18 @@ public:
 
 	Ref<SpineSkin> gen_spine_skin_from_packed_resource(Ref<PackedSpineSkinResource> res);
 
+	bool get_disable_collision_shapes();
+	void set_disable_collision_shapes(bool v);
+
+	bool get_display_collision_shapes();
+	void set_display_collision_shapes(bool v);
+
+	bool get_create_collision_shapes();
+	void set_create_collision_shapes(bool v);
+
+	ProcessMode get_process_mode();
+	void set_process_mode(ProcessMode v);
 };
 
-
+VARIANT_ENUM_CAST(SpineSprite::ProcessMode);
 #endif //GODOT_SPINESPRITE_H
