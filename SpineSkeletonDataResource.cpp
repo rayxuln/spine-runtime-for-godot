@@ -70,6 +70,7 @@ bool SpineSkeletonDataResource::is_skeleton_data_loaded() const{
 }
 
 void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_string) {
+	if (json_string.empty()) return;
 	auto path = get_path();
 	spine::SkeletonJson json(a);
 	auto temp_skeleton_data = json.readSkeletonData(json_string.utf8());

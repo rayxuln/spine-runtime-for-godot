@@ -567,7 +567,7 @@ Array SpineSprite::get_current_animations() {
 	return current_animations.duplicate(true);
 }
 void SpineSprite::set_current_animations(Array as) {
-	current_animations = as;
+	current_animations = as.duplicate(true);
 
 	// validate it then play the animations
 	_validate_and_play_current_animations();
@@ -776,6 +776,8 @@ void SpineSprite::_get_property_list(List<PropertyInfo> *p_list) const {
         if (anim_list.empty()) anim_list.push_back("No Animation");
         p_list->push_back(PropertyInfo(Variant::STRING, vformat("%sanimation", prefix), PROPERTY_HINT_ENUM, String(",").join(anim_list), PROPERTY_USAGE_EDITOR));
 
+        p_list->push_back(PropertyInfo(Variant::REAL, vformat("%sdelay", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+
         p_list->push_back(PropertyInfo(Variant::BOOL, vformat("%sloop", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
 
         p_list->push_back(PropertyInfo(Variant::BOOL, vformat("%sempty", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
@@ -816,6 +818,7 @@ bool SpineSprite::_get(const StringName &p_property, Variant &r_value) const {
                         else if (key == "empty") r_value = false;
                         else if (key == "empty_animation_duration") r_value = 0.3;
                         else if (key == "clear") r_value = false;
+                        else if (key == "delay") r_value = 0;
                         else return false;
                     }
                     return true;
@@ -892,6 +895,7 @@ void SpineSprite::set_current_animation_count(int64_t v) {
         Dictionary d;
         d["track_id"] = current_animations.size();
         d["animation"] = "";
+        d["delay"] = 0;
         d["loop"] = true;
         d["empty"] = false;
         d["empty_animation_duration"] = 0.3;
@@ -926,6 +930,7 @@ void SpineSprite::set_current_animation_count(int64_t v) {
 void SpineSprite::_validate_and_play_current_animations() {
     if(animation_state.is_valid() && skeleton.is_valid()){
         int64_t track_cnt = 0;
+        HashMap<int64_t, bool> has_track;
         for(size_t i=0; i<current_animations.size(); ++i) {
             auto a = current_animations[i];
             if(a.get_type() == Variant::DICTIONARY){
@@ -933,6 +938,7 @@ void SpineSprite::_validate_and_play_current_animations() {
 
                 int64_t track_id = 0;
                 String animation = "";
+                float delay = 0;
                 bool loop = true;
                 bool empty = false;
                 float empty_animation_duration = 0.3;
@@ -940,6 +946,7 @@ void SpineSprite::_validate_and_play_current_animations() {
 
                 if (d.has("track_id")) track_id = d["track_id"];
                 if (d.has("animation")) animation = d["animation"];
+                if (d.has("delay")) delay = d["delay"];
                 if (d.has("loop")) loop = d["loop"];
                 if (d.has("empty")) empty = d["empty"];
                 if (d.has("empty_animation_duration")) empty_animation_duration = d["empty_animation_duration"];
@@ -952,14 +959,21 @@ void SpineSprite::_validate_and_play_current_animations() {
 
                 track_cnt += 1;
 
+
                 if (empty) {
-                    animation_state->set_empty_animation(track_id, empty_animation_duration);
-//                    d["empty"] = false;
+                    if (has_track.has(track_id))
+                        animation_state->add_empty_animation(track_id, empty_animation_duration, delay);
+                    else
+                        animation_state->set_empty_animation(track_id, empty_animation_duration);
+                    has_track[track_id] = true;
                 } else if (clear) {
                     animation_state->clear_track(track_id);
-//                    d["clear"] = false;
                 } else if (skeleton->get_data()->find_animation(animation).is_valid()) {
-                    animation_state->set_animation(animation, loop, track_id);
+                    if (has_track.has(track_id))
+                        animation_state->add_animation(animation, delay, loop, track_id);
+                    else
+                        animation_state->set_animation(animation, loop, track_id);
+                    has_track[track_id] = true;
                 }
 
             }
