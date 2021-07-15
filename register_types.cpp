@@ -30,6 +30,7 @@
 #include "PackedSpineSkinResource.h"
 #include "SpineTimeline.h"
 #include "SpineConstant.h"
+#include "SpineCollisionShapeProxy.h"
 
 
 static Ref<ResourceFormatLoaderSpineAtlas> atlas_loader;
@@ -88,6 +89,7 @@ void register_spine_runtime_types(){
 	ClassDB::register_class<SpineTimeline>();
 	ClassDB::register_class<SpineConstant>();
 	ClassDB::register_class<SpineCollisionShape>();
+	ClassDB::register_class<SpineCollisionShapeProxy>();
 
     atlas_loader.instance();
     ResourceLoader::add_resource_format_loader(atlas_loader);
