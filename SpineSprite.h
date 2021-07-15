@@ -13,7 +13,6 @@
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
 #include "SpineSpriteMeshInstance2D.h"
-#include "SpineCollisionShape.h"
 #include "PackedSpineSkinResource.h"
 
 class SpineSprite : public Node2D, public spine::AnimationStateListenerObject {
@@ -23,6 +22,11 @@ protected:
 
 	void _notification(int p_what);
 
+    void _get_property_list(List<PropertyInfo> *p_list) const;
+    bool _get(const StringName &p_property, Variant &r_value) const;
+    bool _set(const StringName &p_property, const Variant &p_value);
+
+    void _validate_and_play_current_animations();
 public:
     enum ProcessMode {
         ProcessMode_Process,
@@ -42,6 +46,7 @@ private:
 	Array current_animations;
 	int select_track_id;
 	float empty_animation_duration;
+
 	Array bind_slot_nodes;
 	bool overlap;
 	Ref<PackedSpineSkinResource> skin;
@@ -135,6 +140,10 @@ public:
 //
 //	bool get_create_collision_shapes();
 //	void set_create_collision_shapes(bool v);
+
+    // current animation count
+    int64_t get_current_animation_count() const;
+    void set_current_animation_count(int64_t v);
 
 	ProcessMode get_process_mode();
 	void set_process_mode(ProcessMode v);

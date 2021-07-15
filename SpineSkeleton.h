@@ -71,7 +71,7 @@ public:
 
 	Ref<SpineBone> get_root_bone();
 
-	Ref<SpineSkeletonDataResource> get_data();
+	Ref<SpineSkeletonDataResource> get_data() const;
 
 	Array get_bones();
 	Array get_slots();

@@ -264,7 +264,7 @@ Ref<SpineBone> SpineSkeleton::get_root_bone(){
 	return gd_b;
 }
 
-Ref<SpineSkeletonDataResource> SpineSkeleton::get_data(){
+Ref<SpineSkeletonDataResource> SpineSkeleton::get_data() const {
 	auto sd = skeleton->getData();
 	if(sd == NULL) return NULL;
 	Ref<SpineSkeletonDataResource> gd_sd(memnew(SpineSkeletonDataResource));

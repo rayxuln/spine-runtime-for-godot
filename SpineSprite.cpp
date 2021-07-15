@@ -44,6 +44,9 @@ void SpineSprite::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_process_mode", "v"), &SpineSprite::set_process_mode);
     ClassDB::bind_method(D_METHOD("get_process_mode"), &SpineSprite::get_process_mode);
 
+//    ClassDB::bind_method(D_METHOD("set_current_animation_count", "v"), &SpineSprite::set_current_animation_count);
+//    ClassDB::bind_method(D_METHOD("get_current_animation_count"), &SpineSprite::get_current_animation_count);
+
 //    ClassDB::bind_method(D_METHOD("set_disable_collision_shapes", "v"), &SpineSprite::set_disable_collision_shapes);
 //    ClassDB::bind_method(D_METHOD("get_disable_collision_shapes"), &SpineSprite::get_disable_collision_shapes);
 //    ClassDB::bind_method(D_METHOD("set_display_collision_shapes", "v"), &SpineSprite::set_display_collision_shapes);
@@ -70,15 +73,16 @@ void SpineSprite::_bind_methods() {
     ADD_GROUP("animation", "");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "process_mode", PROPERTY_HINT_ENUM, "Process,Physics,Manually"), "set_process_mode", "get_process_mode");
 
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "select_track_id"), "set_select_track_id", "get_select_track_id");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_track_trigger"), "set_clear_track", "get_clear_track");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_tracks_trigger"), "set_clear_tracks", "get_clear_tracks");
-
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "empty_animation_duration"), "set_empty_animation_duration", "get_empty_animation_duration");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animation_trigger"), "set_set_empty_animation", "get_set_empty_animation");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animations_trigger"), "set_set_empty_animations", "get_set_empty_animations");
+//	ADD_PROPERTY(PropertyInfo(Variant::INT, "select_track_id"), "set_select_track_id", "get_select_track_id"); x
+//	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_track_trigger"), "set_clear_track", "get_clear_track"); x
+//	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clear_tracks_trigger"), "set_clear_tracks", "get_clear_tracks");
+//
+//	ADD_PROPERTY(PropertyInfo(Variant::REAL, "empty_animation_duration"), "set_empty_animation_duration", "get_empty_animation_duration");
+//	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animation_trigger"), "set_set_empty_animation", "get_set_empty_animation"); x
+//	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "set_empty_animations_trigger"), "set_set_empty_animations", "get_set_empty_animations");
 
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations"), "set_current_animations", "get_current_animations");
+//    ADD_PROPERTY(PropertyInfo(Variant::INT, "current_animations_count"), "set_current_animation_count", "get_current_animation_count");
 
 //    ADD_GROUP("collision", "");
 //    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "create_collision_shapes"), "set_create_collision_shapes", "get_create_collision_shapes");
@@ -598,60 +602,13 @@ void SpineSprite::callback(spine::AnimationState *state, spine::EventType type, 
 
 // External feature functions
 Array SpineSprite::get_current_animations() {
-	return current_animations;
+	return current_animations.duplicate(true);
 }
 void SpineSprite::set_current_animations(Array as) {
 	current_animations = as;
 
 	// validate it then play the animations
-	if(animation_state.is_valid() && skeleton.is_valid()){
-		for(size_t i=0; i<current_animations.size(); ++i){
-			auto a = current_animations[i];
-			if(a.get_type() == Variant::DICTIONARY){
-				Dictionary d = a;
-				if(d.has("animation_name") && d.has("track_id")){
-					String animation_name = d["animation_name"];
-					int track_id = d["track_id"];
-					if(track_id < 0){
-						print_line(String("track_id at ") + String(Variant((int)i)) + String(" can not less than 0!"));
-						continue;
-					}
-					if(skeleton->get_data()->find_animation(animation_name).is_valid()){
-						bool loop = d.has("loop") ? ((bool)d["loop"]) : true;
-						animation_state->set_animation(animation_name, loop, track_id);
-					} else{
-//						print_line(String("Can't not find animation '") + animation_name + String("'"));
-						continue;
-					}
-				}
-			}else if(a.get_type() == Variant::ARRAY){
-				Array as = a;
-				if(as.size() >= 1 && as[0].get_type() == Variant::STRING){
-					String anim_name = as[0];
-					bool loop = as.size() >= 2 && as[1].get_type() == Variant::BOOL ? (bool)as[1] : true;
-					int track_id = as.size() >= 3 && as[2].get_type() == Variant::INT ? (int)as[2] : (int)i;
-					if(track_id < 0){
-						print_line(String("track_id at ") + String(Variant((int)i)) + String(" can not less than 0!"));
-						continue;
-					}
-					auto anim = skeleton->get_data()->find_animation(anim_name);
-					if(anim.is_valid()){
-						animation_state->set_animation_by_ref(anim, loop, track_id);
-					} else{
-//						print_line(String("Can't not find animation '") + anim_name + String("'"));
-						continue;
-					}
-				}
-			}else if(a.get_type() == Variant::STRING){
-				auto anim = skeleton->get_data()->find_animation(a);
-				if(anim.is_valid()){
-					animation_state->set_animation_by_ref(anim, true, i);
-				} else{
-					continue;
-				}
-			}
-		}
-	}
+	_validate_and_play_current_animations();
 }
 
 int SpineSprite::get_select_track_id(){
@@ -966,5 +923,218 @@ void SpineSprite::set_process_mode(SpineSprite::ProcessMode v) {
     process_mode = v;
     set_process_internal(process_mode == ProcessMode_Process);
     set_physics_process_internal(process_mode == ProcessMode_Physics);
+}
+
+void SpineSprite::_get_property_list(List<PropertyInfo> *p_list) const {
+    p_list->push_back(PropertyInfo(Variant::NIL, "Current Animation Editor", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_CATEGORY));
+    p_list->push_back(PropertyInfo(Variant::BOOL, "setup_pose_trigger", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+    p_list->push_back(PropertyInfo(Variant::BOOL, "clear_tracks_trigger", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+    p_list->push_back(PropertyInfo(Variant::BOOL, "set_empty_animations_trigger", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+    p_list->push_back(PropertyInfo(Variant::REAL, "empty_animation_duration"));
+    p_list->push_back(PropertyInfo(Variant::INT, "track_count", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+
+    for (size_t i=0; i<current_animations.size(); ++i) {
+        String prefix = vformat("ca/%d/", i);
+        p_list->push_back(PropertyInfo(Variant::NIL, vformat("ID %d", i), PROPERTY_HINT_NONE, prefix, PROPERTY_USAGE_GROUP));
+        p_list->push_back(PropertyInfo(Variant::INT, vformat("%strack_id", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+
+        Vector<String> anim_list;
+        if (skeleton.is_valid() && skeleton->get_data().is_valid()) {
+            skeleton->get_data()->get_animation_names(anim_list);
+        }
+        if (anim_list.empty()) anim_list.push_back("No Animation");
+        p_list->push_back(PropertyInfo(Variant::STRING, vformat("%sanimation", prefix), PROPERTY_HINT_ENUM, String(",").join(anim_list), PROPERTY_USAGE_EDITOR));
+
+        p_list->push_back(PropertyInfo(Variant::BOOL, vformat("%sloop", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+
+        p_list->push_back(PropertyInfo(Variant::BOOL, vformat("%sempty", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+        p_list->push_back(PropertyInfo(Variant::REAL, vformat("%sempty_animation_duration", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+
+        p_list->push_back(PropertyInfo(Variant::BOOL, vformat("%sclear", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
+    }
+}
+
+bool SpineSprite::_get(const StringName &p_property, Variant &r_value) const {
+    if (p_property == "setup_pose_trigger" || p_property == "clear_tracks_trigger" || p_property == "set_empty_animations_trigger") {
+        r_value = false;
+        return true;
+    }
+    if (p_property == "empty_animation_duration") {
+        r_value = empty_animation_duration;
+        return true;
+    }
+    if (p_property == "track_count") {
+        r_value = get_current_animation_count();
+        return true;
+    }
+    String p = p_property;
+    if (p.size() > 2 && p[0] == 'c' && p[1] == 'a' && p[2] == '/') {
+        Vector<String> sp = p.split("/");
+        if (sp.size() > 2) {
+            int64_t id = sp[1].to_int64();
+            if (id >= 0 && id < current_animations.size()) {
+                auto &key = sp[2];
+                if (current_animations[id].get_type() == Variant::DICTIONARY) {
+                    Dictionary dic = current_animations.get(id);
+                    if (dic.has(key)) {
+                        r_value = dic[key];
+                    } else {
+                        if (key == "track_id") r_value = 0;
+                        else if (key == "animation") r_value = "";
+                        else if (key == "loop") r_value = true;
+                        else if (key == "empty") r_value = false;
+                        else if (key == "empty_animation_duration") r_value = 0.3;
+                        else if (key == "clear") r_value = false;
+                        else return false;
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool SpineSprite::_set(const StringName &p_property, const Variant &p_value) {
+    if (p_property == "setup_pose_trigger") {
+        if (p_value) {
+            if (skeleton.is_valid()) {
+                skeleton->set_bones_to_setup_pose();
+                skeleton->set_slots_to_setup_pose();
+            }
+        }
+        return true;
+    }
+    if (p_property == "clear_tracks_trigger") {
+        if (p_value) {
+            if (animation_state.is_valid() && skeleton.is_valid()) {
+                animation_state->clear_tracks();
+            }
+        }
+        return true;
+    }
+    if (p_property == "set_empty_animations_trigger") {
+        if (p_value) {
+            if (animation_state.is_valid() && skeleton.is_valid()) {
+                animation_state->set_empty_animations(empty_animation_duration);
+            }
+        }
+        return true;
+    }
+    if (p_property == "empty_animation_duration") {
+        empty_animation_duration = p_value;
+        return true;
+    }
+    if (p_property == "track_count") {
+        set_current_animation_count(p_value);
+        return true;
+    }
+    String p = p_property;
+    if (p.size() > 2 && p[0] == 'c' && p[1] == 'a' && p[2] == '/') {
+        Vector<String> sp = p.split("/");
+        if (sp.size() > 2) {
+            int64_t id = sp[1].to_int64();
+            if (id >= 0 && id < current_animations.size()) {
+                auto &key = sp[2];
+                if (current_animations[id].get_type() != Variant::DICTIONARY) {
+                    current_animations.set(id, Dictionary());
+                }
+
+                Dictionary dic = current_animations.get(id);
+                dic[key] = p_value;
+
+                _validate_and_play_current_animations();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int64_t SpineSprite::get_current_animation_count() const {
+    return current_animations.size();
+}
+
+void SpineSprite::set_current_animation_count(int64_t v) {
+    if (v < 0) v = 0;
+    while (current_animations.size() < v) {
+        Dictionary d;
+        d["track_id"] = current_animations.size();
+        d["animation"] = "";
+        d["loop"] = true;
+        d["empty"] = false;
+        d["empty_animation_duration"] = 0.3;
+        d["clear"] = false;
+        current_animations.push_back(d);
+    }
+    while (current_animations.size() > v) {
+        if (animation_state.is_valid() && skeleton.is_valid()) {
+            if (current_animations.back().get_type() == Variant::DICTIONARY) {
+                Dictionary back = current_animations.back();
+                if (back.has("track_id")) {
+                    int64_t track_id = back["track_id"];
+                    int track_cnt = 0;
+                    for (size_t i=0; i<current_animations.size(); ++i) {
+                        if (current_animations[i].get_type() == Variant::DICTIONARY) {
+                            Dictionary d = current_animations[i];
+                            if (d.has("track_id") && track_id == (int64_t)d["track_id"]) {
+                                track_cnt += 1;
+                            }
+                        }
+                    }
+                    if (track_cnt == 0)
+                        animation_state->clear_track(track_id);
+                }
+            }
+        }
+        current_animations.pop_back();
+    }
+    property_list_changed_notify();
+}
+
+void SpineSprite::_validate_and_play_current_animations() {
+    if(animation_state.is_valid() && skeleton.is_valid()){
+        int64_t track_cnt = 0;
+        for(size_t i=0; i<current_animations.size(); ++i) {
+            auto a = current_animations[i];
+            if(a.get_type() == Variant::DICTIONARY){
+                Dictionary d = a;
+
+                int64_t track_id = 0;
+                String animation = "";
+                bool loop = true;
+                bool empty = false;
+                float empty_animation_duration = 0.3;
+                bool clear = false;
+
+                if (d.has("track_id")) track_id = d["track_id"];
+                if (d.has("animation")) animation = d["animation"];
+                if (d.has("loop")) loop = d["loop"];
+                if (d.has("empty")) empty = d["empty"];
+                if (d.has("empty_animation_duration")) empty_animation_duration = d["empty_animation_duration"];
+                if (d.has("clear")) clear = d["clear"];
+
+                if (track_id < 0) {
+                    print_line(vformat("track_id at 'ID %d'  can not be less than 0!", i));
+                    continue;
+                }
+
+                track_cnt += 1;
+
+                if (empty) {
+                    animation_state->set_empty_animation(track_id, empty_animation_duration);
+//                    d["empty"] = false;
+                } else if (clear) {
+                    animation_state->clear_track(track_id);
+//                    d["clear"] = false;
+                } else if (skeleton->get_data()->find_animation(animation).is_valid()) {
+                    animation_state->set_animation(animation, loop, track_id);
+                }
+
+            }
+        }
+
+        if (track_cnt == 0) animation_state->clear_tracks();
+    }
 }
 
