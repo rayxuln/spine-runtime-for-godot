@@ -37,7 +37,7 @@ private:
 	Ref<SpineAnimationState> animation_state;
 
 	Vector<SpineSpriteMeshInstance2D*> mesh_instances;
-	Vector<SpineCollisionShape*> collision_shapes;
+//	Vector<SpineCollisionShape*> collision_shapes;
 
 	Array current_animations;
 	int select_track_id;
@@ -46,9 +46,9 @@ private:
 	bool overlap;
 	Ref<PackedSpineSkinResource> skin;
 
-	bool disable_collision_shapes;
-	bool display_collision_shapes;
-	bool create_collision_shapes;
+//	bool disable_collision_shapes;
+//	bool display_collision_shapes;
+//	bool create_collision_shapes;
 
     ProcessMode process_mode;
 
@@ -70,10 +70,10 @@ public:
 
 	void update_mesh_from_skeleton(Ref<SpineSkeleton> s);
 
-	void gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s);
-    void update_collision_shape_from_skeleton(Ref<SpineSkeleton> s);
-    void remove_collision_shapes();
-    void remove_redundant_collision_shapes();
+//	void gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s);
+//    void update_collision_shape_from_skeleton(Ref<SpineSkeleton> s);
+//    void remove_collision_shapes();
+//    void remove_redundant_collision_shapes();
 
 	void update_bind_slot_nodes();
 	void update_bind_slot_node_transform(Ref<SpineBone> bone, Node2D *node2d);
@@ -126,14 +126,15 @@ public:
 
 	Ref<SpineSkin> gen_spine_skin_from_packed_resource(Ref<PackedSpineSkinResource> res);
 
-	bool get_disable_collision_shapes();
-	void set_disable_collision_shapes(bool v);
-
-	bool get_display_collision_shapes();
-	void set_display_collision_shapes(bool v);
-
-	bool get_create_collision_shapes();
-	void set_create_collision_shapes(bool v);
+	// TODO: Remove the stupid bounding box support implementation
+//	bool get_disable_collision_shapes();
+//	void set_disable_collision_shapes(bool v);
+//
+//	bool get_display_collision_shapes();
+//	void set_display_collision_shapes(bool v);
+//
+//	bool get_create_collision_shapes();
+//	void set_create_collision_shapes(bool v);
 
 	ProcessMode get_process_mode();
 	void set_process_mode(ProcessMode v);

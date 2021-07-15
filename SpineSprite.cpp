@@ -44,12 +44,12 @@ void SpineSprite::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_process_mode", "v"), &SpineSprite::set_process_mode);
     ClassDB::bind_method(D_METHOD("get_process_mode"), &SpineSprite::get_process_mode);
 
-    ClassDB::bind_method(D_METHOD("set_disable_collision_shapes", "v"), &SpineSprite::set_disable_collision_shapes);
-    ClassDB::bind_method(D_METHOD("get_disable_collision_shapes"), &SpineSprite::get_disable_collision_shapes);
-    ClassDB::bind_method(D_METHOD("set_display_collision_shapes", "v"), &SpineSprite::set_display_collision_shapes);
-    ClassDB::bind_method(D_METHOD("get_display_collision_shapes"), &SpineSprite::get_display_collision_shapes);
-    ClassDB::bind_method(D_METHOD("set_create_collision_shapes", "v"), &SpineSprite::set_create_collision_shapes);
-    ClassDB::bind_method(D_METHOD("get_create_collision_shapes"), &SpineSprite::get_create_collision_shapes);
+//    ClassDB::bind_method(D_METHOD("set_disable_collision_shapes", "v"), &SpineSprite::set_disable_collision_shapes);
+//    ClassDB::bind_method(D_METHOD("get_disable_collision_shapes"), &SpineSprite::get_disable_collision_shapes);
+//    ClassDB::bind_method(D_METHOD("set_display_collision_shapes", "v"), &SpineSprite::set_display_collision_shapes);
+//    ClassDB::bind_method(D_METHOD("get_display_collision_shapes"), &SpineSprite::get_display_collision_shapes);
+//    ClassDB::bind_method(D_METHOD("set_create_collision_shapes", "v"), &SpineSprite::set_create_collision_shapes);
+//    ClassDB::bind_method(D_METHOD("get_create_collision_shapes"), &SpineSprite::get_create_collision_shapes);
 
     ClassDB::bind_method(D_METHOD("manual_update", "delta"), &SpineSprite::_update_all);
 
@@ -80,13 +80,13 @@ void SpineSprite::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "current_animations"), "set_current_animations", "get_current_animations");
 
-    ADD_GROUP("collision", "");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "create_collision_shapes"), "set_create_collision_shapes", "get_create_collision_shapes");
-    ADD_PROPERTY_DEFAULT("create_collision_shapes", false);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disable_collision_shapes"), "set_disable_collision_shapes", "get_disable_collision_shapes");
-    ADD_PROPERTY_DEFAULT("disable_collision_shapes", false);
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "display_collision_shapes"), "set_display_collision_shapes", "get_display_collision_shapes");
-    ADD_PROPERTY_DEFAULT("display_collision_shapes", true);
+//    ADD_GROUP("collision", "");
+//    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "create_collision_shapes"), "set_create_collision_shapes", "get_create_collision_shapes");
+//    ADD_PROPERTY_DEFAULT("create_collision_shapes", false);
+//    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disable_collision_shapes"), "set_disable_collision_shapes", "get_disable_collision_shapes");
+//    ADD_PROPERTY_DEFAULT("disable_collision_shapes", false);
+//    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "display_collision_shapes"), "set_display_collision_shapes", "get_display_collision_shapes");
+//    ADD_PROPERTY_DEFAULT("display_collision_shapes", true);
 
     BIND_ENUM_CONSTANT(ProcessMode::ProcessMode_Process);
     BIND_ENUM_CONSTANT(ProcessMode::ProcessMode_Physics);
@@ -96,8 +96,9 @@ void SpineSprite::_bind_methods() {
 SpineSprite::SpineSprite() :
 		select_track_id(0), empty_animation_duration(0.2f), skeleton_clipper(NULL),
 		overlap(false),
-		process_mode(ProcessMode_Process),
-		create_collision_shapes(false), disable_collision_shapes(false), display_collision_shapes(true) {
+		process_mode(ProcessMode_Process)
+//		create_collision_shapes(false), disable_collision_shapes(false), display_collision_shapes(true)
+		{
 	skeleton_clipper = new spine::SkeletonClipping();
 }
 SpineSprite::~SpineSprite() {
@@ -110,7 +111,7 @@ void SpineSprite::_notification(int p_what) {
             set_process_internal(process_mode == ProcessMode_Process);
             set_physics_process_internal(process_mode == ProcessMode_Physics);
 			remove_redundant_mesh_instances();
-			remove_redundant_collision_shapes();
+//			remove_redundant_collision_shapes();
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 		    if (process_mode == ProcessMode_Process)
@@ -137,9 +138,9 @@ void SpineSprite::_update_all(float delta) {
 
     update_mesh_from_skeleton(skeleton);
 
-    if (create_collision_shapes && !disable_collision_shapes && !collision_shapes.empty()) {
-        update_collision_shape_from_skeleton(skeleton);
-    }
+//    if (create_collision_shapes && !disable_collision_shapes && !collision_shapes.empty()) {
+//        update_collision_shape_from_skeleton(skeleton);
+//    }
 
     update();
 
@@ -244,9 +245,9 @@ void SpineSprite::_on_animation_data_created(){
 	skeleton->update_world_transform();
 	gen_mesh_from_skeleton(skeleton);
 
-	remove_collision_shapes();
-	if (create_collision_shapes)
-        gen_collision_shape_from_skeleton(skeleton);
+//	remove_collision_shapes();
+//	if (create_collision_shapes)
+//        gen_collision_shape_from_skeleton(skeleton);
 
 	if (process_mode == ProcessMode_Process) {
         _notification(NOTIFICATION_INTERNAL_PROCESS);
@@ -259,7 +260,7 @@ void SpineSprite::_on_animation_data_created(){
 void SpineSprite::_on_animation_data_changed() {
 //	print_line("_on_animation_data_changed");
 	remove_mesh_instances();
-	remove_collision_shapes();
+//	remove_collision_shapes();
 	skeleton.unref();
 	animation_state.unref();
 	if(!animation_state_data_res.is_null())
@@ -826,136 +827,136 @@ void SpineSprite::unbind_slot_with_node_2d(const String &slot_name, Node2D *n){
 	}
 }
 
-void SpineSprite::gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s) {
-    auto sk = s->get_spine_object();
-    // create collision shape for every slot
-    for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
-    {
-        auto collision_shape = memnew(SpineCollisionShape);
-        add_child(collision_shape);
-        collision_shape->set_position(Vector2(0, 0));
-        collision_shape->set_owner(this);
-        collision_shapes.push_back(collision_shape);
+//void SpineSprite::gen_collision_shape_from_skeleton(Ref<SpineSkeleton> s) {
+//    auto sk = s->get_spine_object();
+//    // create collision shape for every slot
+//    for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
+//    {
+//        auto collision_shape = memnew(SpineCollisionShape);
+//        add_child(collision_shape);
+//        collision_shape->set_position(Vector2(0, 0));
+//        collision_shape->set_owner(this);
+//        collision_shapes.push_back(collision_shape);
+//
+//        spine::Slot *slot = sk->getDrawOrder()[i];
+//        collision_shape->set_name(vformat("c_%s", slot->getData().getName().buffer()));
+//
+//        collision_shape->set_disabled(disable_collision_shapes);
+//        collision_shape->set_visible(display_collision_shapes);
+//    }
+//}
 
-        spine::Slot *slot = sk->getDrawOrder()[i];
-        collision_shape->set_name(vformat("c_%s", slot->getData().getName().buffer()));
+//void SpineSprite::remove_redundant_collision_shapes() {
+//    Vector<Node*> ms;
+//    for(size_t i=0, n=get_child_count(); i<n; ++i){
+//        auto node = get_child(i);
+//        if(node && node->is_class("SpineCollisionShape")){
+//            if(collision_shapes.find((SpineCollisionShape*)node) == -1)
+//            {
+//                ms.push_back(node);
+//            }
+//
+//        }
+//    }
+//    for(size_t i=0, n=ms.size(); i<n; ++i){
+//        remove_child(ms[i]);
+//        memdelete(ms[i]);
+//    }
+//    ms.clear();
+//}
 
-        collision_shape->set_disabled(disable_collision_shapes);
-        collision_shape->set_visible(display_collision_shapes);
-    }
-}
+//void SpineSprite::remove_collision_shapes() {
+//    for (size_t i=0; i<collision_shapes.size(); ++i) {
+//        remove_child(collision_shapes[i]);
+//        memdelete(collision_shapes[i]);
+//    }
+//    collision_shapes.clear();
+//}
 
-void SpineSprite::remove_redundant_collision_shapes() {
-    Vector<Node*> ms;
-    for(size_t i=0, n=get_child_count(); i<n; ++i){
-        auto node = get_child(i);
-        if(node && node->is_class("SpineCollisionShape")){
-            if(collision_shapes.find((SpineCollisionShape*)node) == -1)
-            {
-                ms.push_back(node);
-            }
+//void SpineSprite::update_collision_shape_from_skeleton(Ref<SpineSkeleton> s) {
+//    auto sk = s->get_spine_object();
+//    for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
+//    {
+//        spine::Vector<float> vertices;
+//
+//        spine::Slot *slot = sk->getDrawOrder()[i];
+//
+//        spine::Attachment *attachment = slot->getAttachment();
+//        if(!attachment){
+//            collision_shapes[i]->get_polygon().clear();
+//            continue;
+//        }
+//
+////        spine::Color skeleton_color = sk->getColor();
+////        spine::Color slot_color = slot->getColor();
+////        spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
+//
+//        if (attachment->getRTTI().isExactly(spine::BoundingBoxAttachment::rtti)) {
+//            auto *box = (spine::BoundingBoxAttachment*) attachment;
+//
+//            vertices.setSize(box->getWorldVerticesLength(), 0);
+////            print_line(vformat("vert: %d", vertices.size()));
+//
+//            box->computeWorldVertices(*slot, vertices);
+//
+////            auto attachment_color = box->getColor();
+////            tint.r *= attachment_color.r;
+////            tint.g *= attachment_color.g;
+////            tint.b *= attachment_color.b;
+////            tint.a *= attachment_color.a;
+//        } else {
+//            continue;
+//        }
+//
+//        Vector<Vector2> vs;
+//        vs.resize(vertices.size()/2);
+//        for (size_t j=0; j < vertices.size(); j+=2) {
+//            vs.set(j/2, Vector2(vertices[j], -vertices[j + 1]));
+//        }
+//        auto collision_shape = collision_shapes[i];
+//        collision_shape->set_polygon(vs);
+//    }
+//}
 
-        }
-    }
-    for(size_t i=0, n=ms.size(); i<n; ++i){
-        remove_child(ms[i]);
-        memdelete(ms[i]);
-    }
-    ms.clear();
-}
+//bool SpineSprite::get_disable_collision_shapes() {
+//    return disable_collision_shapes;
+//}
 
-void SpineSprite::remove_collision_shapes() {
-    for (size_t i=0; i<collision_shapes.size(); ++i) {
-        remove_child(collision_shapes[i]);
-        memdelete(collision_shapes[i]);
-    }
-    collision_shapes.clear();
-}
+//void SpineSprite::set_disable_collision_shapes(bool v) {
+//    if (disable_collision_shapes != v) {
+//        for (size_t i=0; i<collision_shapes.size(); ++i) {
+//            collision_shapes[i]->set_disabled(v);
+//        }
+//    }
+//    disable_collision_shapes = v;
+//}
 
-void SpineSprite::update_collision_shape_from_skeleton(Ref<SpineSkeleton> s) {
-    auto sk = s->get_spine_object();
-    for(size_t i=0, n = sk->getSlots().size(); i < n; ++i)
-    {
-        spine::Vector<float> vertices;
+//bool SpineSprite::get_display_collision_shapes() {
+//    return display_collision_shapes;
+//}
 
-        spine::Slot *slot = sk->getDrawOrder()[i];
+//void SpineSprite::set_display_collision_shapes(bool v) {
+//    if (display_collision_shapes != v) {
+//        for (size_t i=0; i<collision_shapes.size(); ++i) {
+//            collision_shapes[i]->set_visible(v);
+//        }
+//    }
+//    display_collision_shapes = v;
+//}
 
-        spine::Attachment *attachment = slot->getAttachment();
-        if(!attachment){
-            collision_shapes[i]->get_polygon().clear();
-            continue;
-        }
+//bool SpineSprite::get_create_collision_shapes() {
+//    return create_collision_shapes;
+//}
 
-//        spine::Color skeleton_color = sk->getColor();
-//        spine::Color slot_color = slot->getColor();
-//        spine::Color tint(skeleton_color.r * slot_color.r, skeleton_color.g * slot_color.g, skeleton_color.b * slot_color.b, skeleton_color.a * slot_color.a);
-
-        if (attachment->getRTTI().isExactly(spine::BoundingBoxAttachment::rtti)) {
-            auto *box = (spine::BoundingBoxAttachment*) attachment;
-
-            vertices.setSize(box->getWorldVerticesLength(), 0);
-//            print_line(vformat("vert: %d", vertices.size()));
-
-            box->computeWorldVertices(*slot, vertices);
-
-//            auto attachment_color = box->getColor();
-//            tint.r *= attachment_color.r;
-//            tint.g *= attachment_color.g;
-//            tint.b *= attachment_color.b;
-//            tint.a *= attachment_color.a;
-        } else {
-            continue;
-        }
-
-        Vector<Vector2> vs;
-        vs.resize(vertices.size()/2);
-        for (size_t j=0; j < vertices.size(); j+=2) {
-            vs.set(j/2, Vector2(vertices[j], -vertices[j + 1]));
-        }
-        auto collision_shape = collision_shapes[i];
-        collision_shape->set_polygon(vs);
-    }
-}
-
-bool SpineSprite::get_disable_collision_shapes() {
-    return disable_collision_shapes;
-}
-
-void SpineSprite::set_disable_collision_shapes(bool v) {
-    if (disable_collision_shapes != v) {
-        for (size_t i=0; i<collision_shapes.size(); ++i) {
-            collision_shapes[i]->set_disabled(v);
-        }
-    }
-    disable_collision_shapes = v;
-}
-
-bool SpineSprite::get_display_collision_shapes() {
-    return display_collision_shapes;
-}
-
-void SpineSprite::set_display_collision_shapes(bool v) {
-    if (display_collision_shapes != v) {
-        for (size_t i=0; i<collision_shapes.size(); ++i) {
-            collision_shapes[i]->set_visible(v);
-        }
-    }
-    display_collision_shapes = v;
-}
-
-bool SpineSprite::get_create_collision_shapes() {
-    return create_collision_shapes;
-}
-
-void SpineSprite::set_create_collision_shapes(bool v) {
-    if (create_collision_shapes != v) {
-        remove_collision_shapes();
-        if (v) {
-            gen_collision_shape_from_skeleton(skeleton);
-        }
-    }
-    create_collision_shapes = v;
-}
+//void SpineSprite::set_create_collision_shapes(bool v) {
+//    if (create_collision_shapes != v) {
+//        remove_collision_shapes();
+//        if (v) {
+//            gen_collision_shape_from_skeleton(skeleton);
+//        }
+//    }
+//    create_collision_shapes = v;
+//}
 
 SpineSprite::ProcessMode SpineSprite::get_process_mode() {
     return process_mode;
