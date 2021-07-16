@@ -40,14 +40,24 @@ public:
     Error import(const String &p_source_file, const String &p_save_path, const Map<StringName, Variant> &p_options, List<String> *r_platform_variants, List<String> *r_gen_files, Variant *r_metadata) override;
 };
 
+class SpineSpriteAnimateDialog;
+
 class SpineRuntimeEditorPlugin : public EditorPlugin {
 	GDCLASS(SpineRuntimeEditorPlugin, EditorPlugin);
 
+protected:
+    SpineSpriteAnimateDialog *animate_dialog;
 public:
+    SpineRuntimeEditorPlugin(EditorNode *p_node);
+    ~SpineRuntimeEditorPlugin();
+
 	String get_name() const override { return "SpineRuntimeEditorPlugin"; }
 	bool has_main_screen() const { return false; }
 
-	SpineRuntimeEditorPlugin(EditorNode *p_node);
+	bool handles(Object *p_object) const override;
+	void make_visible(bool p_visible) override;
+
+	void _on_animate_button_pressed();
 };
 #endif
 

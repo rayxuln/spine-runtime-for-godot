@@ -31,6 +31,7 @@
 #include "SpineTimeline.h"
 #include "SpineConstant.h"
 #include "SpineCollisionShapeProxy.h"
+#include "SpineSpriteAnimateDialog.h"
 
 
 static Ref<ResourceFormatLoaderSpineAtlas> atlas_loader;
@@ -54,7 +55,10 @@ static void editor_init_callback() {
 
 void register_spine_runtime_types(){
 #ifdef TOOLS_ENABLED
+    ClassDB::register_class<SpineSpriteAnimateDialog>();
+
 	EditorNode::add_init_callback(editor_init_callback);
+
 #endif
 
     ClassDB::register_class<SpineRuntime>();
