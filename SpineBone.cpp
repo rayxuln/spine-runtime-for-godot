@@ -4,6 +4,7 @@
 
 #include "SpineBone.h"
 
+#include "SpineSprite.h"
 #include "SpineSkeleton.h"
 
 void SpineBone::_bind_methods() {
@@ -161,10 +162,15 @@ void SpineBone::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_active"), &SpineBone::is_active);
 	ClassDB::bind_method(D_METHOD("set_active", "v"), &SpineBone::set_active);
 
+	ClassDB::bind_method(D_METHOD("get_godot_transform"), &SpineBone::get_godot_transform);
+	ClassDB::bind_method(D_METHOD("set_godot_transform", "local_transform"), &SpineBone::set_godot_transform);
+    ClassDB::bind_method(D_METHOD("get_godot_global_transform"), &SpineBone::get_godot_global_transform);
+    ClassDB::bind_method(D_METHOD("set_godot_global_transform", "global_transform"), &SpineBone::set_godot_global_transform);
+
 	ClassDB::bind_method(D_METHOD("apply_world_transform_2d", "node2d"), &SpineBone::apply_world_transform_2d);
 }
 
-SpineBone::SpineBone():bone(NULL) {}
+SpineBone::SpineBone():bone(NULL), the_sprite(nullptr) {}
 SpineBone::~SpineBone() {}
 
 void SpineBone::update_world_transform(){
@@ -217,6 +223,7 @@ Ref<SpineSkeleton> SpineBone::get_skeleton(){
 	auto &s = bone->getSkeleton();
 	Ref<SpineSkeleton> gd_s(memnew(SpineSkeleton));
 	gd_s->set_spine_object(&s);
+	gd_s->set_spine_sprite(the_sprite);
 	return gd_s;
 }
 
@@ -225,6 +232,7 @@ Ref<SpineBone> SpineBone::get_parent(){
 	if(b == NULL) return NULL;
 	Ref<SpineBone> gd_b(memnew(SpineBone));
 	gd_b->set_spine_object(b);
+	gd_b->set_spine_sprite(the_sprite);
 	return gd_b;
 }
 
@@ -237,6 +245,7 @@ Array SpineBone::get_children(){
 		if(b == NULL) gd_bs[i] = Ref<SpineBone>(NULL);
 		Ref<SpineBone> gd_b(memnew(SpineBone));
 		gd_b->set_spine_object(b);
+		gd_b->set_spine_sprite(the_sprite);
 		gd_bs[i] = gd_b;
 	}
 	return gd_bs;
@@ -422,4 +431,82 @@ void SpineBone::apply_world_transform_2d(Variant o){
 			node2d->translate(pos);
 		}
 	}
+}
+
+Transform2D SpineBone::get_godot_transform() {
+    if (get_spine_object() == nullptr)
+        return Transform2D();
+    Transform2D trans;
+    trans.translate(get_x(), -get_y());
+    // It seems that spine uses degree for rotation
+    trans.rotate(Math::deg2rad(-get_rotation()));
+    trans.scale(Size2(get_scale_x(), get_scale_y()));
+    return trans;
+}
+
+void SpineBone::set_godot_transform(Transform2D trans) {
+    if (get_spine_object() == nullptr)
+        return;
+    Vector2 position = trans.get_origin();
+    position.y *= -1;
+    real_t rotation = trans.get_rotation();
+    rotation = Math::rad2deg(-rotation);
+    Vector2 scale = trans.get_scale();
+
+    set_x(position.x);
+    set_y(position.y);
+    set_rotation(rotation);
+    set_scale_x(scale.x);
+    set_scale_y(scale.y);
+}
+
+Transform2D SpineBone::get_godot_global_transform() {
+    if (get_spine_object() == nullptr)
+        return Transform2D();
+    if (the_sprite == nullptr)
+        return get_godot_transform();
+    Transform2D res = the_sprite->get_transform();
+    res.translate(get_world_x(), -get_world_y());
+    res.rotate(Math::deg2rad(-get_world_rotation_x()));
+    res.scale(Vector2(get_world_scale_x(), get_world_scale_y()));
+    auto p = the_sprite->get_parent() ? Object::cast_to<CanvasItem>(the_sprite->get_parent()) : nullptr;
+    if (p) {
+        return p->get_global_transform() * res;
+    }
+    return res;
+}
+
+void SpineBone::set_godot_global_transform(Transform2D transform) {
+    if (get_spine_object() == nullptr)
+        return;
+    if (the_sprite == nullptr)
+        set_godot_transform(transform);
+    transform = the_sprite->get_global_transform().affine_inverse() * transform;
+    Vector2 position = transform.get_origin();
+    real_t rotation = transform.get_rotation();
+    Vector2 scale = transform.get_scale();
+    position.y *= -1;
+    auto parent = get_parent();
+    if (parent.is_valid()) {
+        position = parent->world_to_local(position);
+        if (parent->get_world_scale_x() != 0)
+            scale.x /= parent->get_world_scale_x();
+        else
+            print_error("The parent scale.x is zero.");
+        if (parent->get_world_scale_y() != 0)
+            scale.y /= parent->get_world_scale_y();
+        else
+            print_error("The parent scale.y is zero.");
+    }
+    rotation = world_to_local_rotation(Math::rad2deg(-rotation));
+
+    set_x(position.x);
+    set_y(position.y);
+    set_rotation(rotation);
+    set_scale_x(scale.x);
+    set_scale_y(scale.y);
+}
+
+void SpineBone::set_spine_sprite(SpineSprite *s) {
+    the_sprite = s;
 }

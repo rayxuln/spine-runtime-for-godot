@@ -206,6 +206,7 @@ void SpineSprite::_on_animation_data_created(){
 //	print_line("_on_animation_data_created");
 	skeleton = Ref<SpineSkeleton>(memnew(SpineSkeleton));
 	skeleton->load_skeleton(animation_state_data_res->get_skeleton());
+	skeleton->set_spine_sprite(this);
 //	print_line("Run time skeleton created.");
 
 	animation_state = Ref<SpineAnimationState>(memnew(SpineAnimationState));
@@ -758,15 +759,7 @@ Transform2D SpineSprite::bone_get_global_transform(const String &bone_name) {
         print_error(vformat("Bone: '%s' not found.", bone_name));
         return get_global_transform();
     }
-    Transform2D res = get_transform();
-    res.translate(bone->get_world_x(), -bone->get_world_y());
-    res.rotate(Math::deg2rad(-bone->get_world_rotation_x()));
-    res.scale(Vector2(bone->get_world_scale_x(), bone->get_world_scale_y()));
-    auto p = get_parent() ? Object::cast_to<CanvasItem>(get_parent()) : nullptr;
-    if (p) {
-        return p->get_global_transform() * res;
-    }
-    return res;
+    return bone->get_godot_global_transform();
 }
 
 void SpineSprite::bone_set_global_transform(const String &bone_name, Transform2D transform) {
@@ -777,30 +770,7 @@ void SpineSprite::bone_set_global_transform(const String &bone_name, Transform2D
     if (!bone.is_valid()) {
         return;
     }
-    transform = get_global_transform().affine_inverse() * transform;
-    Vector2 position = transform.get_origin();
-    real_t rotation = transform.get_rotation();
-    Vector2 scale = transform.get_scale();
-    position.y *= -1;
-    auto parent = bone->get_parent();
-    if (parent.is_valid()) {
-        position = parent->world_to_local(position);
-        if (parent->get_world_scale_x() != 0)
-            scale.x /= parent->get_world_scale_x();
-        else
-            print_error("The parent scale.x is zero.");
-        if (parent->get_world_scale_y() != 0)
-            scale.y /= parent->get_world_scale_y();
-        else
-            print_error("The parent scale.y is zero.");
-    }
-    rotation = bone->world_to_local_rotation(Math::rad2deg(-rotation));
-
-    bone->set_x(position.x);
-    bone->set_y(position.y);
-    bone->set_rotation(rotation);
-    bone->set_scale_x(scale.x);
-    bone->set_scale_y(scale.y);
+    bone->set_godot_global_transform(transform);
 }
 
 SpineSprite::ProcessMode SpineSprite::get_process_mode() {
