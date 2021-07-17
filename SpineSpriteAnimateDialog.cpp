@@ -59,7 +59,7 @@ SpineSpriteAnimateDialog::SpineSpriteAnimateDialog() {
     add_row("test13");
 
     auto l = memnew(Label);
-    l->set_text("66666");
+    l->set_text("W.I.P");
     vb->add_child(l);
 
     scene_tree_dialog = memnew(SceneTreeDialog);
@@ -130,6 +130,8 @@ void SpineSpriteAnimateDialog::load_data_from_sprite(SpineSprite *sprite, bool &
     err = false;
 }
 
+#define MIN_TRACK_LENGTH 0.15
+
 void SpineSpriteAnimateDialog::gen_new_animation_player(SpineSprite *sprite, bool &err) {
     if (sprite == nullptr) {
         ERROR_MSG("The sprite player is null.");
@@ -148,7 +150,7 @@ void SpineSpriteAnimateDialog::gen_new_animation_player(SpineSprite *sprite, boo
     anim_player->set_owner(sprite->get_owner());
     anim_player->set_root(anim_player->get_path_to(p));
 
-    gen_animations(sprite, anim_player, get_data_from_tree(), 0.017, err);
+    gen_animations(sprite, anim_player, get_data_from_tree(), MIN_TRACK_LENGTH, err);
 }
 
 Dictionary SpineSpriteAnimateDialog::get_data_from_tree() {
@@ -312,7 +314,7 @@ void SpineSpriteAnimateDialog::_on_animate_dialog_action(const String &act) {
     if (act == "confirmed") {
         gen_new_animation_player((SpineSprite*)get_node_or_null(spine_sprite_path), err);
     } else if (act == "override") {
-        gen_animations((SpineSprite*)get_node_or_null(spine_sprite_path), (AnimationPlayer*)get_node_or_null(anim_player_path), get_data_from_tree(), 0.017, err);
+        gen_animations((SpineSprite*)get_node_or_null(spine_sprite_path), (AnimationPlayer*)get_node_or_null(anim_player_path), get_data_from_tree(), MIN_TRACK_LENGTH, err);
     }
     if (!err) {
         animate_dialog->hide();
