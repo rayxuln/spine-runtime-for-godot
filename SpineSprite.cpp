@@ -41,6 +41,9 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_on_skin_property_changed"), &SpineSprite::_on_skin_property_changed);
 	ClassDB::bind_method(D_METHOD("gen_spine_skin_from_packed_resource", "res"), &SpineSprite::gen_spine_skin_from_packed_resource);
 
+	ClassDB::bind_method(D_METHOD("bone_get_global_transform", "bone_name"), &SpineSprite::bone_get_global_transform);
+	ClassDB::bind_method(D_METHOD("bone_set_global_transform", "bone_name", "global_transform"), &SpineSprite::bone_set_global_transform);
+
     ClassDB::bind_method(D_METHOD("set_process_mode", "v"), &SpineSprite::set_process_mode);
     ClassDB::bind_method(D_METHOD("get_process_mode"), &SpineSprite::get_process_mode);
 
@@ -746,6 +749,60 @@ void SpineSprite::unbind_slot_with_node_2d(const String &slot_name, Node2D *n){
 	}
 }
 
+Transform2D SpineSprite::bone_get_global_transform(const String &bone_name) {
+    if (!animation_state.is_valid() && !skeleton.is_valid()) {
+        return get_global_transform();
+    }
+    auto bone = skeleton->find_bone(bone_name);
+    if (!bone.is_valid()) {
+        print_error(vformat("Bone: '%s' not found.", bone_name));
+        return get_global_transform();
+    }
+    Transform2D res = get_transform();
+    res.translate(bone->get_world_x(), -bone->get_world_y());
+    res.rotate(Math::deg2rad(-bone->get_world_rotation_x()));
+    res.scale(Vector2(bone->get_world_scale_x(), bone->get_world_scale_y()));
+    auto p = get_parent() ? Object::cast_to<CanvasItem>(get_parent()) : nullptr;
+    if (p) {
+        return p->get_global_transform() * res;
+    }
+    return res;
+}
+
+void SpineSprite::bone_set_global_transform(const String &bone_name, Transform2D transform) {
+    if (!animation_state.is_valid() && !skeleton.is_valid()) {
+        return;
+    }
+    auto bone = skeleton->find_bone(bone_name);
+    if (!bone.is_valid()) {
+        return;
+    }
+    transform = get_global_transform().affine_inverse() * transform;
+    Vector2 position = transform.get_origin();
+    real_t rotation = transform.get_rotation();
+    Vector2 scale = transform.get_scale();
+    position.y *= -1;
+    auto parent = bone->get_parent();
+    if (parent.is_valid()) {
+        position = parent->world_to_local(position);
+        if (parent->get_world_scale_x() != 0)
+            scale.x /= parent->get_world_scale_x();
+        else
+            print_error("The parent scale.x is zero.");
+        if (parent->get_world_scale_y() != 0)
+            scale.y /= parent->get_world_scale_y();
+        else
+            print_error("The parent scale.y is zero.");
+    }
+    rotation = bone->world_to_local_rotation(Math::rad2deg(-rotation));
+
+    bone->set_x(position.x);
+    bone->set_y(position.y);
+    bone->set_rotation(rotation);
+    bone->set_scale_x(scale.x);
+    bone->set_scale_y(scale.y);
+}
+
 SpineSprite::ProcessMode SpineSprite::get_process_mode() {
     return process_mode;
 }
@@ -982,4 +1039,6 @@ void SpineSprite::_validate_and_play_current_animations() {
         if (track_cnt == 0) animation_state->clear_tracks();
     }
 }
+
+
 

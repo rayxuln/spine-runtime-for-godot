@@ -110,6 +110,10 @@ public:
 	void bind_slot_with_node_2d(const String &slot_name, Node2D *n);
 	void unbind_slot_with_node_2d(const String &slot_name, Node2D *n);
 
+	// bone manipulations
+	Transform2D bone_get_global_transform(const String &bone_name);
+	void bone_set_global_transform(const String &bone_name, Transform2D transform);
+
 	//allow z-manipulation
 	bool get_overlap();
 	void set_overlap(bool v);
