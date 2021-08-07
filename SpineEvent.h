@@ -25,7 +25,7 @@ public:
 	inline void set_spine_object(spine::Event *e){
 		event = e;
 	}
-	inline spine::Event *get_spine_object(){
+	inline spine::Event *get_spine_object() const{
 		return event;
 	}
 

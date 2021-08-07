@@ -5,7 +5,7 @@
 #include "SpinePathConstraint.h"
 
 void SpinePathConstraint::_bind_methods(){
-	ClassDB::bind_method(D_METHOD("apply"), &SpinePathConstraint::apply);
+	// ClassDB::bind_method(D_METHOD("apply"), &SpinePathConstraint::apply);
 	ClassDB::bind_method(D_METHOD("update"), &SpinePathConstraint::update);
 	ClassDB::bind_method(D_METHOD("get_order"), &SpinePathConstraint::get_order);
 	ClassDB::bind_method(D_METHOD("get_position"), &SpinePathConstraint::get_position);
@@ -27,9 +27,9 @@ void SpinePathConstraint::_bind_methods(){
 SpinePathConstraint::SpinePathConstraint():path_constraint(NULL) {}
 SpinePathConstraint::~SpinePathConstraint() {}
 
-void SpinePathConstraint::apply(){
-	path_constraint->apply();
-}
+// void SpinePathConstraint::apply(){
+// 	path_constraint->apply();
+// }
 
 void SpinePathConstraint::update(){
 	path_constraint->update();

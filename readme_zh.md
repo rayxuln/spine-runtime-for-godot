@@ -1,7 +1,8 @@
 # 适用于Godot引擎的Spine运行库模组
 本项目为Godot引擎的模组，用于加载Spine的骨骼动画并渲染播放。
 
-适用于Spine3.8.x版本。
+适用于Spine[3.8.x](https://github.com/EsotericSoftware/spine-runtimes/commit/63ef1938b9661dd44a966ec66b4d29edea2ffd1f)版本。
+
 适用于Godot3.x版本。
 
 # 说明

@@ -51,6 +51,8 @@ public:
 	SpineSkeletonDataResource();
 	virtual ~SpineSkeletonDataResource();
 
+    void _get_property_list(List<PropertyInfo> *p_list) const;
+
 	void set_atlas_res(const Ref<SpineAtlasResource> &a);
 	Ref<SpineAtlasResource> get_atlas_res();
 
@@ -59,10 +61,10 @@ public:
 
 	inline spine::SkeletonData *get_skeleton_data(){return skeleton_data;}
 
-	bool is_skeleton_data_loaded();
+	bool is_skeleton_data_loaded() const;
 
-	Array get_animation_names();
-	Array get_skin_names();
+	void get_animation_names(Vector<String> &l) const;
+    void get_skin_names(Vector<String> &l) const;
 
 	// spine api
 	Ref<SpineBoneData> find_bone(const String &bone_name);
@@ -87,7 +89,7 @@ public:
 
 	Array get_bones();
 	Array get_slots();
-	Array get_skins();
+	Array get_skins() const;
 
 	Ref<SpineSkin> get_default_skin();
 	void set_default_skin(Ref<SpineSkin> v);

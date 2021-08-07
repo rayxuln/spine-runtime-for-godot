@@ -5,7 +5,6 @@
 #include "SpineTransformConstraint.h"
 
 void SpineTransformConstraint::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("apply"), &SpineTransformConstraint::apply);
 	ClassDB::bind_method(D_METHOD("update"), &SpineTransformConstraint::update);
 	ClassDB::bind_method(D_METHOD("get_data"), &SpineTransformConstraint::get_data);
 	ClassDB::bind_method(D_METHOD("get_bones"), &SpineTransformConstraint::get_bones);
@@ -25,10 +24,6 @@ void SpineTransformConstraint::_bind_methods() {
 
 SpineTransformConstraint::SpineTransformConstraint():transform_constraint(NULL) {}
 SpineTransformConstraint::~SpineTransformConstraint() {}
-
-void SpineTransformConstraint::apply(){
-	transform_constraint->apply();
-}
 
 void SpineTransformConstraint::update(){
 	transform_constraint->update();

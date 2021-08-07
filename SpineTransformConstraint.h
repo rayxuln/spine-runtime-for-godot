@@ -32,8 +32,6 @@ public:
 		return transform_constraint;
 	}
 
-	void apply();
-
 	void update();
 
 	int get_order();

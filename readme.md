@@ -1,7 +1,8 @@
 # Spine Runtime for Godot Engine
 [简体中文](readme_zh.md)
 
-runtime version 3.8.95
+runtime version [3.8.x](https://github.com/EsotericSoftware/spine-runtimes/commit/63ef1938b9661dd44a966ec66b4d29edea2ffd1f)
+
 Godot engine version 3.x
 
 This project is a module of Godot engine, used to load Spine's skeleton animation and render and play.
@@ -19,6 +20,6 @@ Compile with -O2 flag for godot engine and run linker can double fps
 Clone this repository to the `godot/modules/` folder as `spine_runtime`, then compile the engine.
 
 # License
-According to Spine's official statement, the use of spine-runtime-cpp is required under [Spine Runtime License] (https://github.com/EsotericSoftware/spine-runtimes/blob/3.8/LICENSE "Spine Runtime License").
+According to Spine's official statement, the use of spine-runtime-cpp is required under [Spine Runtime License](https://github.com/EsotericSoftware/spine-runtimes/blob/3.8/LICENSE "Spine Runtime License").
 
 Other code except those under `spine-cpp` folder is under MIT license.

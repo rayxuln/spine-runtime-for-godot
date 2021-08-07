@@ -13,6 +13,7 @@
 #include "SpineBone.h"
 #include "SpineSlot.h"
 
+class SpineSprite;
 
 class SpineSkeleton : public Reference{
 	GDCLASS(SpineSkeleton, Reference);
@@ -23,6 +24,8 @@ protected:
 private:
 	spine::Skeleton *skeleton;
 	bool spine_object;
+
+	SpineSprite *the_sprite;
 public:
 
 	SpineSkeleton();
@@ -37,6 +40,8 @@ public:
 	inline spine::Skeleton *get_spine_object(){
 		return skeleton;
 	}
+
+	void set_spine_sprite(SpineSprite *s);
 
 
 	void update_world_transform();
@@ -71,7 +76,7 @@ public:
 
 	Ref<SpineBone> get_root_bone();
 
-	Ref<SpineSkeletonDataResource> get_data();
+	Ref<SpineSkeletonDataResource> get_data() const;
 
 	Array get_bones();
 	Array get_slots();

@@ -109,7 +109,7 @@ void SpineSkeleton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_scale_y", "v"), &SpineSkeleton::set_scale_y);
 }
 
-SpineSkeleton::SpineSkeleton():skeleton(NULL),spine_object(false) {
+SpineSkeleton::SpineSkeleton():skeleton(NULL),spine_object(false),the_sprite(nullptr) {
 
 }
 
@@ -154,6 +154,7 @@ Ref<SpineBone> SpineSkeleton::find_bone(const String &name){
 	if(b == NULL) return NULL;
 	Ref<SpineBone> gd_b(memnew(SpineBone));
 	gd_b->set_spine_object(b);
+	gd_b->set_spine_sprite(the_sprite);
 	return gd_b;
 }
 int SpineSkeleton::find_bone_index(const String &name){
@@ -261,10 +262,11 @@ Ref<SpineBone> SpineSkeleton::get_root_bone(){
 	if(b == NULL) return NULL;
 	Ref<SpineBone> gd_b(memnew(SpineBone));
 	gd_b->set_spine_object(b);
+	gd_b->set_spine_sprite(the_sprite);
 	return gd_b;
 }
 
-Ref<SpineSkeletonDataResource> SpineSkeleton::get_data(){
+Ref<SpineSkeletonDataResource> SpineSkeleton::get_data() const {
 	auto sd = skeleton->getData();
 	if(sd == NULL) return NULL;
 	Ref<SpineSkeletonDataResource> gd_sd(memnew(SpineSkeletonDataResource));
@@ -281,6 +283,7 @@ Array SpineSkeleton::get_bones(){
 		if(b == NULL) gd_as[i] = Ref<SpineBone>(NULL);
 		Ref<SpineBone> gd_a(memnew(SpineBone));
 		gd_a->set_spine_object(b);
+		gd_a->set_spine_sprite(the_sprite);
 		gd_as[i] = gd_a;
 	}
 	return gd_as;
@@ -405,4 +408,8 @@ float SpineSkeleton::get_scale_y(){
 }
 void SpineSkeleton::set_scale_y(float v){
 	skeleton->setScaleY(v);
+}
+
+void SpineSkeleton::set_spine_sprite(SpineSprite *s) {
+    the_sprite = s;
 }

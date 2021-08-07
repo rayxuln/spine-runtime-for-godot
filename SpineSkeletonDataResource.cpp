@@ -46,17 +46,12 @@ void SpineSkeletonDataResource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_all_transform_constraint_data"), &SpineSkeletonDataResource::get_transform_constraints);
 	ClassDB::bind_method(D_METHOD("get_all_path_constraint_data"), &SpineSkeletonDataResource::get_path_constraints);
 
-	ClassDB::bind_method(D_METHOD("get_animation_names"), &SpineSkeletonDataResource::get_animation_names);
-	ClassDB::bind_method(D_METHOD("get_skin_names"), &SpineSkeletonDataResource::get_skin_names);
-
 	ADD_SIGNAL(MethodInfo("skeleton_data_loaded"));
 	ADD_SIGNAL(MethodInfo("atlas_res_changed"));
 	ADD_SIGNAL(MethodInfo("skeleton_json_res_changed"));
 
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "atlas_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineAtlasResource"), "set_atlas_res", "get_atlas_res");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "skeleton_json_res", PropertyHint::PROPERTY_HINT_RESOURCE_TYPE, "SpineSkeletonJsonDataResource"), "set_skeleton_json_res", "get_skeleton_json_res");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "animation_names", PropertyHint::PROPERTY_HINT_TYPE_STRING, "String"), "", "get_animation_names");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "skin_names", PropertyHint::PROPERTY_HINT_TYPE_STRING, "String"), "", "get_skin_names");
 }
 
 SpineSkeletonDataResource::SpineSkeletonDataResource():valid(false),spine_object(false),skeleton_data(NULL) {
@@ -70,14 +65,15 @@ SpineSkeletonDataResource::~SpineSkeletonDataResource() {
 	}
 }
 
-bool SpineSkeletonDataResource::is_skeleton_data_loaded() {
+bool SpineSkeletonDataResource::is_skeleton_data_loaded() const{
 	return valid || spine_object;
 }
 
-void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_path) {
+void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_string) {
+	if (json_string.empty()) return;
 	auto path = get_path();
 	spine::SkeletonJson json(a);
-	auto temp_skeleton_data = json.readSkeletonDataFile(spine::String(json_path.utf8()));
+	auto temp_skeleton_data = json.readSkeletonData(json_string.utf8());
 	if(!temp_skeleton_data)
 	{
 		print_error(String("Error happened while loading skeleton json data: ") + path);
@@ -96,9 +92,9 @@ void SpineSkeletonDataResource::load_res(spine::Atlas *a, const String &json_pat
 }
 
 void SpineSkeletonDataResource::update_skeleton_data() {
-	if(atlas_res != NULL && !skeleton_json_res.is_null())
+	if(atlas_res.is_valid() && skeleton_json_res.is_valid())
 	{
-		load_res(atlas_res->get_spine_atlas(), skeleton_json_res->get_path());
+		load_res(atlas_res->get_spine_atlas(), skeleton_json_res->get_json_string());
 		if(valid)
 		{
 			emit_signal("skeleton_data_loaded");
@@ -297,7 +293,7 @@ Array SpineSkeletonDataResource::get_slots(){
 	}
 	return gd_bs;
 }
-Array SpineSkeletonDataResource::get_skins(){
+Array SpineSkeletonDataResource::get_skins() const{
 	auto bs = skeleton_data->getSkins();
 	Array gd_bs;
 	gd_bs.resize(bs.size());
@@ -401,37 +397,53 @@ Array SpineSkeletonDataResource::get_path_constraints(){
 #undef CHECK_X
 
 //External feature functions
-Array SpineSkeletonDataResource::get_animation_names() {
+void SpineSkeletonDataResource::get_animation_names(Vector<String> &res) const{
+    res.clear();
 	if(!is_skeleton_data_loaded()){
-		return Array();
+		return;
 	}
 	auto as = skeleton_data->getAnimations();
-	Array res;
-	res.resize(as.size());
-	for(size_t i=0; i<res.size(); ++i){
+	for(size_t i=0; i<as.size(); ++i){
 		auto a = as[i];
 		if(a){
-			res[i] = a->getName().buffer();
+		    res.push_back(a->getName().buffer());
 		}else{
-			res[i] = "";
+		    res.push_back("");
 		}
 	}
-	return res;
 }
-Array SpineSkeletonDataResource::get_skin_names() {
+void SpineSkeletonDataResource::get_skin_names(Vector<String> &res) const{
+    res.clear();
 	if(!is_skeleton_data_loaded()){
-		return Array();
+		return;
 	}
 	auto as = get_skins();
-	Array res;
 	res.resize(as.size());
-	for(size_t i=0; i<res.size(); ++i){
+	for(size_t i=0; i<as.size(); ++i){
 		auto a = Ref<SpineSkin>(as[i]);
 		if(a.is_valid()){
-			res[i] = a->get_skin_name();
+			res.push_back(a->get_skin_name());
 		}else{
-			res[i] = "";
+		    res.push_back("");
 		}
 	}
-	return res;
+}
+
+void SpineSkeletonDataResource::_get_property_list(List<PropertyInfo> *p_list) const{
+    PropertyInfo p;
+    Vector<String> res;
+
+    p.name = "animations";
+    p.type = Variant::STRING;
+    get_animation_names(res);
+    p.hint_string = String(",").join(res);
+    p.hint = PROPERTY_HINT_ENUM;
+    p_list->push_back(p);
+
+    p.name = "skins";
+    p.type = Variant::STRING;
+    get_skin_names(res);
+    p.hint_string = String(",").join(res);
+    p.hint = PROPERTY_HINT_ENUM;
+    p_list->push_back(p);
 }
