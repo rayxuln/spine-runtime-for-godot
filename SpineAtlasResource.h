@@ -18,25 +18,33 @@
 
 class SpineAtlasResource : public Resource{
     GDCLASS(SpineAtlasResource, Resource);
+
 protected:
     static void _bind_methods();
 
-private:
     spine::Atlas *atlas;
 
+    String source_path;
+    String atlas_data;
+    String normal_texture_prefix;
+
+    Array tex_list;
+    Array ntex_list;
 public:
-	Array texes;
-    Array normal_texes;
+    inline String &get_atlas_data() {return atlas_data;}
 
-    Error load_file(const String &p_path);
+    inline spine::Atlas *get_spine_atlas() {return atlas;}
 
-	void set_textures(const Array &ts);
+    inline void set_normal_texture_prefix(const String &p) {normal_texture_prefix = p;}
+
+    Error load_from_atlas_file(const String &p_path); // .atlas
+
+    Error load_from_file(const String &p_path); // .spatlas
+    Error save_to_file(const String &p_path); // .spatlas
+
+    String get_source_path();
 	Array get_textures();
-
-	void set_normal_textures(const Array &ts);
-	Array get_normal_textures();    
-
-	inline spine::Atlas *get_spine_atlas(){return atlas;}
+	Array get_normal_textures();
 
 	SpineAtlasResource();
     virtual ~SpineAtlasResource();

@@ -32,8 +32,6 @@ public:
 		return transform_constraint;
 	}
 
-	void apply();
-
 	void update();
 
 	int get_order();
@@ -45,17 +43,23 @@ public:
 	Ref<SpineBone> get_target();
 	void set_target(Ref<SpineBone> v);
 
-	float get_rotate_mix();
-	void set_rotate_mix(float v);
+	float get_mix_rotate();
+	void set_mix_rotate(float v);
 
-	float get_translate_mix();
-	void set_translate_mix(float v);
+	float get_mix_x();
+	void set_mix_x(float v);
 
-	float get_scale_mix();
-	void set_scale_mix(float v);
+	float get_mix_y();
+	void set_mix_y(float v);
 
-	float get_shear_mix();
-	void set_shear_mix(float v);
+	float get_mix_scale_x();
+	void set_mix_scale_x(float v);
+
+	float get_mix_scale_y();
+	void set_mix_scale_y(float v);
+
+	float get_mix_shear_y();
+	void set_mix_shear_y(float v);
 
 	bool is_active();
 	void set_active(bool v);

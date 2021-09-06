@@ -17,6 +17,7 @@
 #include "SpineTransformConstraint.h"
 
 class SpineSkeleton;
+class SpineSprite;
 
 class SpineBone : public Reference {
 	GDCLASS(SpineBone, Reference);
@@ -27,6 +28,7 @@ protected:
 private:
 	spine::Bone *bone;
 
+	SpineSprite *the_sprite;
 public:
 	SpineBone();
 	~SpineBone();
@@ -37,6 +39,8 @@ public:
 	inline spine::Bone *get_spine_object(){
 		return bone;
 	}
+
+	void set_spine_sprite(SpineSprite *s);
 
 	void update_world_transform();
 
@@ -129,14 +133,17 @@ public:
 	float get_world_scale_x();
 	float get_world_scale_y();
 
-	bool is_applied_valid();
-	void set_applied_valid(bool v);
-
 	bool is_active();
 	void set_active(bool v);
 
 	// External feature functions
 	void apply_world_transform_2d(Variant o);
+
+	Transform2D get_godot_transform();
+	void set_godot_transform(Transform2D trans);
+
+	Transform2D get_godot_global_transform();
+	void set_godot_global_transform(Transform2D trans);
 };
 
 #endif //GODOT_SPINEBONE_H

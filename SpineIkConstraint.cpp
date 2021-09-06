@@ -6,7 +6,7 @@
 #include "SpineBone.h"
 
 void SpineIkConstraint::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("apply"), &SpineIkConstraint::apply);
+	// ClassDB::bind_method(D_METHOD("apply"), &SpineIkConstraint::apply);
 	ClassDB::bind_method(D_METHOD("update"), &SpineIkConstraint::update);
 	ClassDB::bind_method(D_METHOD("get_order"), &SpineIkConstraint::get_order);
 	ClassDB::bind_method(D_METHOD("get_data"), &SpineIkConstraint::get_data);
@@ -30,9 +30,9 @@ void SpineIkConstraint::_bind_methods() {
 SpineIkConstraint::SpineIkConstraint():ik_constraint(NULL) {}
 SpineIkConstraint::~SpineIkConstraint() {}
 
-void SpineIkConstraint::apply(){
-	ik_constraint->apply();
-}
+// void SpineIkConstraint::apply(){
+// 	ik_constraint->apply();
+// }
 
 void SpineIkConstraint::update(){
 	ik_constraint->update();

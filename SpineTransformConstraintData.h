@@ -28,10 +28,12 @@ public:
 
 	Array get_bones();
 	Ref<SpineBoneData> get_target();
-	float get_rotate_mix();
-	float get_translate_mix();
-	float get_scale_mix();
-	float get_shear_mix();
+	float get_mix_rotate();
+	float get_mix_x();
+	float get_mix_y();
+	float get_mix_scale_x();
+	float get_mix_scale_y();
+	float get_mix_shear_y();
 
 	float get_offset_rotation();
 	float get_offset_x();

@@ -48,6 +48,9 @@ public:
 	bool get_hold_previous();
 	void set_hold_previous(bool v);
 
+    bool get_reverse();
+    void set_reverse(bool v);
+
 	float get_delay();
 	void set_delay(float v);
 

@@ -9,6 +9,8 @@
 #include <scene/resources/shape_2d.h>
 #include <scene/2d/collision_object_2d.h>
 
+#include <scene/2d/collision_polygon_2d.h>
+
 #include "SpineAnimationStateDataResource.h"
 #include "SpineSkeleton.h"
 #include "SpineAnimationState.h"
@@ -32,6 +34,17 @@ protected:
 	void _draw_polygon(Vector<Point2> p, Color color, bool one_way_collision);
 
 	virtual void _validate_property(PropertyInfo &property) const;
+	void _get_property_list(List<PropertyInfo> *p_list) const;
+	bool _get(const StringName &p_property, Variant &r_value) const;
+	bool _set(const StringName &p_property, const Variant &p_value);
+
+	void _validate_and_play_current_animations();
+public:
+    enum ProcessMode {
+        ProcessMode_Process,
+        ProcessMode_Physics,
+        ProcessMode_Manual
+    };
 private:
 
     Ref<SpineAnimationStateDataResource> animation_state_data_res;
@@ -44,9 +57,12 @@ private:
 	Array current_animations;
 	int select_track_id;
 	float empty_animation_duration;
+
 	Array bind_slot_nodes;
-	bool overlap = false;
+	bool overlap;
 	Ref<PackedSpineSkinResource> skin;
+
+    ProcessMode process_mode;
 
 	spine::SkeletonClipping *skeleton_clipper;
 
@@ -85,6 +101,7 @@ public:
 	void _on_animation_data_created();
 	void _on_animation_data_changed();
 
+	void _update_all(float delta);
 
 	// External feature functions
 	Array get_current_animations();
@@ -114,6 +131,10 @@ public:
 	void bind_slot_with_node_2d(const String &slot_name, Node2D *n);
 	void unbind_slot_with_node_2d(const String &slot_name, Node2D *n);
 
+	// bone manipulations
+	Transform2D bone_get_global_transform(const String &bone_name);
+	void bone_set_global_transform(const String &bone_name, Transform2D transform);
+
 	//allow z-manipulation
 	bool get_overlap();
 	void set_overlap(bool v);
@@ -135,6 +156,13 @@ public:
 	void set_bounding_box_attachment_name(const String& p_attachment_name);
 	String get_bounding_box_attachment_name() const;
 };
+    // current animation count
+    int64_t get_current_animation_count() const;
+    void set_current_animation_count(int64_t v);
 
+	ProcessMode get_process_mode();
+	void set_process_mode(ProcessMode v);
+};
 
+VARIANT_ENUM_CAST(SpineSprite::ProcessMode);
 #endif //GODOT_SPINESPRITE_H

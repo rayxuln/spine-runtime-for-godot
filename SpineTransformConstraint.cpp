@@ -5,30 +5,29 @@
 #include "SpineTransformConstraint.h"
 
 void SpineTransformConstraint::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("apply"), &SpineTransformConstraint::apply);
 	ClassDB::bind_method(D_METHOD("update"), &SpineTransformConstraint::update);
 	ClassDB::bind_method(D_METHOD("get_data"), &SpineTransformConstraint::get_data);
 	ClassDB::bind_method(D_METHOD("get_bones"), &SpineTransformConstraint::get_bones);
 	ClassDB::bind_method(D_METHOD("get_target"), &SpineTransformConstraint::get_target);
 	ClassDB::bind_method(D_METHOD("set_target", "v"), &SpineTransformConstraint::set_target);
-	ClassDB::bind_method(D_METHOD("get_rotate_mix"), &SpineTransformConstraint::get_rotate_mix);
-	ClassDB::bind_method(D_METHOD("set_rotate_mix", "v"), &SpineTransformConstraint::set_rotate_mix);
-	ClassDB::bind_method(D_METHOD("get_translate_mix"), &SpineTransformConstraint::get_translate_mix);
-	ClassDB::bind_method(D_METHOD("set_translate_mix", "v"), &SpineTransformConstraint::set_translate_mix);
-	ClassDB::bind_method(D_METHOD("get_scale_mix"), &SpineTransformConstraint::get_scale_mix);
-	ClassDB::bind_method(D_METHOD("set_scale_mix", "v"), &SpineTransformConstraint::set_scale_mix);
-	ClassDB::bind_method(D_METHOD("get_shear_mix"), &SpineTransformConstraint::get_shear_mix);
-	ClassDB::bind_method(D_METHOD("set_shear_mix", "v"), &SpineTransformConstraint::set_shear_mix);
+	ClassDB::bind_method(D_METHOD("get_mix_rotate"), &SpineTransformConstraint::get_mix_rotate);
+	ClassDB::bind_method(D_METHOD("set_mix_rotate", "v"), &SpineTransformConstraint::set_mix_rotate);
+	ClassDB::bind_method(D_METHOD("get_mix_x"), &SpineTransformConstraint::get_mix_x);
+	ClassDB::bind_method(D_METHOD("set_mix_x", "v"), &SpineTransformConstraint::set_mix_x);
+	ClassDB::bind_method(D_METHOD("get_mix_y"), &SpineTransformConstraint::get_mix_y);
+	ClassDB::bind_method(D_METHOD("set_mix_y", "v"), &SpineTransformConstraint::set_mix_y);
+	ClassDB::bind_method(D_METHOD("get_mix_scale_x"), &SpineTransformConstraint::get_mix_scale_x);
+	ClassDB::bind_method(D_METHOD("set_mix_scale_x", "v"), &SpineTransformConstraint::set_mix_scale_x);
+	ClassDB::bind_method(D_METHOD("get_mix_scale_y"), &SpineTransformConstraint::get_mix_scale_y);
+	ClassDB::bind_method(D_METHOD("set_mix_scale_y", "v"), &SpineTransformConstraint::set_mix_scale_y);
+	ClassDB::bind_method(D_METHOD("get_mix_shear_y"), &SpineTransformConstraint::get_mix_shear_y);
+	ClassDB::bind_method(D_METHOD("set_mix_shear_y", "v"), &SpineTransformConstraint::set_mix_shear_y);
 	ClassDB::bind_method(D_METHOD("is_active"), &SpineTransformConstraint::is_active);
 	ClassDB::bind_method(D_METHOD("set_active", "v"), &SpineTransformConstraint::set_active);
 }
 
 SpineTransformConstraint::SpineTransformConstraint():transform_constraint(NULL) {}
 SpineTransformConstraint::~SpineTransformConstraint() {}
-
-void SpineTransformConstraint::apply(){
-	transform_constraint->apply();
-}
 
 void SpineTransformConstraint::update(){
 	transform_constraint->update();
@@ -74,32 +73,46 @@ void SpineTransformConstraint::set_target(Ref<SpineBone> v){
 	}
 }
 
-float SpineTransformConstraint::get_rotate_mix(){
-	return transform_constraint->getRotateMix();
+float SpineTransformConstraint::get_mix_rotate(){
+	return transform_constraint->getMixRotate();
 }
-void SpineTransformConstraint::set_rotate_mix(float v){
-	transform_constraint->setRotateMix(v);
-}
-
-float SpineTransformConstraint::get_translate_mix(){
-	return transform_constraint->getTranslateMix();
-}
-void SpineTransformConstraint::set_translate_mix(float v){
-	transform_constraint->setTranslateMix(v);
+void SpineTransformConstraint::set_mix_rotate(float v){
+	transform_constraint->setMixRotate(v);
 }
 
-float SpineTransformConstraint::get_scale_mix(){
-	return transform_constraint->getScaleMix();
+float SpineTransformConstraint::get_mix_x(){
+	return transform_constraint->getMixX();
 }
-void SpineTransformConstraint::set_scale_mix(float v){
-	transform_constraint->setScaleMix(v);
+void SpineTransformConstraint::set_mix_x(float v){
+	transform_constraint->setMixX(v);
 }
 
-float SpineTransformConstraint::get_shear_mix(){
-	return transform_constraint->getShearMix();
+float SpineTransformConstraint::get_mix_y(){
+	return transform_constraint->getMixY();
 }
-void SpineTransformConstraint::set_shear_mix(float v){
-	transform_constraint->setShearMix(v);
+void SpineTransformConstraint::set_mix_y(float v){
+	transform_constraint->setMixY(v);
+}
+
+float SpineTransformConstraint::get_mix_scale_x(){
+	return transform_constraint->getMixScaleX();
+}
+void SpineTransformConstraint::set_mix_scale_x(float v){
+	transform_constraint->setMixScaleX(v);
+}
+
+float SpineTransformConstraint::get_mix_scale_y(){
+	return transform_constraint->getMixScaleY();
+}
+void SpineTransformConstraint::set_mix_scale_y(float v){
+	transform_constraint->setMixScaleY(v);
+}
+
+float SpineTransformConstraint::get_mix_shear_y(){
+	return transform_constraint->getMixShearY();
+}
+void SpineTransformConstraint::set_mix_shear_y(float v){
+	transform_constraint->setMixShearY(v);
 }
 
 bool SpineTransformConstraint::is_active(){

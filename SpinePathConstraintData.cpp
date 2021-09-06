@@ -21,10 +21,12 @@ void SpinePathConstraintData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_position", "V"), &SpinePathConstraintData::set_position);
 	ClassDB::bind_method(D_METHOD("get_spacing"), &SpinePathConstraintData::get_spacing);
 	ClassDB::bind_method(D_METHOD("set_spacing", "V"), &SpinePathConstraintData::set_spacing);
-	ClassDB::bind_method(D_METHOD("get_rotate_mix"), &SpinePathConstraintData::get_rotate_mix);
-	ClassDB::bind_method(D_METHOD("set_rotate_mix", "V"), &SpinePathConstraintData::set_rotate_mix);
-	ClassDB::bind_method(D_METHOD("get_translate_mix"), &SpinePathConstraintData::get_translate_mix);
-	ClassDB::bind_method(D_METHOD("set_translate_mix", "V"), &SpinePathConstraintData::set_translate_mix);
+	ClassDB::bind_method(D_METHOD("get_mix_rotate"), &SpinePathConstraintData::get_mix_rotate);
+	ClassDB::bind_method(D_METHOD("set_mix_rotate", "V"), &SpinePathConstraintData::set_mix_rotate);
+	ClassDB::bind_method(D_METHOD("get_mix_x"), &SpinePathConstraintData::get_mix_x);
+	ClassDB::bind_method(D_METHOD("set_mix_x", "V"), &SpinePathConstraintData::set_mix_x);
+	ClassDB::bind_method(D_METHOD("get_mix_y"), &SpinePathConstraintData::get_mix_y);
+	ClassDB::bind_method(D_METHOD("set_mix_y", "V"), &SpinePathConstraintData::set_mix_y);
 
 	BIND_ENUM_CONSTANT(POSITIONMODE_FIXED);
 	BIND_ENUM_CONSTANT(POSITIONMODE_PERCENT);
@@ -119,16 +121,23 @@ void SpinePathConstraintData::set_spacing(float v){
 	get_spine_data()->setSpacing(v);
 }
 
-float SpinePathConstraintData::get_rotate_mix(){
-	return get_spine_data()->getRotateMix();
+float SpinePathConstraintData::get_mix_rotate(){
+	return get_spine_data()->getMixRotate();
 }
-void SpinePathConstraintData::set_rotate_mix(float v){
-	get_spine_data()->setRotateMix(v);
+void SpinePathConstraintData::set_mix_rotate(float v){
+	get_spine_data()->setMixRotate(v);
 }
 
-float SpinePathConstraintData::get_translate_mix(){
-	return get_spine_data()->getTranslateMix();
+float SpinePathConstraintData::get_mix_x(){
+	return get_spine_data()->getMixX();
 }
-void SpinePathConstraintData::set_translate_mix(float v){
-	get_spine_data()->setTranslateMix(v);
+void SpinePathConstraintData::set_mix_x(float v){
+	get_spine_data()->setMixX(v);
+}
+
+float SpinePathConstraintData::get_mix_y(){
+	return get_spine_data()->getMixY();
+}
+void SpinePathConstraintData::set_mix_y(float v){
+	get_spine_data()->setMixY(v);
 }
