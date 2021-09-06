@@ -33,7 +33,6 @@
 #include <spine/VertexAttachment.h>
 #include <spine/Color.h>
 #include <spine/SpineObject.h>
-#include <spine/Color.h>
 
 namespace spine {
 	/// Attachment that has a polygon for bounds checking.

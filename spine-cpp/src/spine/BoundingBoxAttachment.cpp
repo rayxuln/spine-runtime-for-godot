@@ -49,7 +49,3 @@ Attachment *BoundingBoxAttachment::copy() {
 	copyTo(copy);
 	return copy;
 }
-
-Color& BoundingBoxAttachment::getColor() {
-	return _color;
-}

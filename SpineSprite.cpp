@@ -130,7 +130,8 @@ void SpineSprite::_validate_property(PropertyInfo &property) const {
 	} else if (property.name == "current_animations") {
 		property.hint = PROPERTY_HINT_ENUM;
 
-		Array animations = skeleton->get_data()->get_animation_names();
+        Vector<String> animations;
+		skeleton->get_data()->get_animation_names(animations);
 
 		for (int i = 0; i < animations.size(); i++) {
 			if (i > 0) {

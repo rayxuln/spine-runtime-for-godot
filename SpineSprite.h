@@ -155,7 +155,7 @@ public:
 
 	void set_bounding_box_attachment_name(const String& p_attachment_name);
 	String get_bounding_box_attachment_name() const;
-};
+
     // current animation count
     int64_t get_current_animation_count() const;
     void set_current_animation_count(int64_t v);
