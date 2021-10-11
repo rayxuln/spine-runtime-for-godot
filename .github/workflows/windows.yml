@@ -28,7 +28,8 @@ jobs:
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
-          path: modules/spine-runtime-for-godot
+          repository: modules/spine-runtime-for-godot
+          ref: spine3.8
       #we need rename module
       - name: rename module
         run: mv modules/spine-runtime-for-godot modules/spine_runtime
