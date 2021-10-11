@@ -8,7 +8,7 @@ on:
 # Global Cache Settings
 # SCONS_CACHE for windows must be set in the build environment
 env:
-  GODOT_BASE_BRANCH: 3.x
+  GODOT_BASE_BRANCH: 3.3
   SCONS_CACHE_MSVC_CONFIG: true
   SCONS_CACHE_LIMIT: 4096
 
@@ -23,13 +23,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: godotengine/godot
-          ref: 3.x
+          ref: ${{env.GODOT_BASE_BRANCH}}
       
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
-          repository: rayxuln/spine-runtime-for-godot
-          ref: spine4.0
           path: modules/spine_runtime
       
       # Upload cache on completion and check it out now
@@ -78,7 +76,7 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.tools.64.exe
+          name: godot_editor_with_spine_4_0.exe
           path: bin/godot.windows.opt.tools.64.exe
 
   windows-template:
@@ -91,13 +89,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: godotengine/godot
-          ref: 3.x
+          ref: ${{env.GODOT_BASE_BRANCH}}
       
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
-          repository: rayxuln/spine-runtime-for-godot
-          ref: spine4.0
           path: modules/spine_runtime
 
       # Upload cache on completion and check it out now
