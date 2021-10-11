@@ -29,9 +29,9 @@ void SpineSkeleton::_bind_methods() {
 //	Ref<SpineAttachment> get_attachment_by_slot_name(const String &slot_name, const String &attachment_name);
 //	Ref<SpineAttachment> get_attachment_by_slot_index(int slot_index, const String &attachment_name);
 	ClassDB::bind_method(D_METHOD("find_bone", "bone_name"), &SpineSkeleton::find_bone);
-	ClassDB::bind_method(D_METHOD("find_bone_index", "bone_name"), &SpineSkeleton::find_bone_index);
+	// ClassDB::bind_method(D_METHOD("find_bone_index", "bone_name"), &SpineSkeleton::find_bone_index);
 	ClassDB::bind_method(D_METHOD("find_slot", "slot_name"), &SpineSkeleton::find_slot);
-	ClassDB::bind_method(D_METHOD("find_slot_index", "slot_name"), &SpineSkeleton::find_slot_index);
+	// ClassDB::bind_method(D_METHOD("find_slot_index", "slot_name"), &SpineSkeleton::find_slot_index);
 	ClassDB::bind_method(D_METHOD("set_skin_by_name", "skin_name"), &SpineSkeleton::set_skin_by_name);
 	ClassDB::bind_method(D_METHOD("set_skin", "new_skin"), &SpineSkeleton::set_skin);
 	ClassDB::bind_method(D_METHOD("get_attachment_by_slot_name", "slot_name", "attachment_name"), &SpineSkeleton::get_attachment_by_slot_name);
@@ -157,10 +157,10 @@ Ref<SpineBone> SpineSkeleton::find_bone(const String &name){
 	gd_b->set_spine_sprite(the_sprite);
 	return gd_b;
 }
-int SpineSkeleton::find_bone_index(const String &name){
-	if(name.empty()) return -1;
-	return skeleton->findBoneIndex(S_T(name));
-}
+// int SpineSkeleton::find_bone_index(const String &name){
+// 	if(name.empty()) return -1;
+// 	return skeleton->findBoneIndex(S_T(name));
+// }
 
 Ref<SpineSlot> SpineSkeleton::find_slot(const String &name){
 	if(name.empty()) return NULL;
@@ -170,10 +170,10 @@ Ref<SpineSlot> SpineSkeleton::find_slot(const String &name){
 	gd_s->set_spine_object(s);
 	return gd_s;
 }
-int SpineSkeleton::find_slot_index(const String &name){
-	if(name.empty()) return -1;
-	return skeleton->findSlotIndex(S_T(name));
-}
+// int SpineSkeleton::find_slot_index(const String &name){
+// 	if(name.empty()) return -1;
+// 	return skeleton->findSlotIndex(S_T(name));
+// }
 
 void SpineSkeleton::set_skin_by_name(const String &skin_name){
 	skeleton->setSkin(S_T(skin_name));

@@ -69,11 +69,11 @@ public:
 	// spine api
 	Ref<SpineBoneData> find_bone(const String &bone_name);
 
-	int find_bone_index(const String &bone_name);
+	// int find_bone_index(const String &bone_name);
 
 	Ref<SpineSlotData> find_slot(const String &slot_name);
 
-	int find_slot_index(const String &slot_name);
+	// int find_slot_index(const String &slot_name);
 
 	Ref<SpineSkin> find_skin(const String &skin_name);
 
@@ -85,7 +85,7 @@ public:
 	Ref<SpineTransformConstraintData> find_transform_constraint(const String &constraint_name);
 	Ref<SpinePathConstraintData> find_path_constraint(const String &constraint_name);
 
-	int find_path_constraint_index(const String &path_constraint_name);
+	// int find_path_constraint_index(const String &path_constraint_name);
 
 	Array get_bones();
 	Array get_slots();

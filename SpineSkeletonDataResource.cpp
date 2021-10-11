@@ -12,9 +12,9 @@ void SpineSkeletonDataResource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_skeleton_json_res", "skeleton_json_res"), &SpineSkeletonDataResource::set_skeleton_json_res);
 	ClassDB::bind_method(D_METHOD("get_skeleton_json_res"), &SpineSkeletonDataResource::get_skeleton_json_res);
 	ClassDB::bind_method(D_METHOD("is_skeleton_data_loaded"), &SpineSkeletonDataResource::is_skeleton_data_loaded);
-	ClassDB::bind_method(D_METHOD("find_bone_index", "bone_name"), &SpineSkeletonDataResource::find_bone_index);
-	ClassDB::bind_method(D_METHOD("find_slot_index", "slot_name"), &SpineSkeletonDataResource::find_slot_index);
-	ClassDB::bind_method(D_METHOD("find_path_constraint_index", "path_constraint_name"), &SpineSkeletonDataResource::find_path_constraint_index);
+	// ClassDB::bind_method(D_METHOD("find_bone_index", "bone_name"), &SpineSkeletonDataResource::find_bone_index);
+	// ClassDB::bind_method(D_METHOD("find_slot_index", "slot_name"), &SpineSkeletonDataResource::find_slot_index);
+	// ClassDB::bind_method(D_METHOD("find_path_constraint_index", "path_constraint_name"), &SpineSkeletonDataResource::find_path_constraint_index);
 	ClassDB::bind_method(D_METHOD("find_animation", "animation_name"), &SpineSkeletonDataResource::find_animation);
 	ClassDB::bind_method(D_METHOD("get_sk_name"), &SpineSkeletonDataResource::get_sk_name);
 	ClassDB::bind_method(D_METHOD("set_sk_name", "sk_name"), &SpineSkeletonDataResource::set_sk_name);
@@ -133,21 +133,21 @@ Ref<SpineSkeletonJsonDataResource> SpineSkeletonDataResource::get_skeleton_json_
 #define CHECK_V if(!is_skeleton_data_loaded()){ERR_PRINT("skeleton data has not loaded yet!");return;}
 #define CHECK_X(x) if(!is_skeleton_data_loaded()){ERR_PRINT("skeleton data has not loaded yet!");return x;}
 #define S_T(x) (spine::String(x.utf8()))
-int SpineSkeletonDataResource::find_bone_index(const String &bone_name) {
-	CHECK_X(-1);
-	if(bone_name.empty()) return -1;
-	return skeleton_data->findBoneIndex(S_T(bone_name));
-}
-int SpineSkeletonDataResource::find_slot_index(const String &slot_name) {
-	if(slot_name.empty()) return -1;
-	CHECK_X(-1);
-	return skeleton_data->findSlotIndex(S_T(slot_name));
-}
-int SpineSkeletonDataResource::find_path_constraint_index(const String &path_constraint_name) {
-	if(path_constraint_name.empty()) return -1;
-	CHECK_X(-1);
-	return skeleton_data->findPathConstraintIndex(S_T(path_constraint_name));
-}
+// int SpineSkeletonDataResource::find_bone_index(const String &bone_name) {
+// 	CHECK_X(-1);
+// 	if(bone_name.empty()) return -1;
+// 	return skeleton_data->findBoneIndex(S_T(bone_name));
+// }
+// int SpineSkeletonDataResource::find_slot_index(const String &slot_name) {
+// 	if(slot_name.empty()) return -1;
+// 	CHECK_X(-1);
+// 	return skeleton_data->findSlotIndex(S_T(slot_name));
+// }
+// int SpineSkeletonDataResource::find_path_constraint_index(const String &path_constraint_name) {
+// 	if(path_constraint_name.empty()) return -1;
+// 	CHECK_X(-1);
+// 	return skeleton_data->findPathConstraintIndex(S_T(path_constraint_name));
+// }
 Ref<SpineAnimation> SpineSkeletonDataResource::find_animation(const String &animation_name) {
 	CHECK_X(NULL);
 	if(animation_name.empty()){

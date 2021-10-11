@@ -53,10 +53,10 @@ public:
 	void set_slots_to_setup_pose();
 
 	Ref<SpineBone> find_bone(const String &name);
-	int find_bone_index(const String &name);
+	// int find_bone_index(const String &name);
 
 	Ref<SpineSlot> find_slot(const String &name);
-	int find_slot_index(const String &name);
+	// int find_slot_index(const String &name);
 
 	void set_skin_by_name(const String &skin_name);
 	void set_skin(Ref<SpineSkin> new_skin);
