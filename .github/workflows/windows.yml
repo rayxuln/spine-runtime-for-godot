@@ -30,9 +30,8 @@ jobs:
         with:
           repository: rayxuln/spine-runtime-for-godot
           ref: spine4.0
-      #we need rename module
-      - name: rename module
-        run: mv modules/spine-runtime-for-godot modules/spine_runtime
+          path: modules/spine_runtime
+      
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
@@ -99,7 +98,7 @@ jobs:
         with:
           repository: rayxuln/spine-runtime-for-godot
           ref: spine4.0
-      
+          path: modules/spine_runtime
 
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
