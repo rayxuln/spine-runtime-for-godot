@@ -63,12 +63,14 @@ jobs:
           scons --version
 
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
-      - name: Compilation
+      - name: compile x86 x64
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=yes tests=no target=release_debug
-
+          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=yes tests=no target=release_debug bits=32
+          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=yes tests=no target=release_debug bits=64
+      - name: list all builds
+        run: ls -l bin/
       # TODO Such tests are able to run from Godot 4.0 only
       # Execute unit tests for the editor
       #- name: Unit Tests
@@ -78,9 +80,13 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.exe
-          path: bin/godot.windows.opt.tools.64.exe
+          name: godot_editor_with_spine3_8_x86.exe
+          path: bin/godot.windows.opt.tools.86.exe
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: godot_editor_with_spine3.8_x64.exe
+          path: bin/godot.windows.opt.tools.64.exe
   windows-template:
     # Windows 10 with latest image
     runs-on: "windows-latest"
@@ -130,20 +136,33 @@ jobs:
           scons --version
 
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
-      - name: Compilation
+      - name: release tempz x86_x64
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release
+          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release_debug bits=64
+          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release bits=64
+
+      - name: debug tempz x86_x64
+        env:
+          SCONS_CACHE: /.scons_cache/
+        run: |
+          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release_debug bits=32
+          scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release bits=32
 
       # TODO Such tests are able to run from Godot 4.0 only
       # Execute unit tests for the editor
       #- name: Unit Tests
       #  run: |
       #    ./bin/godot.windows.opt.tools.64.exe --test
-
-      # Make build available
+      - name: list all builds
+        run: ls -l bin/
+      # upload all build tempzs
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.64.exe
+          name: godot.windows.release.64.exe
           path: bin/godot.windows.opt.64.exe
+      - uses: actions/upload-artifact@v2
+        with:
+          name: godot.windows.release.32.exe
+          path: bin/godot.windows.opt.32.exe
