@@ -12,6 +12,7 @@ env:
   SCONS_CACHE_MSVC_CONFIG: true
   SCONS_CACHE_LIMIT: 4096
   GODOT_TARGET_PLATFORM: windows
+  SPINE_SUFFIX: 3_8
 
 jobs:
   windows-editor:
@@ -71,7 +72,7 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.64.exe
+          name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.64.exe
           path: bin/godot.windows.opt.tools.64.exe
 
   windows-template-debug:
@@ -252,7 +253,7 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.32.exe
+          name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.32.exe
           path: bin/godot.windows.opt.tools.32.exe
 
   windows-template-debug-32:

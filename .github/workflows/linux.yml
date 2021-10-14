@@ -10,6 +10,7 @@ env:
   GODOT_BASE_BRANCH: 3.3
   SCONS_CACHE_LIMIT: 4096
   GODOT_TARGET_PLATFORM: x11
+  SPINE_SUFFIX: 3_8
 
 jobs:
   linux-editor:
@@ -75,15 +76,15 @@ jobs:
         env:
           SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=yes tests=no target=release_debug production=yes bits=64
+          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=yes tests=no target=release_debug production=yes bits=64
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.64
+          name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.64
           path: bin/godot.x11.opt.tools.64
 
-linux-template-debug:
+  linux-template-debug:
     runs-on: "ubuntu-20.04"
     name: Debug
 
@@ -125,7 +126,7 @@ linux-template-debug:
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=debug bits=64
+          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=64
       
       # Make build available
       - uses: actions/upload-artifact@v2
@@ -175,7 +176,7 @@ linux-template-debug:
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=release bits=64
+          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=64
       
       # Make build available
       - uses: actions/upload-artifact@v2
@@ -246,15 +247,15 @@ linux-template-debug:
         env:
           SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=yes tests=no target=release_debug production=yes bits=32
+          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=yes tests=no target=release_debug production=yes bits=32
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.32
+          name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.32
           path: bin/godot.x11.opt.tools.32
 
-linux-template-debug-32:
+  linux-template-debug-32:
     runs-on: "ubuntu-20.04"
     name: Debug-32
 
@@ -296,7 +297,7 @@ linux-template-debug-32:
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=debug bits=32
+          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=32
       
       # Make build available
       - uses: actions/upload-artifact@v2
@@ -346,7 +347,7 @@ linux-template-debug-32:
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=release bits=32
+          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=32
       
       # Make build available
       - uses: actions/upload-artifact@v2
