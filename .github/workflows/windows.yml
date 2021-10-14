@@ -1,9 +1,9 @@
 name: 🚪 Windows Builds
 on:
   push:
-    branches: [ master, github_actions, spine3.8 ]
-  pull_request:
     branches: [ spine3.8 ]
+  # pull_request:
+  #   branches: [ spine4.0 ]
 
 # Global Settings
 # SCONS_CACHE for windows must be set in the build environment
@@ -38,7 +38,7 @@ jobs:
         id: windows-editor-cache
         uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -65,7 +65,7 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=${{env.GODOT_TARGET_PLATFORM}} tools=yes tests=no target=release_debug bits=64
 
@@ -73,7 +73,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.64.exe
-          path: bin/godot.windows.opt.tools.64.exe
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.tools.64.exe
 
   windows-template-debug:
     # Windows 10 with latest image
@@ -95,10 +95,10 @@ jobs:
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: windows-template-debug-cache
         uses: RevoluPowered/cache@v2.1
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -125,15 +125,15 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=64
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.debug.64.exe
-          path: bin/godot.windows.debug.64.exe
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.debug.64.exe
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.debug.64.exe
 
   windows-template-release:
     # Windows 10 with latest image
@@ -155,10 +155,10 @@ jobs:
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: windows-template-release-cache
         uses: RevoluPowered/cache@v2.1
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -185,15 +185,15 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=64
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.64.exe
-          path: bin/godot.windows.opt.64.exe
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.opt.64.exe
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.64.exe
   
   # Compile 32 bits
   windows-editor-32:
@@ -216,10 +216,10 @@ jobs:
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: windows-editor-32-cache
         uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -246,7 +246,7 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=yes tests=no target=release_debug bits=32
 
@@ -254,7 +254,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.32.exe
-          path: bin/godot.windows.opt.tools.32.exe
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.tools.32.exe
 
   windows-template-debug-32:
     # Windows 10 with latest image
@@ -276,10 +276,10 @@ jobs:
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: windows-template-debug-32-cache
         uses: RevoluPowered/cache@v2.1
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -306,15 +306,15 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=32
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.debug.32.exe
-          path: bin/godot.windows.debug.32.exe
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.debug.32.exe
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.debug.32.exe
 
   windows-template-release-32:
     # Windows 10 with latest image
@@ -336,10 +336,10 @@ jobs:
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: windows-template-release-32-cache
         uses: RevoluPowered/cache@v2.1
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -366,12 +366,12 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=32
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.32.exe
-          path: bin/godot.windows.opt.32.exe
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.opt.32.exe
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.32.exe
