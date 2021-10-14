@@ -252,6 +252,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
             libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
 
@@ -323,6 +324,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
             libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
 
@@ -394,6 +396,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
             libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
 
