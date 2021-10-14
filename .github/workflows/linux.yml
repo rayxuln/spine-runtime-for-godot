@@ -252,7 +252,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb libc6-dev libc6-dev-i386 \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
@@ -323,7 +323,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb libc6-dev libc6-dev-i386 \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
@@ -394,7 +394,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb libc6-dev libc6-dev-i386 \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
