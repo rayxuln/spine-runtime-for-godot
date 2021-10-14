@@ -9,7 +9,7 @@ on:
 env:
   GODOT_BASE_BRANCH: 3.3
   SCONS_CACHE_LIMIT: 4096
-  GODOT_TARGET_PLATFORM: x11
+  GODOT_TARGET_PLATFORM: linuxbsd
   SPINE_SUFFIX: 4_0
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
       
       # Upload cache on completion and check it out now
@@ -82,7 +82,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.64
-          path: bin/godot.x11.opt.tools.64
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.tools.64
 
   linux-template-debug:
     runs-on: "ubuntu-20.04"
@@ -110,12 +110,12 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
-        id: linux-editor-cache
+        id: linux-template-debug-cache
         uses: actions/cache@v2
         with:
           path: ${{github.workspace}}/.scons_cache/
@@ -145,15 +145,15 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=64
       
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.x11.debug.64
-          path: bin/godot.x11.debug.64
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.debug.64
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.debug.64
 
   linux-template-release:
     runs-on: "ubuntu-20.04"
@@ -181,12 +181,12 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
-        id: linux-editor-cache
+        id: linux-template-release-cache
         uses: actions/cache@v2
         with:
           path: ${{github.workspace}}/.scons_cache/
@@ -216,15 +216,15 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=64
       
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.x11.opt.64
-          path: bin/godot.x11.opt.64
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.opt.64
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.64
 
   linux-editor-32:
     runs-on: "ubuntu-20.04"
@@ -252,12 +252,12 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
-        id: linux-editor-cache
+        id: linux-editor-32-cache
         uses: actions/cache@v2
         with:
           path: ${{github.workspace}}/.scons_cache/
@@ -295,7 +295,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: godot_editor_with_spine_${{env.SPINE_SUFFIX}}.32
-          path: bin/godot.x11.opt.tools.32
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.tools.32
 
   linux-template-debug-32:
     runs-on: "ubuntu-20.04"
@@ -323,12 +323,12 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
-        id: linux-editor-cache
+        id: linux-template-debug-32-cache
         uses: actions/cache@v2
         with:
           path: ${{github.workspace}}/.scons_cache/
@@ -358,15 +358,15 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=32
       
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.x11.debug.32
-          path: bin/godot.x11.debug.32
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.debug.32
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.debug.32
 
   linux-template-release-32:
     runs-on: "ubuntu-20.04"
@@ -394,12 +394,12 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
-        id: linux-editor-cache
+        id: linux-template-release-32-cache
         uses: actions/cache@v2
         with:
           path: ${{github.workspace}}/.scons_cache/
@@ -429,12 +429,12 @@ jobs:
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=32
       
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.x11.opt.32
-          path: bin/godot.x11.opt.32
+          name: godot.${{env.GODOT_TARGET_PLATFORM}}.opt.32
+          path: bin/godot.${{env.GODOT_TARGET_PLATFORM}}.opt.32
