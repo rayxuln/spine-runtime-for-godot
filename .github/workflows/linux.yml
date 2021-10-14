@@ -254,9 +254,21 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
-            libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
-
+          sudo apt-get install build-essential pkg-config \
+            xvfb \
+            gcc-multilib g++-multilib \
+            libc6-dev libc6-dev-i386 \
+            libx11-dev libx11-dev:i386 \
+            libxcursor-dev libxcursor-dev:i386 \
+            libxinerama-dev libxinerama-dev:i386 \
+            libgl1-mesa-dev libgl1-mesa-dev:i386 \
+            libglu-dev libglu-dev:i386 \
+            libasound2-dev libasound2-dev:i386 \
+            libpulse-dev libpulse-dev:i386 \
+            libudev-dev libudev-dev:i386 \
+            libxi-dev libxi-dev:i386 \
+            libxrandr-dev libxrandr-dev:i386 \
+            yasm
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
         id: linux-editor-32-cache
@@ -327,8 +339,21 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
-            libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
+          sudo apt-get install build-essential pkg-config \
+            xvfb \
+            gcc-multilib g++-multilib \
+            libc6-dev libc6-dev-i386 \
+            libx11-dev libx11-dev:i386 \
+            libxcursor-dev libxcursor-dev:i386 \
+            libxinerama-dev libxinerama-dev:i386 \
+            libgl1-mesa-dev libgl1-mesa-dev:i386 \
+            libglu-dev libglu-dev:i386 \
+            libasound2-dev libasound2-dev:i386 \
+            libpulse-dev libpulse-dev:i386 \
+            libudev-dev libudev-dev:i386 \
+            libxi-dev libxi-dev:i386 \
+            libxrandr-dev libxrandr-dev:i386 \
+            yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
@@ -400,8 +425,21 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
-            libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
+          sudo apt-get install build-essential pkg-config \
+            xvfb \
+            gcc-multilib g++-multilib \
+            libc6-dev libc6-dev-i386 \
+            libx11-dev libx11-dev:i386 \
+            libxcursor-dev libxcursor-dev:i386 \
+            libxinerama-dev libxinerama-dev:i386 \
+            libgl1-mesa-dev libgl1-mesa-dev:i386 \
+            libglu-dev libglu-dev:i386 \
+            libasound2-dev libasound2-dev:i386 \
+            libpulse-dev libpulse-dev:i386 \
+            libudev-dev libudev-dev:i386 \
+            libxi-dev libxi-dev:i386 \
+            libxrandr-dev libxrandr-dev:i386 \
+            yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
