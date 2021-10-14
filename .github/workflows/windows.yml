@@ -1,9 +1,9 @@
 name: 🚪 Windows Builds
 on:
   push:
-    branches: [ master, github_actions, spine4.0 ]
-  pull_request:
     branches: [ spine4.0 ]
+  # pull_request:
+  #   branches: [ spine4.0 ]
 
 # Global Settings
 # SCONS_CACHE for windows must be set in the build environment

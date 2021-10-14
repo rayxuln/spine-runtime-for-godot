@@ -1,15 +1,15 @@
 name: 🐧 Linux Builds
 on:
   push:
-    branches: [ master, github_actions, spine4.0 ]
-  pull_request:
     branches: [ spine4.0 ]
+  # pull_request:
+  #   branches: [ spine4.0 ]
 
 # Global Settings
 env:
   GODOT_BASE_BRANCH: 3.3
   SCONS_CACHE_LIMIT: 4096
-  GODOT_TARGET_PLATFORM: linuxbsd
+  GODOT_TARGET_PLATFORM: x11 # Platform "linuxbsd" is still called "x11" in Godot 3.x.
   SPINE_SUFFIX: 4_0
 
 jobs:
@@ -252,8 +252,8 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
-            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
+          sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
+            libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
@@ -323,8 +323,8 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
-            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
+          sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
+            libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
@@ -394,8 +394,8 @@ jobs:
       # Install all packages (except scons)
       - name: Configure dependencies
         run: |
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
-            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
+          sudo apt-get install build-essential pkg-config libx11-dev libx11-dev:i386 libxcursor-dev libxcursor-dev:i386 xvfb libc6-dev libc6-dev-i386 gcc-multilib g++-multilib \
+            libxinerama-dev libxinerama-dev:i386 libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxi-dev:i386 libxrandr-dev libxrandr-dev:i386 yasm
 
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
