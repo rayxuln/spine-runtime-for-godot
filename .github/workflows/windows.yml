@@ -137,8 +137,8 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.64.debug.exe
-          path: bin/godot.windows.opt.64.exe
+          name: godot.windows.debug.64.exe
+          path: bin/godot.windows.debug.64.exe
 
   windows-template-release:
     # Windows 10 with latest image
@@ -197,7 +197,7 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.64.release.exe
+          name: godot.windows.opt.64.exe
           path: bin/godot.windows.opt.64.exe
   
   # Compile 32 bits
@@ -318,8 +318,8 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.32.debug.exe
-          path: bin/godot.windows.opt.32.exe
+          name: godot.windows.debug.32.exe
+          path: bin/godot.windows.debug.32.exe
 
   windows-template-release-32:
     # Windows 10 with latest image
@@ -378,5 +378,5 @@ jobs:
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.32.release.exe
+          name: godot.windows.opt.32.exe
           path: bin/godot.windows.opt.32.exe
