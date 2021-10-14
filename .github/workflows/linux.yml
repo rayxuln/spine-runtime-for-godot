@@ -1,22 +1,19 @@
-name: 🚪 Windows Builds
+name: 🐧 Linux Builds
 on:
   push:
-    branches: [ master, github_actions, spine3.8 ]
+    branches: [ master, github_actions ,spine3.8 ]
   pull_request:
     branches: [ spine3.8 ]
 
 # Global Settings
-# SCONS_CACHE for windows must be set in the build environment
 env:
   GODOT_BASE_BRANCH: 3.3
-  SCONS_CACHE_MSVC_CONFIG: true
   SCONS_CACHE_LIMIT: 4096
-  GODOT_TARGET_PLATFORM: windows
+  GODOT_TARGET_PLATFORM: x11
 
 jobs:
-  windows-editor:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+  linux-editor:
+    runs-on: "ubuntu-20.04"
     name: Editor
 
     steps:
@@ -31,19 +28,31 @@ jobs:
         with:
           path: modules/spine_runtime
       
+      # Azure repositories are not reliable, we need to prevent azure giving us packages.
+      - name: Make apt sources.list use the default Ubuntu repositories
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/*
+          sudo cp -f misc/ci/sources.list /etc/apt/sources.list
+          sudo apt-get update
+      
+      # Install all packages (except scons)
+      - name: Configure dependencies
+        run: |
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
+      
       # Upload cache on completion and check it out now
-      # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: linux-editor-cache
         uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}
-
+      
       # Use python 3.x release (works cross platform; best to keep self contained in it's own step)
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
@@ -57,26 +66,25 @@ jobs:
       - name: Configuring Python packages
         run: |
           python -c "import sys; print(sys.version)"
-          python -m pip install scons pywin32
+          python -m pip install scons
           python --version
           scons --version
-
+      
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=${{env.GODOT_TARGET_PLATFORM}} tools=yes tests=no target=release_debug bits=64
+          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=yes tests=no target=release_debug production=yes bits=64
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.64.exe
-          path: bin/godot.windows.opt.tools.64.exe
+          name: godot_editor_with_spine_3_8.64
+          path: bin/godot.x11.opt.tools.64
 
-  windows-template-debug:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+linux-template-debug:
+    runs-on: "ubuntu-20.04"
     name: Debug
 
     steps:
@@ -85,19 +93,18 @@ jobs:
         with:
           repository: godotengine/godot
           ref: ${{env.GODOT_BASE_BRANCH}}
-      
+
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
           path: modules/spine_runtime
 
       # Upload cache on completion and check it out now
-      # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
-        uses: RevoluPowered/cache@v2.1
+        id: linux-editor-cache
+        uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -113,30 +120,21 @@ jobs:
           # Optional - x64 or x86 architecture, defaults to x64
           architecture: 'x64'
 
-      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
-      - name: Configuring Python packages
-        run: |
-          python -c "import sys; print(sys.version)"
-          python -m pip install scons pywin32
-          python --version
-          scons --version
-
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=64
-
+          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=debug bits=64
+      
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.debug.64.exe
-          path: bin/godot.windows.debug.64.exe
+          name: godot.x11.debug.64
+          path: bin/godot.x11.debug.64
 
-  windows-template-release:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+  linux-template-release:
+    runs-on: "ubuntu-20.04"
     name: Release
 
     steps:
@@ -145,19 +143,18 @@ jobs:
         with:
           repository: godotengine/godot
           ref: ${{env.GODOT_BASE_BRANCH}}
-      
+
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
           path: modules/spine_runtime
 
       # Upload cache on completion and check it out now
-      # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
-        uses: RevoluPowered/cache@v2.1
+        id: linux-editor-cache
+        uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -173,31 +170,21 @@ jobs:
           # Optional - x64 or x86 architecture, defaults to x64
           architecture: 'x64'
 
-      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
-      - name: Configuring Python packages
-        run: |
-          python -c "import sys; print(sys.version)"
-          python -m pip install scons pywin32
-          python --version
-          scons --version
-
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=yes platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=64
-
+          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=release bits=64
+      
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.64.exe
-          path: bin/godot.windows.opt.64.exe
-  
-  # Compile 32 bits
-  windows-editor-32:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+          name: godot.x11.opt.64
+          path: bin/godot.x11.opt.64
+
+  linux-editor-32:
+    runs-on: "ubuntu-20.04"
     name: Editor-32
 
     steps:
@@ -212,19 +199,31 @@ jobs:
         with:
           path: modules/spine_runtime
       
+      # Azure repositories are not reliable, we need to prevent azure giving us packages.
+      - name: Make apt sources.list use the default Ubuntu repositories
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/*
+          sudo cp -f misc/ci/sources.list /etc/apt/sources.list
+          sudo apt-get update
+      
+      # Install all packages (except scons)
+      - name: Configure dependencies
+        run: |
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm
+      
       # Upload cache on completion and check it out now
-      # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
+        id: linux-editor-cache
         uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}
-
+      
       # Use python 3.x release (works cross platform; best to keep self contained in it's own step)
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
@@ -238,26 +237,25 @@ jobs:
       - name: Configuring Python packages
         run: |
           python -c "import sys; print(sys.version)"
-          python -m pip install scons pywin32
+          python -m pip install scons
           python --version
           scons --version
-
+      
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
-          SCONS_CACHE: /.scons_cache/
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=yes tests=no target=release_debug bits=32
+          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=yes tests=no target=release_debug production=yes bits=32
 
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot_editor_with_spine_3_8.32.exe
-          path: bin/godot.windows.opt.tools.32.exe
+          name: godot_editor_with_spine_3_8.32
+          path: bin/godot.x11.opt.tools.32
 
-  windows-template-debug-32:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+linux-template-debug-32:
+    runs-on: "ubuntu-20.04"
     name: Debug-32
 
     steps:
@@ -266,19 +264,18 @@ jobs:
         with:
           repository: godotengine/godot
           ref: ${{env.GODOT_BASE_BRANCH}}
-      
+
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
           path: modules/spine_runtime
 
       # Upload cache on completion and check it out now
-      # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
-        uses: RevoluPowered/cache@v2.1
+        id: linux-editor-cache
+        uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -294,30 +291,21 @@ jobs:
           # Optional - x64 or x86 architecture, defaults to x64
           architecture: 'x64'
 
-      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
-      - name: Configuring Python packages
-        run: |
-          python -c "import sys; print(sys.version)"
-          python -m pip install scons pywin32
-          python --version
-          scons --version
-
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=debug bits=32
-
+          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=debug bits=32
+      
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.debug.32.exe
-          path: bin/godot.windows.debug.32.exe
+          name: godot.x11.debug.32
+          path: bin/godot.x11.debug.32
 
-  windows-template-release-32:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+  linux-template-release-32:
+    runs-on: "ubuntu-20.04"
     name: Release-32
 
     steps:
@@ -326,19 +314,18 @@ jobs:
         with:
           repository: godotengine/godot
           ref: ${{env.GODOT_BASE_BRANCH}}
-      
+
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
           path: modules/spine_runtime
 
       # Upload cache on completion and check it out now
-      # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
-        id: windows-editor-cache
-        uses: RevoluPowered/cache@v2.1
+        id: linux-editor-cache
+        uses: actions/cache@v2
         with:
-          path: /.scons_cache/
+          path: ${{github.workspace}}/.scons_cache/
           key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
           restore-keys: |
             ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{github.ref}}-${{github.sha}}
@@ -354,23 +341,15 @@ jobs:
           # Optional - x64 or x86 architecture, defaults to x64
           architecture: 'x64'
 
-      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
-      - name: Configuring Python packages
-        run: |
-          python -c "import sys; print(sys.version)"
-          python -m pip install scons pywin32
-          python --version
-          scons --version
-
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
       - name: Compilation
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
-          scons -j2 verbose=yes warnings=all werror=no platform=${{env.GODOT_TARGET_PLATFORM}} tools=no tests=no target=release bits=32
-
+          scons -j2 verbose=yes warnings=all werror=no platform=x11 tools=no tests=no target=release bits=32
+      
       # Make build available
       - uses: actions/upload-artifact@v2
         with:
-          name: godot.windows.opt.32.exe
-          path: bin/godot.windows.opt.32.exe
+          name: godot.x11.opt.32
+          path: bin/godot.x11.opt.32
