@@ -2,6 +2,9 @@
 [简体中文](readme_zh.md)
 [![🚪 Windows Builds](https://github.com/2439905184/spine-runtime-for-godot/actions/workflows/windows.yml/badge.svg?branch=spine3.8)](https://github.com/2439905184/spine-runtime-for-godot/actions/workflows/windows.yml)
 
+[![🚪 Windows Builds](https://github.com/rayxuln/spine-runtime-for-godot/actions/workflows/windows.yml/badge.svg?branch=spine3.8)](https://github.com/rayxuln/spine-runtime-for-godot/actions/workflows/windows.yml)
+[![🐧 Linux Builds](https://github.com/rayxuln/spine-runtime-for-godot/actions/workflows/linux.yml/badge.svg?branch=spine3.8)](https://github.com/rayxuln/spine-runtime-for-godot/actions/workflows/linux.yml)
+
 runtime version [3.8.x](https://github.com/EsotericSoftware/spine-runtimes/commit/63ef1938b9661dd44a966ec66b4d29edea2ffd1f)
 
 Godot engine version 3.x
