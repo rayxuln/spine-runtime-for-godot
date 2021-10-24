@@ -8,7 +8,7 @@ on:
 # Global Cache Settings
 # SCONS_CACHE for windows must be set in the build environment
 env:
-  GODOT_BASE_BRANCH: 3.3
+  GODOT_BASE_BRANCH: 3.3.3-stable
   SCONS_CACHE_MSVC_CONFIG: true
   SCONS_CACHE_LIMIT: 4096
 
@@ -23,15 +23,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: godotengine/godot
-          ref: 3.3
+          ref: ${{env.GODOT_BASE_BRANCH}}
       
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
         with:
-          path: modules/spine-runtime-for-godot
-      #we need rename module
-      - name: rename module
-        run: mv modules/spine-runtime-for-godot modules/spine_runtime
+          path: modules/spine_runtime
       # Upload cache on completion and check it out now
       # Editing this is pretty dangerous for Windows since it can break and needs to be properly tested with a fresh cache.
       - name: Load .scons_cache directory
