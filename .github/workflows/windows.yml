@@ -8,7 +8,7 @@ on:
 # Global Cache Settings
 # SCONS_CACHE for windows must be set in the build environment
 env:
-  GODOT_BASE_BRANCH: 3.3.3-stable
+  GODOT_BASE_BRANCH: 3.3
   SCONS_CACHE_MSVC_CONFIG: true
   SCONS_CACHE_LIMIT: 4096
 
@@ -82,7 +82,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: godot_editor_with_spine3_8_x86.exe
-          path: bin/godot.windows.opt.tools.86.exe
+          path: bin/godot.windows.opt.tools.32.exe
 
       - uses: actions/upload-artifact@v2
         with:
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: godotengine/godot
-          ref: 3.3
+          ref: ${{env.GODOT_BASE_BRANCH}}
       
       # Clone our module under the correct directory
       - uses: actions/checkout@v2
@@ -137,14 +137,14 @@ jobs:
           scons --version
 
       # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
-      - name: release tempz x86_x64
+      - name: release tempz x64
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release_debug bits=64
           scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release bits=64
 
-      - name: debug tempz x86_x64
+      - name: debug tempz x86
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
