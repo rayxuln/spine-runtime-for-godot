@@ -7,7 +7,7 @@ on:
 
 # Global Settings
 env:
-  GODOT_BASE_BRANCH: 3.3
+  GODOT_BASE_BRANCH: 3.4-stable
   SCONS_CACHE_LIMIT: 4096
   GODOT_TARGET_PLATFORM: x11 # Platform "linuxbsd" is still called "x11" in Godot 3.x.
   SPINE_SUFFIX: 4_0
