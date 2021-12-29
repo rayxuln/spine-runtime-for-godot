@@ -35,7 +35,7 @@ void SpineSprite::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_bind_slot_nodes"), &SpineSprite::get_bind_slot_nodes);
 	ClassDB::bind_method(D_METHOD("set_bind_slot_nodes", "v"), &SpineSprite::set_bind_slot_nodes);
 	ClassDB::bind_method(D_METHOD("get_overlap"), &SpineSprite::get_overlap);
-	ClassDB::bind_method(D_METHOD("set_overlap", "v"), &SpineSprite::set_overlap);	
+	ClassDB::bind_method(D_METHOD("set_overlap", "v"), &SpineSprite::set_overlap);
 	ClassDB::bind_method(D_METHOD("set_skin", "v"), &SpineSprite::set_skin);
 	ClassDB::bind_method(D_METHOD("get_skin"), &SpineSprite::get_skin);
 	ClassDB::bind_method(D_METHOD("_on_skin_property_changed"), &SpineSprite::_on_skin_property_changed);
@@ -291,8 +291,8 @@ void SpineSprite::gen_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 				break;
 			default:
 				blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
-		}		
-		mat->set_blend_mode(blend_mode);		
+		}
+		mat->set_blend_mode(blend_mode);
 		mesh_ins->set_material(mat);
 	}
 }
@@ -425,7 +425,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 		}
 
 		auto mesh_ins = mesh_instances[i];
-		VisualServer::get_singleton()->canvas_item_clear(mesh_ins->get_canvas_item());	
+		VisualServer::get_singleton()->canvas_item_clear(mesh_ins->get_canvas_item());
 
 		if (skeleton_clipper->isClipping()) {
 			skeleton_clipper->clipTriangles(vertices, indices, uvs, VERTEX_STRIDE);
@@ -518,7 +518,7 @@ void SpineSprite::update_mesh_from_skeleton(Ref<SpineSkeleton> s) {
 					break;
 				default:
 					blend_mode = CanvasItemMaterial::BLEND_MODE_MIX;
-			}		
+			}
 			mat->set_blend_mode(blend_mode);
 		}
 	}
@@ -792,6 +792,7 @@ void SpineSprite::_get_property_list(List<PropertyInfo> *p_list) const {
     p_list->push_back(PropertyInfo(Variant::INT, "track_count", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
 
     for (size_t i=0; i<current_animations.size(); ++i) {
+
         String prefix = vformat("ca/%d/", i);
         p_list->push_back(PropertyInfo(Variant::NIL, vformat("ID %d", i), PROPERTY_HINT_NONE, prefix, PROPERTY_USAGE_GROUP));
         p_list->push_back(PropertyInfo(Variant::INT, vformat("%strack_id", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
