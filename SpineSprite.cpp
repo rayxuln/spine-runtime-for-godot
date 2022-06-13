@@ -792,8 +792,8 @@ void SpineSprite::_get_property_list(List<PropertyInfo> *p_list) const {
     p_list->push_back(PropertyInfo(Variant::INT, "track_count", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
 
     for (size_t i=0; i<current_animations.size(); ++i) {
-        String prefix = vformat("ca/%d/", i);
-        p_list->push_back(PropertyInfo(Variant::NIL, vformat("ID %d", i), PROPERTY_HINT_NONE, prefix, PROPERTY_USAGE_GROUP));
+        String prefix = vformat("ca/%d/", (unsigned int) i);
+        p_list->push_back(PropertyInfo(Variant::NIL, vformat("ID %d", (unsigned int) i), PROPERTY_HINT_NONE, prefix, PROPERTY_USAGE_GROUP));
         p_list->push_back(PropertyInfo(Variant::INT, vformat("%strack_id", prefix), PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR));
 
         Vector<String> anim_list;
@@ -980,7 +980,7 @@ void SpineSprite::_validate_and_play_current_animations() {
                 if (d.has("clear")) clear = d["clear"];
 
                 if (track_id < 0) {
-                    print_line(vformat("track_id at 'ID %d'  can not be less than 0!", i));
+                    print_line(vformat("track_id at 'ID %d'  can not be less than 0!", (unsigned int) i));
                     continue;
                 }
 
